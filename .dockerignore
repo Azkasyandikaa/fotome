@@ -1,0 +1,17 @@
+node_modules
+dist
+dist-server
+.git
+.gitignore
+.env
+.env.*
+*.log
+gdrive-service-account*.json
+docs
+scripts
+.freebuff
+.aider*
+--script
+.tmp-*
+Dockerfile
+.dockerignore

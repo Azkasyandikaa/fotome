@@ -14,7 +14,11 @@ import express from 'express';
 import { checkPassword, createSession, destroySession, isValidAdmin, requireAdmin, isAuthConfigured, devBypass } from './auth.js';
 import { driveConfigured, uploadToDrive } from './gdrive.js';
 
-const GALLERY_ROOT = process.env.GALLERY_DIR ?? '/tmp/photobooth/gallery';
+// Folder cache galeri. Prioritas: GALLERY_DIR > DATA_DIR/gallery
+// (deploy dengan persistent volume) > /tmp (vps/lokal tanpa konfigurasi).
+const GALLERY_ROOT =
+  process.env.GALLERY_DIR ??
+  (process.env.DATA_DIR ? path.join(process.env.DATA_DIR, 'gallery') : '/tmp/photobooth/gallery');
 const META_FILE = path.join(GALLERY_ROOT, 'meta.json');
 const MAX_ITEMS = 200;
 const MAX_BODY = '48mb';

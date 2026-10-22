@@ -11,7 +11,41 @@ import { devBypass, isAuthConfigured, isValidAdmin, requireAdmin } from './auth.
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.resolve(__dirname, '../dist');
+const PUBLIC_ROOT = path.resolve(DIST, '../public');
 const PORT = Number(process.env.PORT ?? 3000);
+
+/**
+ * DATA_DIR (opsional): folder untuk SEMUA state yang bisa berubah —
+ * frame hasil upload developer, kategori, leaderboard, showcase homepage,
+ * edit template.json, dan cache galeri. Dipakai saat deploy ke platform
+ * dengan persistent volume (Fly.io, Zeabur, Railway, VPS): mount volume di
+ * folder ini supaya data tidak hilang saat redeploy.
+ *
+ * Boot pertama: isi bawaan dari public/booth (atau dist/booth) di-copy sekali
+ * ke DATA_DIR/booth; data user disimpan di situ selamanya.
+ * Tanpa DATA_DIR, perilaku tidak berubah (state di samping build, seperti
+ * mode `npm run serve` yang lama).
+ */
+const DATA_DIR = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : null;
+const BOOTH_ROOT = DATA_DIR ?? PUBLIC_ROOT;
+/** Root untuk scan manifest: saat DATA_DIR aktif, scan folder data (bukan dist). */
+const MANIFEST_ROOT = DATA_DIR ?? DIST;
+/** Root untuk state JSON (kategori/leaderboard/showcase). */
+const STATE_ROOT = DATA_DIR ?? PUBLIC_ROOT;
+/** Root pemakai CRUD frame (PUT/POST/DELETE): tulis & cari frame di sini. */
+const BOOTH_DIRS = DATA_DIR ? [BOOTH_ROOT] : [DIST, PUBLIC_ROOT];
+
+function seedBoothData(): void {
+  if (!DATA_DIR) return;
+  const dest = path.join(DATA_DIR, 'booth');
+  if (fs.existsSync(dest)) return;
+  const src = [path.join(PUBLIC_ROOT, 'booth'), path.join(DIST, 'booth')].find((d) => fs.existsSync(d));
+  if (!src) return;
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.cpSync(src, dest, { recursive: true });
+  console.log(`[data] seeded booth data: ${src} -> ${dest}`);
+}
+seedBoothData();
 
 const app = express();
 app.disable('x-powered-by');
@@ -49,8 +83,8 @@ app.get('/healthz', (_req, res) => res.json({ ok: true, uptime: process.uptime()
 
 // Drop-in booth manifest (scanned fresh on every request: drop files, refresh).
 app.get('/api/booth', (_req, res) => {
-  const m = scanBooth(DIST);
-  const publicRoot = path.resolve(DIST, '../public');
+  const m = scanBooth(MANIFEST_ROOT);
+  const publicRoot = STATE_ROOT;
   // Kategori global dari public/booth/categories.json (dibuat lewat halaman dev).
   const globalCats = loadBoothCategories(publicRoot);
   // Leaderboard pemakaian frame + konfigurasi showcase homepage.
@@ -67,7 +101,7 @@ app.post('/api/booth/usage', express.json({ limit: '8kb' }), (req, res) => {
     res.status(400).json({ error: 'invalid id' });
     return;
   }
-  const count = bumpBoothUsage(path.resolve(DIST, '../public'), id);
+  const count = bumpBoothUsage(STATE_ROOT, id);
   if (count === null) {
     res.status(400).json({ error: 'invalid id' });
     return;
@@ -86,7 +120,7 @@ app.put('/api/booth/showcase', requireAdmin, express.json({ limit: '8kb' }), (re
     res.status(400).json({ error: 'invalid showcase patch' });
     return;
   }
-  const saved = saveBoothShowcase(path.resolve(DIST, '../public'), patch);
+  const saved = saveBoothShowcase(STATE_ROOT, patch);
   res.json({ ok: true, ...saved });
 });
 
@@ -117,8 +151,9 @@ app.put(
       return;
     }
     // Tulis ke folder yang di-scan (dist di production) DAN sumbernya (public)
-    // supaya hasil edit tidak hilang saat build ulang.
-    const roots = [DIST, path.resolve(DIST, '../public')];
+    // supaya hasil edit tidak hilang saat build ulang. Dengan DATA_DIR cukup
+    // satu folder (volume persisten).
+    const roots = BOOTH_DIRS;
     let written: string | null = null;
     for (const root of roots) {
       if (!fs.existsSync(path.join(root, 'booth', 'templates'))) continue;
@@ -179,7 +214,7 @@ app.post(
     // terpakai di root mana pun, baru tulis memakai id itu (tanpa suffix)
     // supaya hasil edit/hapus admin tidak meleset dan frame tidak hilang
     // saat build ulang.
-    const roots = [DIST, path.resolve(DIST, '../public')].filter((root) =>
+    const roots = BOOTH_DIRS.filter((root) =>
       fs.existsSync(path.join(root, 'booth')),
     );
     if (roots.length === 0) {
@@ -240,7 +275,7 @@ app.put(
       return;
     }
     const ext = UPLOAD_EXT[mime] ?? 'png';
-    const roots = [DIST, path.resolve(DIST, '../public')];
+    const roots = BOOTH_DIRS;
     let written = 0;
     for (const root of roots) {
       const dir = findTemplateDir(root, id);
@@ -270,7 +305,7 @@ app.delete('/api/booth/templates/:id/thumb', requireAdmin, (req, res) => {
     res.status(400).json({ error: 'invalid id' });
     return;
   }
-  const roots = [DIST, path.resolve(DIST, '../public')];
+  const roots = BOOTH_DIRS;
   let removed = false;
   for (const root of roots) {
     const dir = findTemplateDir(root, id);
@@ -288,7 +323,7 @@ app.delete('/api/booth/templates/:id/thumb', requireAdmin, (req, res) => {
 
 // Daftar kategori global (halaman developer → centang kategori tiap frame).
 app.get('/api/booth/categories', (_req, res) => {
-  res.json({ categories: loadBoothCategories(path.resolve(DIST, '../public')) });
+  res.json({ categories: loadBoothCategories(STATE_ROOT) });
 });
 
 // Simpan daftar kategori global (tambah/hapus kategori dari halaman developer).
@@ -303,7 +338,7 @@ app.put(
       return;
     }
     // Tulis ke sumber (public) — file ini ikut ter-build saat npm run build.
-    const root = path.resolve(DIST, '../public');
+    const root = STATE_ROOT;
     if (!fs.existsSync(path.join(root, 'booth'))) {
       res.status(404).json({ error: 'folder booth tidak ditemukan' });
       return;
@@ -320,7 +355,7 @@ app.delete('/api/booth/templates/:id', requireAdmin, (req, res) => {
     res.status(400).json({ error: 'invalid id' });
     return;
   }
-  const roots = [DIST, path.resolve(DIST, '../public')];
+  const roots = BOOTH_DIRS;
   let deleted = false;
   for (const root of roots) {
     if (!fs.existsSync(path.join(root, 'booth', 'templates'))) continue;

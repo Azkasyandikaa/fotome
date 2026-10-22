@@ -22,6 +22,7 @@ atau disimpan di server.
 11. [Konfigurasi situs (QR donasi, profil, admin WA)](#11-konfigurasi-situs)
 12. [Struktur kode](#12-struktur-kode)
 13. [Catatan performa & keamanan](#13-catatan-performa--keamanan)
+14. [Deploy ke platform Node + volume persisten](#14-deploy-ke-platform-node--volume-persisten)
 
 ---
 
@@ -478,3 +479,71 @@ docs/                    DESAIN & GALLERY-GDRIVE
   sembarang.
 - Studio frame menulis ke folder `public/` DAN `dist/` (production) supaya
   hasil edit tidak hilang saat build ulang.
+
+---
+
+## 14. Deploy ke platform Node + volume persisten
+
+> **PENTING:** jangan deploy situs ini sebagai *static site murni* (misal
+> Vercel/Netlify static). Fitur frame upload/edit, showcase homepage,
+> leaderboard, dan galeri foto semuanya berjalan via server Express dan
+> menyimpan file ke disk — di static hosting semua `/api/*` akan 404 dan
+> dashboard admin mati.
+
+### Konsep
+
+- Container menjalankan **frontend build + server Express** (satu process).
+  Sudah disiapkan `Dockerfile` yang bisa dipakai di Fly.io, Zeabur, Render,
+  Koyeb, VPS (docker compose), dll.
+- Semua **state mutable** (frame hasil upload, kategori, leaderboard,
+  showcase, cache galeri) disimpan di folder `DATA_DIR`. Saat deploy, mount
+  **persistent volume** di folder itu supaya data tidak hilang saat redeploy.
+- Boot pertama: isi bawaan `public/booth/` otomatis di-copy (seed) ke
+  `DATA_DIR/booth`, lalu semua perubahan admin ditulis ke sana saja.
+
+### Variabel env
+
+| Variabel                 | Fungsi                                                                 |
+| ------------------------ | ---------------------------------------------------------------------- |
+| `PORT`                   | port Express (default 3000; platform biasanya menyuntik sendiri)       |
+| `DATA_DIR`               | folder state persisten (set `DATA_DIR=/app/data` + volume di situ)     |
+| `GALLERY_ADMIN_PASSWORD` | WAJIB diganti di production — default bawaan ada di source code, bukan rahasia |
+| `GALLERY_DIR`            | folder cache galeri (default `DATA_DIR/gallery` bila DATA_DIR diset)   |
+| `GDRIVE_*`               | opsional Google Drive — lihat `docs/GALLERY-GDRIVE.md`                 |
+| `GALLERY_DEV_BYPASS`     | `1` = lewati login — **jangan pernah** diset di production             |
+
+### Deploy ke Fly.io (pakai volume)
+
+```bash
+# 1. Install CLI (sekali saja) — pilih sesuai OS: brew/shell script/powershell
+fly version || fly version 2>/dev/null || curl -L https://fly.io/install.sh | sh
+
+# 2. Buat app + volume di region terdekat
+fly launch --no-deploy --region singapore   # kalau ada prompt, jangan pilih database tambahan
+fly volumes create fotome-data --region singapore --size 3
+fly deploy
+
+# 3. Password admin (WAJIB sebelum dipakai publik)
+fly secrets set GALLERY_ADMIN_PASSWORD="password-baru-yang-kuat"
+```
+`Dockerfile` sudah set `DATA_DIR=/app/data`; volume di-mounted ke `/app/data`
+(mis. `fly volumes list` untuk cek attach). Health check: `/healthz`.
+
+### Deploy ke Zeabur
+
+1. Push repo ke GitHub → **Zeabur → New Service → Git** → pilih repo
+   (Zeabur otomatis memakai Dockerfile).
+2. Add **Volume**: mount ke `/app/data`.
+3. Variables: `GALLERY_ADMIN_PASSWORD=<password-kuat>`, `DATA_DIR=/app/data`
+   (sudah di-set Dockerfile, tapi boleh diulang).
+4. Network → tambah custom domain atau pakai subdomain Zeabur.
+
+### Cek pasca-deploy
+
+1. Buka `https://<domain>/healthz` → harus `{"ok":true,...}`.
+2. Beranda tampil, `#/frames` menampilkan semua frame drop-in, frame bisa
+   dipakai sampai halaman unduh.
+3. Login admin (gerbang `#/admin`) → gladiskan upload frame baru →
+   redeploy app → **frame tidak boleh hilang** (bukti volume bekerja).
+4. `#/api/gallery/status` → `authConfigured:true`.
+
