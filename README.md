@@ -219,6 +219,11 @@ semuanya dari satu tempat.
   "fotome." di header 7x berturut-turut** (dalam ~1.5 detik per tekanan) →
   **halaman password khusus `#/devlogin`** → masukkan password → baru
   dashboard `#/admin` terbuka.
+- **Buka langsung `#/admin` tanpa sesi** (mis. `http://localhost:3000/#/admin`)
+  juga bisa — halaman otomatis dialihkan ke `#/devlogin`, jadi tidak perlu
+  gestur 7x. Setelah login pertama, sesi cookie HttpOnly (12 jam) membuat
+  `#/admin` **langsung terbuka** pada kunjungan berikutnya tanpa ketik password
+  lagi. Kalau sesi habis, `#/admin` mengalihkan kembali ke `#/devlogin`.
 - Pakai **password developer** (`GALLERY_ADMIN_PASSWORD`). Kalau env tidak
   disetel, password bawaan **`Azkasyan77`** dipakai.
 - Di mode dev (vite tanpa server) halaman `#/devlogin` otomatis meneruskan

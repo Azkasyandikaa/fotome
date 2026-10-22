@@ -1,4 +1,5 @@
 import { toast } from '../../components/toast';
+import { navigate } from '../../app/router';
 import {
   adminLogin,
   deletePublicPhoto,
@@ -107,13 +108,13 @@ export function mountAdminFramesPage(host: HTMLElement): () => void {
       </header>
 
       <section class="admin__stats" data-stats aria-label="Status sistem">
-        <div class="admin-stat" data-stat="server"><span class="admin-stat__label">Server</span><span class="admin-stat__value">…</span></div>
-        <div class="admin-stat" data-stat="frames"><span class="admin-stat__label">Frame</span><span class="admin-stat__value">…</span></div>
-        <div class="admin-stat" data-stat="stickers"><span class="admin-stat__label">Stiker</span><span class="admin-stat__value">…</span></div>
-        <div class="admin-stat" data-stat="filters"><span class="admin-stat__label">Filter</span><span class="admin-stat__value">…</span></div>
-        <div class="admin-stat" data-stat="music"><span class="admin-stat__label">Musik</span><span class="admin-stat__value">…</span></div>
-        <div class="admin-stat" data-stat="gallery"><span class="admin-stat__label">Galeri</span><span class="admin-stat__value">…</span></div>
-        <div class="admin-stat" data-stat="homepage"><span class="admin-stat__label">Homepage</span><span class="admin-stat__value">…</span></div>
+        <div class="admin-stat" data-stat="server"><span class="admin-stat__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h4l2.5-6 4 12 2.5-6H21"/></svg></span><span class="admin-stat__label">Server</span><span class="admin-stat__value">…</span></div>
+        <div class="admin-stat" data-stat="frames"><span class="admin-stat__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3.5" width="16" height="17" rx="2.5"/><rect x="7" y="6.5" width="10" height="5" rx="1.5"/><rect x="7" y="14" width="10" height="3.5" rx="1.5"/></svg></span><span class="admin-stat__label">Frame</span><span class="admin-stat__value">…</span></div>
+        <div class="admin-stat" data-stat="stickers"><span class="admin-stat__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 14.2c1 1.4 2.3 2.1 3.5 2.1s2.5-.7 3.5-2.1"/><path d="M9 9.6h.01M15 9.6h.01"/></svg></span><span class="admin-stat__label">Stiker</span><span class="admin-stat__value">…</span></div>
+        <div class="admin-stat" data-stat="filters"><span class="admin-stat__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7.5h9M19 7.5h1M4 16.5h3M13 16.5h7"/><circle cx="16" cy="7.5" r="2.4"/><circle cx="10" cy="16.5" r="2.4"/></svg></span><span class="admin-stat__label">Filter</span><span class="admin-stat__value">…</span></div>
+        <div class="admin-stat" data-stat="music"><span class="admin-stat__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></span><span class="admin-stat__label">Musik</span><span class="admin-stat__value">…</span></div>
+        <div class="admin-stat" data-stat="gallery"><span class="admin-stat__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="8.8" cy="9.8" r="1.6"/><path d="m4.5 17.2 4.4-4.2a2 2 0 0 1 2.8 0l3.3 3.1 2.1-1.8a2 2 0 0 1 2.6 0l.8.7"/></svg></span><span class="admin-stat__label">Galeri</span><span class="admin-stat__value">…</span></div>
+        <div class="admin-stat" data-stat="homepage"><span class="admin-stat__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11.3 12 4.2l8 7.1"/><path d="M6.4 10.2V19a1 1 0 0 0 1 1h9.2a1 1 0 0 0 1-1v-8.8"/><path d="M10.4 20v-5.2h3.2V20"/></svg></span><span class="admin-stat__label">Homepage</span><span class="admin-stat__value">…</span></div>
       </section>
 
       <form class="admin__login panel-card" data-login hidden>
@@ -128,8 +129,11 @@ export function mountAdminFramesPage(host: HTMLElement): () => void {
       </form>
 
       <p class="admin__offline" data-offline hidden>
-        Fitur edit frame butuh server dengan <code>GALLERY_ADMIN_PASSWORD</code> disetel.
-        Jalankan <code>npm run serve</code> lalu buka lewat alamat server (bukan dev server).
+        <b>Server belum terdeteksi.</b> Fitur edit frame butuh server dengan
+        <code>GALLERY_ADMIN_PASSWORD</code> disetel. Jalankan
+        <code>npm run build</code> lalu <code>GALLERY_ADMIN_PASSWORD=rahasia npm run serve</code>,
+        dan buka lewat alamat server — misal <code>http://localhost:3000/#/admin</code>
+        (bukan dev server <code>:5173</code>).
       </p>
 
       <form class="admin__upload panel-card" data-cats-form hidden>
@@ -879,12 +883,17 @@ export function mountAdminFramesPage(host: HTMLElement): () => void {
     const status = await fetchBoothAdminStatus();
     if (destroyed) return;
     if (status.authRequired) {
-      loginEl.hidden = false;
-      loginHint.classList.remove('is-error');
-      loginHint.textContent = status.authConfigured
-        ? 'Masukkan password developer untuk membuka dashboard & editor frame.'
-        : 'Server belum mengatur GALLERY_ADMIN_PASSWORD — setel dulu di server supaya fitur ini aman dipakai.';
-      loginEl.querySelector<HTMLInputElement>('[data-login-pw]')?.focus();
+      // Belum login → langsung alihkan ke gerbang password (#/devlogin).
+      // Setelah password benar, halaman itu membuka #/admin kembali; sesi
+      // cookie HttpOnly 12 jam membuat kunjungan berikutnya langsung kebuka
+      // tanpa perlu ketik password lagi (dan tanpa gerbang 7x logo).
+      toast(
+        status.authConfigured
+          ? 'Masuk dulu dengan password developer ✦'
+          : 'Server belum mengatur GALLERY_ADMIN_PASSWORD — setel dulu di server.',
+        'info',
+      );
+      navigate('/devlogin');
       return;
     }
     await loadList();

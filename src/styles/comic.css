@@ -1214,6 +1214,309 @@ body.is-fullview .camera__shutter {
 /* ------------------------------------------------------------
    14. REDUCED MOTION — hormati preferensi pengguna
    ------------------------------------------------------------ */
+/* ============================================================
+   PASS v8 — AESTHETIC PREMIUM (upgrade "lebih keren & aesthetic")
+   Aurora candy di latar · header kaca berpita gradien pelangi ·
+   kartu melayang (bayangan berlapis: offset tinta + ambient lembut) ·
+   glow berwarna saat hover · kicker gradien · sentuhan micro-interaction.
+   Diimpor paling akhir — menang atas semua pass sebelumnya.
+   ============================================================ */
+
+/* ---- 1. LATAR — aurora permen di balik halftone kertas ---- */
+html body {
+  background-image:
+    radial-gradient(rgb(26 26 36 / 0.075) 1.1px, transparent 1.3px),
+    radial-gradient(rgb(255 107 153 / 0.18) 1.7px, transparent 1.9px),
+    radial-gradient(54rem 38rem at 6% -10%, rgb(255 107 153 / 0.17), transparent 62%),
+    radial-gradient(48rem 36rem at 106% 6%, rgb(166 130 255 / 0.17), transparent 60%),
+    radial-gradient(44rem 34rem at 52% 114%, rgb(78 204 163 / 0.15), transparent 60%),
+    radial-gradient(30rem 24rem at 86% 58%, rgb(255 209 102 / 0.13), transparent 65%);
+  background-size: 18px 18px, 18px 18px, auto, auto, auto, auto;
+  background-position: 0 0, 9px 9px, 0 0, 0 0, 0 0, 0 0;
+}
+
+/* ---- 2. HEADER — kaca premium + pita gradien pelangi yang mengalir ---- */
+.site-header {
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.92) 0%, rgb(255 249 251 / 0.74) 100%);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  box-shadow: 0 14px 30px -20px rgb(26 26 36 / 0.5);
+}
+
+.site-header::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: var(--grad-rainbow);
+  background-size: 200% 100%;
+  animation: candy-ribbon 14s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes candy-ribbon {
+  from { background-position: 0% 0; }
+  to { background-position: 200% 0; }
+}
+
+/* ---- 3. BRAND & IKON AKSI — mark gradien + glow lembut ---- */
+.brand-mark {
+  background: var(--grad-pop);
+  box-shadow: 3px 3px 0 var(--color-ink), 0 10px 18px -8px rgb(255 107 153 / 0.95);
+}
+
+.icon-btn { background: linear-gradient(180deg, #ffffff 0%, #fff6fa 100%); }
+.icon-btn:hover {
+  box-shadow: 5px 6px 0 var(--color-ink), 0 12px 20px -12px rgb(166 130 255 / 0.85);
+}
+
+/* ---- 4. NAVIGASI — hover gradien + glow pink ---- */
+.site-nav__link:hover {
+  background: linear-gradient(180deg, #ffffff 0%, var(--color-primary-soft) 100%);
+  box-shadow: 5px 6px 0 var(--color-ink), 0 12px 20px -12px rgb(255 107 153 / 0.75);
+}
+
+/* ---- 5. TOMBOL — offset tinta + glow permen, CTA utama makin "hidup" ---- */
+.btn {
+  box-shadow: 4px 5px 0 var(--color-ink), 0 14px 24px -14px rgb(26 26 36 / 0.6);
+}
+
+.btn:hover:not(:disabled) {
+  box-shadow: 6px 8px 0 var(--color-ink), 0 22px 32px -14px rgb(26 26 36 / 0.55);
+}
+
+.btn:active:not(:disabled) {
+  box-shadow: 1px 1px 0 var(--color-ink);
+}
+
+.btn--ghost,
+.btn--secondary {
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.96) 0%, rgb(255 244 249 / 0.9) 100%);
+}
+
+.btn--ghost:hover:not(:disabled),
+.btn--secondary:hover:not(:disabled) {
+  box-shadow: 6px 8px 0 var(--color-ink), 0 18px 28px -14px rgb(166 130 255 / 0.6);
+}
+
+.btn--primary {
+  box-shadow: 4px 5px 0 var(--color-ink), 0 16px 28px -12px rgb(255 107 153 / 0.95);
+}
+
+.btn--primary:hover:not(:disabled) {
+  box-shadow: 6px 8px 0 var(--color-ink), 0 24px 36px -12px rgb(255 107 153 / 1);
+  filter: saturate(1.07);
+}
+
+/* ---- 6. CHIP / PIL — glow lavender pas disorot, glow pink pas aktif ---- */
+.chip:hover,
+.tpl-cat:hover,
+.sticker-cat:hover,
+.cat-chip:hover,
+.admin__slot-chip:hover,
+.sc-shape:hover,
+.slot-filter__btn:hover {
+  box-shadow: 5px 6px 0 var(--color-ink), 0 14px 22px -14px rgb(166 130 255 / 0.85);
+}
+
+.chip.is-active,
+.tpl-cat.is-active,
+.sticker-cat.is-active,
+.cat-chip.is-active,
+.slot-filter__btn.is-active,
+.segmented__btn.is-active {
+  box-shadow: 4px 5px 0 var(--color-ink), 0 14px 26px -10px rgb(255 107 153 / 0.95);
+}
+
+/* ---- 7. KARTU MELAYANG — offset tinta + bayangan ambient lembut ---- */
+.panel-card {
+  box-shadow: 7px 8px 0 rgb(26 26 36 / 0.9), 0 32px 52px -32px rgb(26 26 36 / 0.55);
+}
+
+.feature-card {
+  box-shadow: 6px 7px 0 var(--color-ink), 0 30px 48px -30px rgb(26 26 36 / 0.55);
+}
+
+.feature-card:hover {
+  box-shadow: 9px 11px 0 var(--color-ink), 0 42px 60px -32px rgb(26 26 36 / 0.6);
+}
+
+.frame-group {
+  box-shadow: 6px 7px 0 rgb(26 26 36 / 0.85), 0 30px 48px -30px rgb(26 26 36 / 0.55);
+}
+
+.guide-step {
+  box-shadow: 6px 7px 0 rgb(26 26 36 / 0.85), 0 28px 46px -30px rgb(26 26 36 / 0.55);
+}
+
+.guide-flow,
+.credit__card,
+.credit__support,
+.home__popular,
+.empty-state,
+.gallery__empty,
+.frame-settings,
+.tip-card {
+  box-shadow: 6px 7px 0 rgb(26 26 36 / 0.82), 0 28px 46px -30px rgb(26 26 36 / 0.5);
+}
+
+.tip-card:hover {
+  box-shadow: 6px 7px 0 rgb(26 26 36 / 0.85), 0 34px 50px -30px rgb(26 26 36 / 0.55);
+}
+
+.gallery__card {
+  box-shadow: 5px 6px 0 rgb(26 26 36 / 0.85), 0 26px 44px -28px rgb(26 26 36 / 0.55);
+}
+
+.gallery__card:hover {
+  box-shadow: 7px 9px 0 rgb(26 26 36 / 0.9), 0 38px 56px -30px rgb(26 26 36 / 0.6);
+}
+
+.devlogin__card {
+  box-shadow: 7px 8px 0 rgb(26 26 36 / 0.9), 0 38px 64px -32px rgb(166 130 255 / 0.55),
+    0 22px 44px -30px rgb(255 107 153 / 0.5);
+}
+
+.modal {
+  box-shadow: var(--shadow-comic-lg);
+}
+
+.toast {
+  box-shadow: 5px 5px 0 var(--color-ink), 0 24px 40px -22px rgb(26 26 36 / 0.6);
+}
+
+.music-widget {
+  box-shadow: 5px 6px 0 var(--color-ink), 0 22px 38px -20px rgb(26 26 36 / 0.6);
+}
+
+.download__panel .panel-card {
+  box-shadow: 7px 8px 0 rgb(26 26 36 / 0.88), 0 32px 52px -32px rgb(26 26 36 / 0.55);
+}
+
+.download__frame canvas,
+.download__frame > img {
+  box-shadow: 8px 9px 0 rgb(26 26 36 / 0.85), 0 36px 60px -32px rgb(26 26 36 / 0.6);
+}
+
+.home__popular-item {
+  box-shadow: 4px 4px 0 rgb(26 26 36 / 0.85), 0 20px 34px -24px rgb(26 26 36 / 0.55);
+}
+
+.home__popular-item:hover {
+  box-shadow: 7px 7px 0 rgb(26 26 36 / 0.9), 0 30px 44px -26px rgb(26 26 36 / 0.6);
+}
+
+.home__cta {
+  box-shadow: 9px 10px 0 var(--color-ink), 0 40px 66px -34px rgb(166 130 255 / 0.55);
+}
+
+.sc-card {
+  box-shadow: 3px 3px 0 rgb(26 26 36 / 0.8), 0 18px 32px -22px rgb(26 26 36 / 0.5);
+}
+
+.sc-card:hover {
+  box-shadow: 5px 6px 0 rgb(26 26 36 / 0.9), 0 26px 40px -24px rgb(26 26 36 / 0.55);
+}
+
+/* ---- 8. KICKER / PIL LABEL — gradien permen + halftone di atasnya ---- */
+.admin__kicker,
+.home__popular-kicker,
+.section-head__kicker {
+  background-color: transparent;
+  background-image: radial-gradient(rgb(26 26 36 / 0.1) 1.1px, transparent 1.25px), var(--grad-sunrise);
+  background-size: 9px 9px, auto;
+  color: var(--color-ink);
+  box-shadow: 3px 4px 0 var(--color-ink), 0 12px 20px -12px rgb(255 154 92 / 0.95);
+}
+
+/* Kicker admin = <p> block di dalam div biasa — rapatkan jadi pill
+   supaya gradasinya tidak membentang jadi bar selebar kolom teks. */
+.admin__kicker {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: var(--radius-pill);
+  transform: rotate(-1deg);
+}
+
+.frames__kicker,
+.guide__kicker,
+.home__kicker,
+.devlogin__kicker {
+  background-color: transparent;
+  background-image: radial-gradient(rgb(26 26 36 / 0.1) 1.1px, transparent 1.25px), var(--grad-pop);
+  background-size: 9px 9px, auto;
+  color: var(--color-ink);
+  box-shadow: 3px 4px 0 var(--color-ink), 0 12px 20px -12px rgb(255 107 153 / 0.6);
+}
+
+/* ---- 9. JUDUL — offset tinta + glow lembut di bawahnya ---- */
+.frames__title,
+.guide__title,
+.gallery__title,
+.download__title,
+.admin__title {
+  text-shadow: 3px 3px 0 rgb(255 224 102 / 0.95), 0 18px 32px rgb(166 130 255 / 0.3);
+}
+
+.section-head__title {
+  text-shadow: 4px 4px 0 rgb(255 224 102 / 0.95), 0 20px 34px rgb(255 107 153 / 0.3);
+}
+
+.home__title {
+  text-shadow: 5px 5px 0 var(--color-lemon), 0 24px 40px rgb(166 130 255 / 0.35);
+}
+
+.home__title em {
+  text-shadow: 5px 5px 0 rgb(26 26 36 / 0.85), 0 24px 40px rgb(255 107 153 / 0.4);
+}
+
+.home__cta-title {
+  text-shadow: 4px 4px 0 #fff, 7px 7px 0 rgb(26 26 36 / 0.35), 0 22px 38px rgb(255 107 153 / 0.35);
+}
+
+/* ---- 10. FORM — cincin fokus dua warna (pink + lavender) ---- */
+input:not([type='checkbox']):not([type='radio']):not([type='range']):focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  box-shadow: 0 0 0 3px rgb(255 107 153 / 0.4), 0 0 0 6px rgb(166 130 255 / 0.24),
+    3px 4px 0 var(--color-ink);
+}
+
+/* ---- 11. HALAMAN GERBANG PASSWORD — kartu kaca dengan glow ---- */
+.devlogin__card {
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.97) 0%, rgb(255 250 253 / 0.92) 100%);
+}
+
+.devlogin__badge {
+  background: var(--grad-pop);
+  color: #fff;
+  box-shadow: 3px 4px 0 var(--color-ink), 0 12px 22px -10px rgb(255 107 153 / 0.9);
+}
+
+.devlogin__badge svg { stroke: currentColor; }
+
+/* ---- 12. FOOTER — gradasi lembut + pita pelangi berjalan ---- */
+.site-footer {
+  background: linear-gradient(180deg, var(--color-surface) 0%, #fff5f9 55%, #fdeef7 100%);
+}
+
+.site-footer__ticker {
+  background: linear-gradient(90deg, #ffd166, #ff9a5c, #ff6b99, #a682ff, #ff6b99);
+  background-size: 200% 100%;
+  animation: candy-ribbon 12s linear infinite;
+}
+
+.site-footer__ticker-track {
+  color: var(--color-ink);
+  text-shadow: 0 1px 0 rgb(255 255 255 / 0.55);
+}
+
+/* ============================================================
+   REDUCED MOTION — matikan animasi dari semua pass (v6–v8)
+   ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   .btn::after,
   .site-footer__ticker-track,
@@ -1228,5 +1531,8 @@ body.is-fullview .camera__shutter {
   .sticky-bar .btn--primary,
   .guide__cta .btn--primary,
   .download__actions .btn--primary,
-  .tpl-preview__hint:only-child::before { animation: none !important; }
+  .tpl-preview__hint:only-child::before,
+  .site-header::before,
+  .admin__head::before,
+  .site-footer__ticker { animation: none !important; }
 }
