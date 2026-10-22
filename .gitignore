@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dist-server/
+.env
+.env.*
+*.log
+.DS_Store
+
+# Google Drive service account (RAHASIA — jangan commit)
+gdrive-service-account*.json
+
+# Output smoke test browser (scripts/e2e-smoke.mjs)
+scripts/e2e/
+--script/
+.tmp-read*.css
+.aider*

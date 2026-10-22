@@ -1,0 +1,36 @@
+{
+  "name": "mother day3",
+  "category": "Mother day",
+  "categories": [
+    "Mother day"
+  ],
+  "photoSlots": [
+    {
+      "photoIndex": 0,
+      "x": 59,
+      "y": 22,
+      "width": 539,
+      "height": 521
+    },
+    {
+      "photoIndex": 1,
+      "x": 62,
+      "y": 547,
+      "width": 526,
+      "height": 537
+    },
+    {
+      "photoIndex": 2,
+      "x": 54,
+      "y": 1123,
+      "width": 545,
+      "height": 465
+    }
+  ],
+  "description": "Drop-in frame dari public/booth/templates.",
+  "canvas": {
+    "width": 640,
+    "height": 1920
+  },
+  "background": "#fffdf8"
+}

@@ -1,0 +1,36 @@
+{
+  "name": "Merdeka6",
+  "category": "Merdeka",
+  "categories": [
+    "Merdeka"
+  ],
+  "photoSlots": [
+    {
+      "photoIndex": 0,
+      "x": 33,
+      "y": 330,
+      "width": 591,
+      "height": 483
+    },
+    {
+      "photoIndex": 1,
+      "x": 29,
+      "y": 835,
+      "width": 584,
+      "height": 483
+    },
+    {
+      "photoIndex": 2,
+      "x": 26,
+      "y": 1351,
+      "width": 581,
+      "height": 468
+    }
+  ],
+  "description": "Drop-in frame dari public/booth/templates.",
+  "canvas": {
+    "width": 640,
+    "height": 1920
+  },
+  "background": "#fffdf8"
+}

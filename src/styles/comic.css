@@ -1,0 +1,1232 @@
+/* ============================================================
+   COMIC PASS — gaya komik untuk SELURUH aplikasi
+   Diimpor TERAKHIR di main.ts (setelah tokens/global/capture/editor/admin)
+   supaya aturan di sini menang atas file stylesheet lain.
+
+   Isi: kertas halftone · outline tinta tebal · bayangan keras tanpa blur ·
+   judul font komik (Luckiest Guy) · balon komik & hiasan homepage.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. KERTAS KOMIK — halftone tinta + pink di seluruh latar
+   ------------------------------------------------------------ */
+html body {
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(rgb(26 26 36 / 0.075) 1.1px, transparent 1.3px),
+    radial-gradient(rgb(255 107 153 / 0.18) 1.7px, transparent 1.9px);
+  background-size: 18px 18px, 18px 18px;
+  background-position: 0 0, 9px 9px;
+}
+
+/* ------------------------------------------------------------
+   2. JUDUL — font komik Luckiest Guy (huruf besar ala komik)
+   ------------------------------------------------------------ */
+h1,
+h2,
+.modal-title {
+  font-family: var(--font-comic);
+  font-weight: 400;
+  /* Bangers populasi padat — tracking tipis biar tetap terbaca di semua ukuran. */
+  letter-spacing: var(--tracking-comic, 0.04em);
+}
+
+/* ------------------------------------------------------------
+   3. TOMBOL — outline tinta tebal + bayangan keras + teks kapital
+   ------------------------------------------------------------ */
+.btn {
+  border-width: 2.5px;
+  box-shadow: 4px 5px 0 var(--color-ink);
+}
+
+/* Spesifikasi Comic-Candy: tombol = sans geometris bersih (Plus Jakarta
+   Sans), teks tebal kapital dengan letter-spacing renggang. */
+.btn {
+  font-family: var(--font-ui);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide, 0.05em);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translate(-2px, -3px);
+  box-shadow: 6px 8px 0 var(--color-ink);
+}
+
+.btn:active:not(:disabled) {
+  transform: translate(3px, 4px) scale(0.98);
+  box-shadow: 1px 1px 0 var(--color-ink);
+}
+
+.btn--ghost {
+  box-shadow: 4px 5px 0 var(--color-ink);
+}
+.btn--ghost:hover:not(:disabled) {
+  box-shadow: 6px 8px 0 var(--color-ink);
+}
+
+/* CTA besar & tombol utama: kapital ala ledakan komik. */
+.btn--lg,
+.btn--primary {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ------------------------------------------------------------
+   4. CHIP / KATEGORI / NAVIGASI — outline tinta 2.5px
+   ------------------------------------------------------------ */
+.chip,
+.tpl-cat,
+.sticker-cat,
+.cat-chip,
+.site-nav__link,
+.icon-btn,
+.admin__slot-chip,
+.sc-shape {
+  border-width: 2.5px;
+  box-shadow: 3px 4px 0 var(--color-ink);
+}
+
+.chip:hover,
+.tpl-cat:hover,
+.sticker-cat:hover,
+.cat-chip:hover,
+.site-nav__link:hover,
+.icon-btn:hover,
+.admin__slot-chip:hover,
+.sc-shape:hover {
+  box-shadow: 5px 6px 0 var(--color-ink);
+}
+
+.chip:active,
+.tpl-cat:active,
+.cat-chip:active,
+.site-nav__link:active,
+.icon-btn:active,
+.admin__slot-chip:active,
+.sc-shape:active {
+  box-shadow: 1px 1px 0 var(--color-ink);
+}
+
+/* ------------------------------------------------------------
+   5. KARTU / PANEL — outline tebal + bayangan potongan tegas
+   ------------------------------------------------------------ */
+.panel-card {
+  border-width: 3px;
+  box-shadow: 7px 8px 0 rgb(26 26 36 / 0.9);
+}
+
+.feature-card {
+  border-width: 3px;
+  box-shadow: 6px 7px 0 var(--color-ink);
+}
+
+.feature-card:hover {
+  transform: translateY(-5px) rotate(-0.5deg);
+  box-shadow: 9px 11px 0 var(--color-ink);
+}
+
+.feature-card__title {
+  font-family: var(--font-comic);
+  font-weight: 400;
+  letter-spacing: 0.012em;
+}
+
+.modal {
+  border-width: 3px;
+  box-shadow: var(--shadow-comic-lg);
+}
+
+.toast {
+  border-width: 2.5px;
+  box-shadow: 5px 5px 0 var(--color-ink);
+}
+
+.note-pill {
+  border-width: 2px;
+  box-shadow: 3px 3px 0 var(--color-ink);
+  color: var(--color-text);
+  font-weight: 800;
+}
+
+/* Kartu halaman developer (#/admin). */
+.admin-card {
+  box-shadow: 3px 3px 0 rgb(26 26 36 / 0.8);
+}
+.admin-card:hover {
+  box-shadow: 4px 5px 0 rgb(26 26 36 / 0.9);
+}
+.admin-card.is-selected {
+  box-shadow: 0 0 0 2px var(--color-primary), 4px 5px 0 rgb(26 26 36 / 0.9);
+}
+
+.sc-card {
+  border-width: 2px;
+  box-shadow: 3px 3px 0 rgb(26 26 36 / 0.8);
+}
+.sc-card:hover {
+  box-shadow: 5px 6px 0 rgb(26 26 36 / 0.9);
+}
+
+.admin__cats-row,
+.admin__lb-row,
+.dl-modal__promo,
+.donation__qr,
+.modal__close {
+  border-color: var(--color-ink);
+}
+
+/* Leaderboard homepage: kartu miring ala panel komik. */
+.home__popular-item {
+  box-shadow: 4px 4px 0 rgb(26 26 36 / 0.85);
+}
+.home__popular-item:hover {
+  box-shadow: 7px 7px 0 rgb(26 26 36 / 0.9);
+}
+
+/* ------------------------------------------------------------
+   6. FORM — semua input ber-outline tinta
+   ------------------------------------------------------------ */
+input:not([type='checkbox']):not([type='radio']):not([type='range']),
+select,
+textarea {
+  border-width: 2px;
+  border-color: var(--color-ink);
+}
+
+/* ------------------------------------------------------------
+   7. SHELL — strip tinta di header & footer
+   ------------------------------------------------------------ */
+.site-header {
+  border-bottom-width: 2.5px;
+}
+
+.site-footer {
+  border-top-width: 2.5px;
+}
+
+/* ------------------------------------------------------------
+   8. HOMEPAGE KOMIK — judul 3D, balon komik, panel frame
+   ------------------------------------------------------------ */
+.home__kicker {
+  border-width: 2.5px;
+  box-shadow: 3px 4px 0 var(--color-ink);
+  font-size: var(--text-sm);
+}
+
+/* Judul 3D: offset kuning untuk huruf gelap, offset tinta untuk gradasi. */
+.home__title {
+  text-shadow: 5px 5px 0 var(--color-lemon);
+}
+.home__title em {
+  text-shadow: 5px 5px 0 rgb(26 26 36 / 0.85);
+}
+
+/* Tagline jadi balon komik dengan ekor. */
+.home__tagline {
+  display: inline-block;
+  position: relative;
+  background: var(--color-surface);
+  border: 2.5px solid var(--color-ink);
+  border-radius: 16px;
+  padding: 10px 18px;
+  margin-bottom: var(--space-5);
+  box-shadow: 4px 5px 0 var(--color-ink);
+  transform: rotate(-1deg);
+}
+
+.home__tagline::after {
+  content: '';
+  position: absolute;
+  left: 28px;
+  bottom: -11px;
+  width: 16px;
+  height: 16px;
+  background: var(--color-surface);
+  border-right: 2.5px solid var(--color-ink);
+  border-bottom: 2.5px solid var(--color-ink);
+  border-bottom-right-radius: 4px;
+  transform: rotate(45deg);
+}
+
+/* Sinar ledakan komik di belakang intro hero. */
+.home__intro {
+  position: relative;
+  isolation: isolate;
+}
+
+.home__intro::before {
+  content: '';
+  position: absolute;
+  inset: -8% -10%;
+  z-index: -1;
+  background: repeating-conic-gradient(
+    from -12deg at 46% 44%,
+    rgb(255 224 102 / 0.55) 0deg 5deg,
+    transparent 5deg 12deg
+  );
+  -webkit-mask-image: radial-gradient(closest-side at 46% 44%, #000 25%, transparent 78%);
+  mask-image: radial-gradient(closest-side at 46% 44%, #000 25%, transparent 78%);
+  pointer-events: none;
+  opacity: 0.75;
+  border-radius: 30%;
+}
+
+/* Kaption showcase → chip komik. */
+.home__showcase figcaption a {
+  display: inline-block;
+  background: var(--color-surface);
+  border: 2px solid var(--color-ink);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  box-shadow: 3px 4px 0 var(--color-ink);
+}
+
+/* Frame homepage: bayangan offset tipis supaya tetap "canvas tanpa kotak". */
+.home__showcase-frame {
+  box-shadow: 6px 7px 0 rgb(26 26 36 / 0.28);
+}
+.home__showcase-frame:hover {
+  box-shadow: 8px 10px 0 rgb(26 26 36 / 0.35);
+}
+
+/* ============================================================
+   PASS v6 — upgrade tipografi + sentuhan hidup
+   Diimpor paling akhir: menang atas semua pass sebelumnya.
+   Font: Luckiest Guy (komik) untuk brand/credit · Nunito variable
+   untuk body · JetBrains Mono untuk angka teknis.
+   ============================================================ */
+
+/* ---- Brand & identity: font komik konsisten dengan boot screen ---- */
+.brand-word {
+  font-family: var(--font-comic);
+  font-weight: 400;
+  font-size: 23px;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.site-header__brand:hover .brand-word { transform: rotate(-2deg) scale(1.04); }
+
+.site-footer__credit {
+  font-family: var(--font-comic);
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+
+/* ---- Tombol: gradasi permen + kilau gloss di atas outline tinta ---- */
+.btn--primary {
+  background: linear-gradient(180deg, #ffa8cf 0%, var(--color-primary) 55%, var(--color-primary-active) 100%);
+  text-shadow: 0 1px 0 rgb(26 26 36 / 0.25);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, #ffb9da 0%, var(--color-primary-hover) 55%, var(--color-primary-active) 100%);
+}
+
+/* Kilau gloss ala permen mengkilap — hanya tombol utama. */
+.btn--primary::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 3px;
+  height: 42%;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.5), rgb(255 255 255 / 0));
+  pointer-events: none;
+}
+
+.btn--secondary {
+  background: linear-gradient(180deg, #fff 0%, var(--color-accent-soft) 100%);
+}
+
+/* ---- Chip & kategori aktif: kilau + angkat ---- */
+.chip.is-active,
+.tpl-cat.is-active,
+.sticker-cat.is-active,
+.cat-chip.is-active {
+  background: linear-gradient(180deg, #ffa8cf 0%, var(--color-primary) 60%, var(--color-primary-active) 100%);
+  text-shadow: 0 1px 0 rgb(26 26 36 / 0.25);
+}
+
+/* Kategori ikut Bubblegum Pop saat aktif (spesifikasi #/frames: chip
+   permen kenyal, aktif berubah jadi bubblegum dengan teks putih tebal). */
+.tpl-cat.is-active,
+.sticker-cat.is-active,
+.cat-chip.is-active {
+  background: linear-gradient(180deg, #ff8fb3 0%, var(--color-primary) 60%, var(--color-primary-active) 100%);
+  color: #fff;
+  text-shadow: 0 1px 0 rgb(26 26 36 / 0.25);
+}
+
+/* ---- Form: fokus candy glow + placeholder rapi ---- */
+input:not([type='checkbox']):not([type='radio']):not([type='range']):focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  border-color: var(--color-ink);
+  box-shadow: 0 0 0 3px rgb(255 107 153 / 0.35), 3px 4px 0 var(--color-ink);
+}
+
+::placeholder { color: var(--color-text-muted); opacity: 1; }
+
+/* Checkbox / radio / slider ikut warna permen. */
+input[type='checkbox'],
+input[type='radio'],
+input[type='range'] { accent-color: var(--color-primary); }
+
+/* ---- Judul komik: jarak huruf + bayangan tinta halus di sekunder ---- */
+h1, h2, .modal-title {
+  letter-spacing: 0.012em;
+  text-wrap: balance;
+}
+
+/* Judul halaman sekunder (h3 & di bawahnya) tampil lebih tebal. */
+h3 {
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+/* ---- Navigasi: label kapital kecil ala papan komik ---- */
+.site-nav__link {
+  letter-spacing: 0.02em;
+}
+
+/* ---- Ikon aksi header: kilau lembut sekali saat disentuh ---- */
+.icon-btn:active { background: var(--color-lemon); }
+
+/* ---- Toast: ikon memantul pas muncul ---- */
+.toast__icon { animation: toast-icon-pop 0.35s var(--ease-out); }
+
+@keyframes toast-icon-pop {
+  0% { transform: scale(0.4) rotate(-20deg); }
+  70% { transform: scale(1.15) rotate(6deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+/* ============================================================
+   PASS v7 — COMIC CANDY MAXIMALIS
+   Efek tangan: garis spidol di bawah judul · tape · burst ·
+   kilau melintang di tombol · slider permen · doodle di latar ·
+   masuk kartu berurutan. Semua di sini biar menang atas pass lama.
+   ============================================================ */
+
+/* ---- Util dekor: SVG tangan dipakai ulang ---- */
+:root {
+  --deco-squiggle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 12' preserveAspectRatio='none'%3E%3Cpath d='M2 7c10-6 18 6 28 0s18 6 28 0 18 6 28 0 18 6 28 0 18 6 28 0 18 6 28 0' fill='none' stroke='%23ff5fa2' stroke-width='3.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  --deco-squiggle-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 12' preserveAspectRatio='none'%3E%3Cpath d='M2 7c10-6 18 6 28 0s18 6 28 0 18 6 28 0 18 6 28 0 18 6 28 0 18 6 28 0' fill='none' stroke='%2333253d' stroke-width='3.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  --deco-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.4l2.5 6.3 6.6.5-5 4.3 1.6 6.4L12 16.4.3 19.9l1.6-6.4-5-4.3 6.6-.5z' fill='%23ffe066' stroke='%2333253d' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --deco-spark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3c.9 4.6 3.5 7.2 8 8-4.5.9-7.1 3.5-8 8-.9-4.5-3.5-7.1-8-8 4.5-.8 7.1-3.4 8-8z' fill='%23ff5fa2' stroke='%2333253d' stroke-width='1.3' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --deco-heart: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 20.5C6.5 16.6 3 13.6 3 9.9A4.6 4.6 0 0 1 12 7.4 4.6 4.6 0 0 1 21 9.9c0 3.7-3.5 6.7-9 10.6z' fill='%23b8a4fb' stroke='%2333253d' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+/* ---- 1. JUDUL HALAMAN — garis spidol tangan di bawah huruf ---- */
+.frames__title::after,
+.guide__title::after,
+.gallery__title::after,
+.download__title::after,
+.home__popular-title::after,
+.home__title::after,
+.admin__title::after,
+.credit__name::after {
+  content: '';
+  display: block;
+  width: min(240px, 72%);
+  height: 11px;
+  margin-top: 3px;
+  background: var(--deco-squiggle) no-repeat center / 100% 100%;
+  pointer-events: none;
+}
+
+/* Judul yang teksnya di tengah → garis spidol ikut di tengah biar simetris. */
+.gallery__title::after,
+.download__title::after,
+.guide__title::after,
+.home__popular-title::after { margin-inline: auto; }
+
+/* Judul besar diberi bayangan cetak tinta ala komik. */
+.frames__title,
+.guide__title,
+.gallery__title,
+.download__title,
+.admin__title {
+  text-shadow: 3px 3px 0 rgb(255 224 102 / 0.9);
+}
+
+/* ---- 2. KICKER / LABEL — pil seret + halftone ---- */
+.frames__kicker,
+.guide__kicker,
+.home__kicker,
+.home__popular-kicker,
+.devlogin__kicker,
+.admin__kicker {
+  position: relative;
+  overflow: hidden;
+  background-image: radial-gradient(rgb(26 26 36 / 0.08) 1.1px, transparent 1.25px);
+  background-size: 9px 9px;
+  font-size: var(--text-xs);
+  padding: 5px 14px;
+}
+
+.home__popular-kicker,
+.admin__kicker { background-color: var(--color-lemon); }
+
+/* ---- 3. TOMBOL — kilau melintang + getar pelan buat CTA utama ---- */
+.btn { overflow: hidden; }
+
+.btn::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: -30%;
+  width: 26%;
+  height: 140%;
+  background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.55), transparent);
+  transform: skewX(-18deg) translateX(-140%);
+  pointer-events: none;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+.btn:hover:not(:disabled)::after { transform: skewX(-18deg) translateX(560%); }
+
+/* CTA utama: napas pelan supaya tombol terasa "hidup", bukan tempelan. */
+.home__actions .btn--primary,
+.sticky-bar .btn--primary,
+.guide__cta .btn--primary,
+.download__actions .btn--primary {
+  animation: btn-breathe 2.8s ease-in-out infinite;
+}
+
+.home__actions .btn--primary:hover,
+.sticky-bar .btn--primary:hover { animation-play-state: paused; }
+
+@keyframes btn-breathe {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-2px) rotate(-0.5deg); }
+}
+
+/* Fokus: dua baris — ring tinta + kilau permen. */
+.btn:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgb(255 224 102 / 0.75), 4px 5px 0 var(--color-ink);
+}
+
+/* ---- 4. CHIP AKTIF — pop singkat tiap kali dipilih ---- */
+.chip.is-active,
+.tpl-cat.is-active,
+.sticker-cat.is-active,
+.cat-chip.is-active,
+.slot-filter__btn.is-active,
+.segmented__btn.is-active {
+  animation: chip-pop 0.3s var(--ease-out);
+}
+
+@keyframes chip-pop {
+  0% { transform: scale(0.86) rotate(-3deg); }
+  60% { transform: scale(1.06) rotate(1.5deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+/* Baris slot-filter: bingkai kotak + pita bergaris di latar track. */
+.slot-filter {
+  border-width: 2.5px;
+  background-color: var(--color-surface);
+  background-image: var(--pattern-halftone);
+  background-size: 9px 9px;
+}
+
+.slot-filter__btn {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: var(--text-xs);
+}
+
+/* ---- 5. FORM & SLIDER — permen tinta, bukan kotak polos ---- */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 12px;
+  border: 2px solid var(--color-ink);
+  border-radius: var(--radius-pill);
+  background: repeating-linear-gradient(
+    -45deg,
+    rgb(255 107 153 / 0.28) 0 7px,
+    rgb(255 224 102 / 0.45) 7px 14px
+  );
+  cursor: pointer;
+  box-shadow: 2px 3px 0 rgb(26 26 36 / 0.4);
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-lemon);
+  border: 2.5px solid var(--color-ink);
+  box-shadow: 2px 2px 0 var(--color-ink);
+  cursor: grab;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+input[type='range']::-webkit-slider-thumb:hover { transform: scale(1.14); }
+input[type='range']:active::-webkit-slider-thumb { cursor: grabbing; transform: scale(0.94); }
+
+input[type='range']::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-lemon);
+  border: 2.5px solid var(--color-ink);
+  box-shadow: 2px 2px 0 var(--color-ink);
+  cursor: grab;
+}
+
+input[type='range']::-moz-range-track { background: transparent; }
+
+/* Select menyerupai tombol komik. */
+select {
+  font-weight: 700;
+  background-color: var(--color-surface);
+  cursor: pointer;
+}
+
+/* ---- 6. PANEL — tape, sudut halftone, garis dalam ---- */
+.frame-group,
+.guide-step,
+.tip-card,
+.credit__card,
+.credit__support,
+.gallery__card,
+.frame-settings,
+.devlogin__card,
+.home__popular,
+.empty-state,
+.gallery__empty,
+.guide-flow {
+  position: relative;
+}
+
+/* Tape kertas di pojok — kesan ditempel tangan. */
+.guide-step::before,
+.credit__card::before,
+.frame-settings::before {
+  content: '';
+  position: absolute;
+  top: -11px;
+  right: 26px;
+  width: 88px;
+  height: 24px;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgb(166 130 255 / 0.75) 0 9px,
+    rgb(184 164 251 / 0.55) 9px 18px
+  );
+  border-left: 1.5px dashed rgb(26 26 36 / 0.55);
+  border-right: 1.5px dashed rgb(26 26 36 / 0.55);
+  transform: rotate(-4deg);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.credit__card::before { right: auto; left: 30px; transform: rotate(3deg); background: repeating-linear-gradient(-45deg, rgb(255 224 102 / 0.9) 0 9px, rgb(255 154 92 / 0.6) 9px 18px); }
+.frame-settings::before { top: -12px; right: 40px; background: repeating-linear-gradient(-45deg, rgb(255 107 153 / 0.7) 0 9px, rgb(255 107 153 / 0.5) 9px 18px); }
+
+/* Halftone di sudut kanan-bawah panel besar. */
+.frame-group::after,
+.home__popular::after,
+.guide-flow::after {
+  content: '';
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 120px;
+  height: 90px;
+  background-image: radial-gradient(rgb(26 26 36 / 0.16) 1.3px, transparent 1.5px);
+  background-size: 9px 9px;
+  -webkit-mask-image: radial-gradient(closest-side at 100% 100%, #000 20%, transparent 85%);
+  mask-image: radial-gradient(closest-side at 100% 100%, #000 20%, transparent 85%);
+  pointer-events: none;
+  border-bottom-right-radius: inherit;
+}
+
+/* ---- 7. HALAMAN #/FRAMES — tiap grup jadi panel komik penuh ---- */
+.frame-group {
+  background: var(--color-surface);
+  border: 2.5px solid var(--color-ink);
+  border-radius: var(--radius-xl);
+  box-shadow: 6px 7px 0 rgb(26 26 36 / 0.85);
+  overflow: visible;
+}
+
+.frame-group__head {
+  position: relative;
+  margin: calc(-1 * var(--space-4) - 2.5px) calc(-1 * var(--space-4)) var(--space-4);
+  padding: 10px var(--space-4);
+  border-bottom: 2.5px solid var(--color-ink);
+  border-radius: calc(var(--radius-xl) - 3px) calc(var(--radius-xl) - 3px) 0 0;
+  background: linear-gradient(90deg, var(--color-primary-soft), var(--color-accent-soft));
+  background-image:
+    var(--pattern-halftone),
+    linear-gradient(90deg, var(--color-primary-soft), var(--color-accent-soft));
+  background-size: 8px 8px, auto;
+}
+
+@media (min-width: 768px) {
+  .frame-group__head {
+    margin: calc(-1 * var(--space-5) - 2.5px) calc(-1 * var(--space-5)) var(--space-5);
+    padding: 11px var(--space-5);
+  }
+}
+
+.frame-group__count {
+  border-width: 2.5px;
+  border-color: var(--color-ink);
+  box-shadow: 2px 3px 0 var(--color-ink);
+}
+
+.frame-group__title {
+  font-family: var(--font-comic);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  font-size: var(--text-base);
+  text-transform: uppercase;
+}
+
+/* Pencarian frame: kotak tinta + tombol clear menyerupai stiker. */
+.tpl-search__input {
+  font-weight: 700;
+  background: var(--color-surface);
+  border-width: 2.5px;
+  border-radius: var(--radius-pill);
+  box-shadow: 3px 4px 0 rgb(26 26 36 / 0.8);
+  transition: transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out);
+}
+
+.tpl-search__input:hover { background: var(--color-primary-soft); }
+.tpl-search__input:focus {
+  transform: translate(-1px, -2px);
+  box-shadow: 5px 6px 0 rgb(26 26 36 / 0.9), 0 0 0 4px rgb(255 224 102 / 0.6);
+  background: #fff;
+}
+
+/* Kartu template: masuk berurutan + stempel pilihan. */
+.template-card { animation: candy-pop 0.4s var(--ease-out) backwards; }
+.template-card:nth-child(1) { animation-delay: 0.02s; }
+.template-card:nth-child(2) { animation-delay: 0.06s; }
+.template-card:nth-child(3) { animation-delay: 0.1s; }
+.template-card:nth-child(4) { animation-delay: 0.14s; }
+.template-card:nth-child(5) { animation-delay: 0.18s; }
+.template-card:nth-child(6) { animation-delay: 0.22s; }
+.template-card:nth-child(7) { animation-delay: 0.26s; }
+.template-card:nth-child(8) { animation-delay: 0.3s; }
+
+.template-card.is-selected {
+  box-shadow: 0 0 0 2.5px var(--color-ink), 6px 7px 0 var(--color-bubble);
+  transform: rotate(-1.2deg);
+}
+
+/* Badge "Dipilih ✦" bawaan aplikasi dibikin ala stempel. */
+.template-card__badge {
+  background: var(--color-lemon);
+  color: var(--color-ink);
+  border: 2px solid var(--color-ink);
+  box-shadow: 2px 2px 0 var(--color-ink);
+  font-family: var(--font-comic);
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transform: rotate(4deg);
+}
+
+@keyframes candy-pop {
+  from { opacity: 0; transform: translateY(16px) rotate(-1.5deg) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Panel settingan: kartu data makin tegas. */
+.frame-settings__item {
+  background: var(--color-surface);
+  border-width: 2px;
+  box-shadow: 3px 4px 0 rgb(26 26 36 / 0.8);
+}
+
+.frame-settings__item strong { font-family: var(--font-comic); font-weight: 400; font-size: 17px; }
+
+/* ---- 8. HALAMAN LAIN — arsitektur seragam ---- */
+.guide-step { box-shadow: 6px 7px 0 rgb(26 26 36 / 0.85); border-width: 2.5px; }
+.guide-step__num { border-width: 2.5px; box-shadow: 2px 3px 0 var(--color-ink); }
+.guide-step__icon { border-width: 2.5px; border-color: var(--color-ink); box-shadow: 3px 4px 0 rgb(26 26 36 / 0.75); }
+
+.tip-card { border: 2.5px solid var(--color-ink); background: var(--color-surface); }
+.tip-card:nth-child(odd) { transform: rotate(-0.6deg); }
+.tip-card:nth-child(even) { transform: rotate(0.6deg); }
+.tip-card:hover { transform: rotate(0) translateY(-4px); box-shadow: 6px 7px 0 rgb(26 26 36 / 0.8); }
+
+.guide-flow {
+  border: 2.5px solid var(--color-ink);
+  background-color: var(--color-surface);
+  background-image: var(--pattern-halftone);
+  background-size: 10px 10px;
+  box-shadow: 6px 7px 0 rgb(26 26 36 / 0.8);
+}
+
+.guide-flow__dot { background: var(--color-lemon); box-shadow: 2px 3px 0 var(--color-ink); border-width: 2.5px; }
+.guide-flow__arrow { font-size: 20px; }
+
+.gallery__card { border-width: 2.5px; box-shadow: 5px 6px 0 rgb(26 26 36 / 0.85); }
+.gallery__card:nth-child(3n + 1) { transform: rotate(-0.7deg); }
+.gallery__card:nth-child(3n + 2) { transform: rotate(0.5deg); }
+.gallery__card:hover { transform: rotate(0) translateY(-5px); box-shadow: 7px 9px 0 rgb(26 26 36 / 0.9); }
+.gallery__card { animation: candy-pop 0.42s var(--ease-out) backwards; }
+
+.credit__card { box-shadow: 6px 7px 0 rgb(26 26 36 / 0.85); border-width: 2.5px; }
+.credit__support { border-width: 2.5px; box-shadow: 6px 7px 0 rgb(26 26 36 / 0.85); }
+.credit__tech-item { border-width: 2px; border-color: var(--color-ink); font-weight: 900; box-shadow: 2px 2px 0 var(--color-ink); }
+
+/* Baris hasil unduh — ala struk kasir. */
+.result-row {
+  background: var(--color-surface);
+  border: 2px dashed var(--color-ink);
+  border-radius: var(--radius-sm);
+  box-shadow: 3px 4px 0 rgb(26 26 36 / 0.55);
+}
+
+.download__frame canvas,
+.download__frame > img { border: 3px solid var(--color-ink); box-shadow: 8px 9px 0 rgb(26 26 36 / 0.85); }
+
+.download__panel .panel-card {
+  background: var(--color-surface);
+  box-shadow: 7px 8px 0 rgb(26 26 36 / 0.88);
+}
+
+/* Empty state & skeleton: kertas komik, bukan kotak abu. */
+.empty-state,
+.gallery__empty {
+  background-color: var(--color-surface);
+  background-image: var(--pattern-halftone);
+  background-size: 12px 12px;
+  border-color: var(--color-ink);
+  border-style: solid;
+  box-shadow: 6px 7px 0 rgb(26 26 36 / 0.7);
+}
+
+.skeleton { border: 2.5px dashed var(--color-ink); background-color: var(--color-surface); background-image: var(--pattern-halftone); background-size: 10px 10px; }
+
+/* ---- 9. HOMEPAGE — doodle latar, band langkah, CTA penutup ---- */
+.home { position: relative; }
+
+.home::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--deco-star), var(--deco-spark), var(--deco-heart), var(--deco-star);
+  background-repeat: no-repeat;
+  background-position: 1% 16%, 99% 34%, 1.5% 64%, 97% 82%;
+  background-size: 34px, 26px, 30px, 22px;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.home > .home__hero,
+.home > .section-head,
+.home > .feature-grid,
+.home > .home__flow,
+.home > .home__popular,
+.home > .home__notes,
+.home > .home__cta { position: relative; }
+
+.home .feature-card { animation: candy-pop 0.5s var(--ease-out) backwards; }
+.home .feature-card:nth-child(1) { animation-delay: 0.05s; }
+.home .feature-card:nth-child(2) { animation-delay: 0.13s; }
+.home .feature-card:nth-child(3) { animation-delay: 0.21s; }
+.home .feature-card:nth-child(4) { animation-delay: 0.29s; }
+
+/* Judul seksi umum — kicker + judul komik + sub. */
+.section-head {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  text-align: center;
+  margin: var(--space-7) 0 var(--space-4);
+}
+
+@media (max-width: 767px) {
+  .section-head { margin-top: var(--space-6); margin-bottom: var(--space-3); }
+
+  /* Kartu fitur jadi panel komik 2 kolom di HP — rapat & tidak kosong. */
+  .home .feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+
+  .home .feature-card { padding: var(--space-4); gap: 6px; }
+  .home .feature-card__icon { width: 40px; height: 40px; }
+  .home .feature-card__icon svg { width: 21px; height: 21px; }
+  .home .feature-card__title { font-size: var(--text-base); }
+  .home .feature-card::after { font-size: 58px; bottom: -18px; }
+}
+
+.section-head__kicker {
+  margin: 0;
+  padding: 5px 14px;
+  background: var(--color-lemon);
+  border: 2.5px solid var(--color-ink);
+  border-radius: var(--radius-pill);
+  box-shadow: 3px 4px 0 var(--color-ink);
+  transform: rotate(-1.6deg);
+}
+
+.section-head__title {
+  font-family: var(--font-comic);
+  font-weight: 400;
+  font-size: var(--text-3xl);
+  letter-spacing: 0.01em;
+  text-shadow: 4px 4px 0 rgb(255 224 102 / 0.9);
+  margin: 0;
+}
+
+.section-head__title::after {
+  content: '';
+  display: block;
+  width: min(210px, 60%);
+  height: 10px;
+  margin: 2px auto 0;
+  background: var(--deco-squiggle) no-repeat center / 100% 100%;
+  pointer-events: none;
+}
+
+.section-head__sub {
+  margin: 0;
+  max-width: 52ch;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+/* Band alur 3 langkah di beranda. */
+.home__flow { margin-top: var(--space-7); }
+
+.home__flow .guide-flow {
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  justify-content: space-evenly;
+}
+
+.home__flow .guide-flow__label {
+  font-family: var(--font-comic);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  color: var(--color-ink);
+}
+
+.home__flow .guide-flow__node:nth-child(4n + 1) .guide-flow__dot { background: var(--color-primary); color: #fff; }
+.home__flow .guide-flow__node:nth-child(4n + 3) .guide-flow__dot { background: var(--color-mint); }
+.home__flow .guide-flow__node:nth-child(4n + 5) .guide-flow__dot { background: var(--color-accent); color: #fff; }
+.home__flow .guide-flow__node:nth-child(4n + 7) .guide-flow__dot { background: var(--color-lemon); }
+
+.home__cta-alt {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-bottom: 2.5px dashed var(--color-ink);
+  padding-bottom: 1px;
+  transform: rotate(-0.6deg);
+  transition: color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+}
+
+.home__cta-alt:hover { color: var(--color-bubble); transform: rotate(0) translateY(-2px); }
+
+.home__cta .btn--lg { margin-top: var(--space-2); }
+
+/* CTA penutup beranda — panel ledakan. */
+.home__cta {
+  position: relative;
+  margin-top: var(--space-8);
+  display: grid;
+  gap: var(--space-3);
+  justify-items: center;
+  text-align: center;
+  padding: var(--space-7) var(--space-5);
+  overflow: hidden;
+  background: linear-gradient(150deg, var(--color-primary-soft), var(--color-accent-soft));
+  border: 3px solid var(--color-ink);
+  border-radius: var(--radius-xl);
+  box-shadow: 9px 10px 0 var(--color-ink);
+  isolation: isolate;
+}
+
+.home__cta::before {
+  content: '';
+  position: absolute;
+  inset: -40% -20%;
+  z-index: -1;
+  background: repeating-conic-gradient(from 0deg at 50% 50%, rgb(255 255 255 / 0.65) 0deg 7deg, transparent 7deg 15deg);
+  animation: cta-rays 26s linear infinite;
+  opacity: 0.55;
+}
+
+@keyframes cta-rays { to { transform: rotate(360deg); } }
+
+.home__cta-title {
+  font-family: var(--font-comic);
+  font-weight: 400;
+  font-size: var(--text-3xl);
+  letter-spacing: 0.01em;
+  margin: 0;
+  text-shadow: 4px 4px 0 #fff, 7px 7px 0 rgb(26 26 36 / 0.35);
+}
+
+.home__cta-sub { margin: 0; font-size: var(--text-sm); font-weight: 700; color: var(--color-text-secondary); max-width: 48ch; }
+
+/* Sinar ledakan dipangkas di layar sempit supaya tidak bikin geser. */
+@media (max-width: 767px) {
+  .home__intro::before { inset: -6% -1%; }
+
+  /* Bentuk "Kipas" memesan tinggi 280px buat foto; frame komik lebih pendek
+     sehingga menyisakan kosong — rapatkan di mode frame. */
+  .home__showcase.is-frames-mode.home__showcase--kipas .home__showcase-body { min-height: 0; }
+}
+
+/* ---- 10. SHELL — sticky bar & scroll arrow ---- */
+.sticky-bar {
+  background: var(--color-surface);
+  border-top: 3px solid var(--color-ink);
+  box-shadow: 0 -5px 0 rgb(26 26 36 / 0.14);
+}
+
+.sticky-bar::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 4px;
+  height: 6px;
+  background: repeating-linear-gradient(90deg, var(--color-bubble) 0 14px, transparent 14px 28px, var(--color-lemon) 28px 42px, transparent 42px 56px);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.sticky-bar { position: fixed; }
+
+.scroll-arrow {
+  border-width: 2.5px;
+  border-color: var(--color-ink);
+  background: var(--color-lemon);
+  font-family: var(--font-comic);
+}
+
+/* ---- 11. MISC — countdown, lightbox, widget musik, modal ---- */
+/* Panel CTA tutorial: sinar ledakan pelan kayak di beranda. */
+.guide__cta,
+.credit__support {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.guide__cta::before,
+.credit__support::before {
+  content: '';
+  position: absolute;
+  inset: -60% -20%;
+  z-index: -1;
+  background: repeating-conic-gradient(from 0deg at 50% 50%, rgb(255 255 255 / 0.7) 0deg 6deg, transparent 6deg 14deg);
+  animation: cta-rays 30s linear infinite;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.guide__cta > *,
+.credit__support > * { position: relative; }
+
+/* Pill navigasi: miring dikit pas disorot — kesan ditempel tangan. */
+.site-nav__link:hover { transform: translate(-1px, -3px) rotate(-1.4deg); }
+.site-nav__link:active { transform: rotate(0); }
+
+.countdown-number {
+  font-family: var(--font-comic);
+  font-weight: 400;
+  color: var(--color-lemon);
+  text-shadow:
+    -2px -2px 0 var(--color-ink),
+    2px -2px 0 var(--color-ink),
+    -2px 2px 0 var(--color-ink),
+    2px 2px 0 var(--color-ink),
+    0 -2px 0 var(--color-ink),
+    0 2px 0 var(--color-ink),
+    -2px 0 0 var(--color-ink),
+    2px 0 0 var(--color-ink),
+    7px 8px 0 rgb(26 26 36 / 0.5);
+}
+
+.lightbox__img { border: 3px solid #fff; box-shadow: 10px 11px 0 rgb(0 0 0 / 0.5); }
+
+.music-widget {
+  border-width: 2.5px;
+  border-color: var(--color-ink);
+  background: var(--color-surface);
+  box-shadow: 5px 6px 0 var(--color-ink);
+}
+
+.music-widget__btn { border: 2.5px solid var(--color-ink); box-shadow: 2px 3px 0 var(--color-ink); }
+.music-widget__next { border-width: 2px; border-color: var(--color-ink); }
+
+.modal__header { border-bottom: 2.5px solid var(--color-ink); background: var(--color-primary-soft); }
+.modal__footer { border-top: 2.5px dashed var(--color-ink); background: var(--color-surface-muted); }
+.modal__close { border: 2.5px solid var(--color-ink); box-shadow: 2px 3px 0 var(--color-ink); font-family: var(--font-comic); }
+
+/* ---- 11b. HALAMAN AMBIL FOTO — preview & keadaan kosong ---- */
+/* Badge PREVIEW membentang jadi pita panel (bukan kotak gelap datar). */
+.capture.is-fullview .tpl-preview__badge,
+.tpl-preview__badge {
+  color: var(--color-lemon);
+  text-align: left;
+  letter-spacing: 0.24em;
+  background-color: var(--color-ink);
+  background-image: radial-gradient(rgb(255 255 255 / 0.18) 1.1px, transparent 1.25px);
+  background-size: 8px 8px;
+  box-shadow: 3px 4px 0 rgb(26 26 36 / 0.55);
+}
+
+.capture.is-fullview .tpl-preview__badge { padding-left: 20px; }
+
+/* Keadaan kosong preview: panel komik besar, bukan satu baris teks tipis. */
+.tpl-preview__hint:only-child {
+  max-width: min(540px, 92%);
+  padding: var(--space-7) var(--space-6);
+  border: 3px dashed var(--color-ink);
+  border-radius: var(--radius-xl);
+  background-color: var(--color-surface);
+  background-image: var(--pattern-halftone);
+  background-size: 13px 13px;
+  box-shadow: 7px 8px 0 rgb(26 26 36 / 0.8);
+  transform: rotate(-0.7deg);
+  gap: var(--space-2);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+.tpl-preview__hint-title {
+  font-family: var(--font-comic);
+  font-weight: 400;
+  font-size: var(--text-xl);
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+  text-shadow: 3px 3px 0 rgb(255 224 102 / 0.9);
+}
+
+.tpl-preview__hint:only-child::before {
+  content: '';
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 4px;
+  background: var(--deco-spark) center / contain no-repeat;
+  animation: hint-bob 2.6s ease-in-out infinite;
+}
+
+@keyframes hint-bob { 50% { transform: translateY(-7px) rotate(-8deg); } }
+
+/* Nama frame + deskripsi di bawah preview. */
+.tpl-preview__meta {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+/* ------------------------------------------------------------
+   12.5 DETAIL POP — lubang transparan & panel di langit gelap
+   ------------------------------------------------------------ */
+/* Lubang transparan frame = checker catur abu-abu halus (spesifikasi
+   #/frames: area kosong terlihat "kertas catur" ala editor gambar). */
+.template-card__thumb img,
+.tpl-card__frame img {
+  background-image: var(--pattern-checker);
+  background-size: 15px 15px;
+}
+
+/* ------------------------------------------------------------
+   13. NIGHT-SKY CANDY — full-viewport mode capture & edit
+   Spesifikasi: latar belakang canvas dark (#0F0E17) dengan partikel
+   bintang kecil melayang — kartu candy tetap Sugar White dan menonjol
+   di atas langit gelap.
+   ------------------------------------------------------------ */
+body.is-fullview {
+  background-color: var(--color-canvas-dark);
+  background-image:
+    /* partikel bintang kecil: putih, bubblegum, lavender */
+    radial-gradient(rgb(255 249 251 / 0.55) 1px, transparent 1.3px),
+    radial-gradient(rgb(255 107 153 / 0.4) 1.2px, transparent 1.5px),
+    radial-gradient(rgb(166 130 255 / 0.38) 1.1px, transparent 1.4px),
+    radial-gradient(rgb(255 209 102 / 0.3) 1px, transparent 1.3px),
+    /* dua glow candy lembut di luber halaman */
+    radial-gradient(52rem 36rem at 10% -10%, rgb(255 107 153 / 0.14), transparent 60%),
+    radial-gradient(48rem 34rem at 95% 110%, rgb(166 130 255 / 0.16), transparent 62%);
+  background-size:
+    236px 210px,
+    320px 264px,
+    188px 166px,
+    404px 348px,
+    auto,
+    auto;
+  background-attachment: fixed;
+  color: #f6f2ff; /* teks candy langsung di langit gelap */
+}
+
+/* Semua UI capture/editor hidup di kartu terang — di sana teks tetap tinta
+   gelap supaya kontras di atas Sugar White tetap aman. */
+body.is-fullview .capture,
+body.is-fullview .editor {
+  color: var(--color-text);
+}
+
+/* Panel kaca memerah candy: di atas langit gelap, glass 72% memudar jadi
+   abu-abu murky — angkat ke versi pekat supaya kartu "menyala" Sugar White. */
+body.is-fullview .panel-card,
+body.is-fullview .editor__stage-wrap,
+body.is-fullview .editor__panel {
+  background: var(--glass-strong);
+}
+
+/* Tombol jepret di langit gelap: ring putus-putus bubblegum ala cetakan
+   komik lawas — kontras di atas Canvas Dark jadi mustahil terlewat. */
+body.is-fullview .camera__shutter {
+  outline: 2.5px dashed rgb(255 107 153 / 0.85);
+  outline-offset: 5px;
+}
+
+/* ------------------------------------------------------------
+   14. REDUCED MOTION — hormati preferensi pengguna
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .btn::after,
+  .site-footer__ticker-track,
+  .home__cta::before,
+  .guide__cta::before,
+  .credit__support::before,
+  .home__stamp,
+  .home .feature-card,
+  .template-card,
+  .gallery__card,
+  .home__actions .btn--primary,
+  .sticky-bar .btn--primary,
+  .guide__cta .btn--primary,
+  .download__actions .btn--primary,
+  .tpl-preview__hint:only-child::before { animation: none !important; }
+}

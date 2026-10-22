@@ -1,0 +1,25 @@
+{
+  "name": "photobooth",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "build:server": "tsc server/index.ts server/cleanup.ts server/gallery.ts server/auth.ts server/gdrive.ts --outDir dist-server --module ES2022 --moduleResolution bundler --target ES2022 --skipLibCheck && node -e \"require('fs').copyFileSync('server/booth-scan.js','dist-server/booth-scan.js')\" && node -e \"require('fs').copyFileSync('server/music-scan.js','dist-server/music-scan.js')\"",
+    "serve": "npm run build:server && node dist-server/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "compression": "^1.7.5",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.8.1",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.2",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10"
+  }
+}

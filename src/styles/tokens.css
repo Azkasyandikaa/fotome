@@ -1,0 +1,207 @@
+/* ============================================================
+   FOTOME — design tokens "Candy Pop" (imut · kece · chunky)
+   Single source of truth for color, type, spacing, radius, motion.
+   Import this file FIRST, before any component stylesheet.
+   Vibe: pastel candy + ink outline sticker + bubble shape.
+   ============================================================ */
+
+:root {
+  /* ---- 3.1 Warna — "Comic-Candy-Aesthetic-Modern" ----
+     Palet resmi (docs/DESIGN-PROMPT.md):
+     Bubblegum Pop #FF6B99 · Lavender Dream #A682FF · Mint Fresh #4ECCA3 ·
+     Sunshine Yellow #FFD166 · Ink Black #1A1A24 · Sugar White #FFF9FB ·
+     Canvas Dark #0F0E17. */
+
+  /* Brand — Bubblegum Pop (CTA utama, border aktif, tombol jepret) */
+  --color-primary: #ff6b99;
+  --color-primary-hover: #ff568a;
+  --color-primary-active: #f0447a;
+  --color-primary-soft: #ffe9f1;
+
+  /* Accent — Lavender Dream (chip kategori, badge, aksen sekunder) */
+  --color-accent: #a682ff;
+  --color-accent-soft: #f2edff;
+
+  /* Neutral — Sugar White + tinta komik */
+  --color-bg: #fff9fb;
+  --color-surface: #ffffff;
+  --color-surface-muted: #fdf2f7;
+  --color-border: #ffe3ee;
+  /* COMIC: semua outline "kuat" = garis tinta — kartu, input, chip, modal
+     langsung bergaris tinta tebal ala panel komik tanpa ubah komponen. */
+  --color-border-strong: var(--color-ink);
+
+  /* Text */
+  --color-text: #1a1a24; /* Ink Black — teks utama */
+  --color-text-secondary: #5f5a6e;
+  --color-text-muted: #938da2;
+  --color-text-inverse: #ffffff;
+
+  /* Semantic */
+  --color-success: #4ecca3; /* Mint Fresh — sukses, tombol lanjut ✓ */
+  --color-success-soft: #e2f9f0;
+  --color-warning: #ffd166; /* Sunshine Yellow — highlight/peringatan */
+  --color-warning-soft: #fff3d9;
+  --color-danger: #ff5d6c;
+  --color-danger-soft: #ffe9eb;
+  --color-info: #7c9cff;
+  --color-info-soft: #eaf0ff;
+
+  /* Warna bantu baru (khusus tema candy) */
+  --color-mint: #4ecca3;
+  --color-lemon: #ffd166; /* Sunshine Yellow */
+  --color-sky: #a5d8ff;
+  --color-ink: #1a1a24; /* Ink Black — stroke komik */
+
+  /* Comic Candy — warna pop sekunder buat panel, badge, & efek cetak.
+     Dipakai bergantian biar halaman tidak monokrom satu rasa. */
+  --color-grape: #9a83e8; /* ungu anggur */
+  --color-tangerine: #ff9a5c; /* jeruk */
+  --color-bubble: #ff6b99; /* permen karet */
+  --color-aqua: #4fd6c2; /* toska */
+  --color-blueberry: #6d8bff; /* biru premium */
+
+  /* Canvas Dark — full-viewport mode capture/edit: gradasi gelap minimalis
+     + partikel bintang kecil (night sky candy aesthetic). */
+  --color-canvas-dark: #0f0e17;
+  --color-canvas-star: rgba(255 249 251 / 0.85);
+
+  /* COMIC — elevation: bayangan keras ala komik (offset tinta, tanpa blur).
+     Semua kartu/tombol otomatis dapat bayangan potongan tegas. */
+  --shadow-xs: 2px 2px 0 rgb(26 26 36 / 0.4);
+  --shadow-sm: 3px 3px 0 rgb(26 26 36 / 0.55);
+  --shadow-md: 5px 5px 0 rgb(26 26 36 / 0.7);
+  --shadow-lg: 8px 8px 0 rgb(26 26 36 / 0.8);
+
+  /* Hierarki elevasi — dipakai semua kartu, jadi tidak ada bayangan
+     tempelan yang beda-beda di tiap komponen. Versi komik: offset tinta
+     pekat tanpa blur — spesifikasi: 4px 4px 0 datar, hover 8px 8px 0. */
+  --shadow-card: 4px 4px 0 rgb(26 26 36 / 0.9);
+  --shadow-card-hover: 8px 8px 0 rgb(26 26 36 / 0.95);
+  --shadow-pop: 9px 9px 0 rgb(26 26 36 / 0.95);
+  --shadow-cta: 5px 5px 0 var(--color-ink);
+
+  /* Komik — siap pakai: garis & bayangan tinta untuk komponen baru. */
+  --line-comic: 3px solid var(--color-ink);
+  --line-comic-thick: 4px solid var(--color-ink);
+  --shadow-comic: 4px 4px 0 var(--color-ink);
+  --shadow-comic-lg: 8px 8px 0 var(--color-ink);
+
+  /* Comic Candy — offset berwarna: ala cetakan komik yang sedikit
+     "meleset register", bayangan dicetak pink/cyan di bawah tinta. */
+  --shadow-offset-pink: 5px 5px 0 var(--color-bubble);
+  --shadow-offset-cyan: 5px 5px 0 var(--color-aqua);
+  --shadow-offset-lemon: 4px 4px 0 var(--color-lemon);
+  --shadow-offset-grape: 5px 5px 0 var(--color-grape);
+
+  /* Comic Candy — pola siap pakai (dipakai ulang di banyak komponen). */
+  --pattern-halftone: radial-gradient(rgb(26 26 36 / 0.16) 1.1px, transparent 1.25px);
+  --pattern-halftone-ink: radial-gradient(rgb(26 26 36 / 0.14) 1.1px, transparent 1.25px);
+  --pattern-halftone-pink: radial-gradient(rgb(255 107 153 / 0.32) 1.4px, transparent 1.55px);
+  --pattern-wavy: repeating-linear-gradient(
+    90deg,
+    rgb(255 107 153 / 0.14) 0 14px,
+    rgb(166 130 255 / 0.14) 14px 28px,
+    rgb(78 204 163 / 0.12) 28px 42px
+  );
+  --pattern-stripes: repeating-linear-gradient(
+    -45deg,
+    rgb(255 107 153 / 0.16) 0 8px,
+    transparent 8px 16px
+  );
+  --pattern-stripes-ink: repeating-linear-gradient(
+    -45deg,
+    rgb(26 26 36 / 0.1) 0 6px,
+    transparent 6px 12px
+  );
+  --pattern-checker: repeating-conic-gradient(
+    rgb(26 26 36 / 0.07) 0% 25%,
+    transparent 0% 50%
+  );
+
+  /* Batas bergigi ala kertas sobek / pita permen (dipakai ::before band). */
+  --edge-scallop: radial-gradient(circle at 50% 0, transparent 0 7px, var(--color-surface) 7.5px);
+  --edge-zigzag: conic-gradient(from -45deg at 50% 0, var(--color-ink) 0 90deg, transparent 0) 50% / 22px 11px repeat-x;
+
+  /* (legacy) bayangan stiker chunky — kini dipakai sangat hemat */
+  --glass: rgb(255 249 251 / 0.72);
+  --glass-strong: rgb(255 249 251 / 0.94);
+  --glass-border: rgb(26 26 36 / 0.85);
+  --backdrop-blur: blur(14px);
+  --shadow-glass: 4px 4px 0 var(--color-ink); /* komik, bukan blur */
+
+  /* ---- 3.2 Tipografi — "Comic-Candy-Aesthetic-Modern" ----
+     Display komik: Bangers (pop-art heavy, stroke tinta) — diambil dari
+     Google Fonts di index.html; fallback tetap di jaga. */
+
+  /* Body/UI/Tombol: Plus Jakarta Sans — geometris, bersih, tajam di HP */
+  --font-ui: 'Plus Jakarta Sans', 'Nunito', system-ui, sans-serif;
+  /* Display/heading gaya komik pop-art: Bangers (uppercase luar biasa) */
+  --font-display: 'Bangers', 'Fredoka', system-ui, sans-serif;
+  /* Aksen komik: Luckiest Guy (stiker/kicker candy) */
+  --font-comic: 'Bangers', 'Luckiest Guy', 'Fredoka', cursive;
+  /* Mono untuk label teknis (admin, readout presisi) — JetBrains Mono
+     variable: tajam di semua ukuran, angka selalu rata lebar. */
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --text-xs: 0.75rem; /* 12px */
+  --text-sm: 0.875rem; /* 14px */
+  --text-base: 1rem; /* 16px */
+  --text-lg: 1.125rem; /* 18px */
+  --text-xl: 1.375rem; /* 22px */
+  --text-2xl: 1.75rem; /* 28px */
+  --text-3xl: clamp(2rem, 5vw, 2.75rem);
+  --text-4xl: clamp(2.6rem, 7vw, 4rem);
+
+  --leading-tight: 1.25; /* Bangers = tinggi & padat, butuh napas ekstra */
+  --leading-normal: 1.6;
+  --tracking-wide: 0.05em; /* letter-spacing renggang ala teks tombol */
+  --tracking-comic: 0.04em; /* Bangers makin terbaca dengan tracking tipis */
+
+  /* ---- 3.3 Spacing, Radius, Motion ---- */
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  /* COMIC — sudut lebih kotak ala panel komik (pil tetap bulat) */
+  --radius-sm: 12px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+  --radius-pill: 999px;
+
+  --duration-fast: 160ms;
+  --duration-normal: 260ms;
+  --duration-slow: 420ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---- 4.1 Container ---- */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 16px;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-inline: 32px;
+  }
+}
+
+/* ---- §7 Semua animasi harus dihormati ---- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

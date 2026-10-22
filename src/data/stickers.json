@@ -1,0 +1,12 @@
+[
+  { "id": "heart", "name": "Heart", "image": "/assets/stickers/heart.svg", "category": "cute", "enabled": true },
+  { "id": "star", "name": "Star", "image": "/assets/stickers/star.svg", "category": "fun", "enabled": true },
+  { "id": "flower", "name": "Flower", "image": "/assets/stickers/flower.svg", "category": "cute", "enabled": true },
+  { "id": "sparkle", "name": "Sparkle", "image": "/assets/stickers/sparkle.svg", "category": "fun", "enabled": true },
+  { "id": "camera", "name": "Camera", "image": "/assets/stickers/camera.svg", "category": "fun", "enabled": true },
+  { "id": "mustache", "name": "Mustache", "image": "/assets/stickers/mustache.svg", "category": "party", "enabled": true },
+  { "id": "crown", "name": "Crown", "image": "/assets/stickers/crown.svg", "category": "party", "enabled": true },
+  { "id": "balloon", "name": "Balloon", "image": "/assets/stickers/balloon.svg", "category": "party", "enabled": true },
+  { "id": "sun", "name": "Sun", "image": "/assets/stickers/sun.svg", "category": "seasonal", "enabled": true },
+  { "id": "rainbow", "name": "Rainbow", "image": "/assets/stickers/rainbow.svg", "category": "cute", "enabled": true }
+]

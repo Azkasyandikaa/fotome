@@ -1,0 +1,30 @@
+{
+  "name": "merdeka17",
+  "category": "Merdeka",
+  "categories": [
+    "Merdeka"
+  ],
+  "photoSlots": [
+    {
+      "photoIndex": 0,
+      "x": 90,
+      "y": 100,
+      "width": 900,
+      "height": 551
+    },
+    {
+      "photoIndex": 1,
+      "x": 90,
+      "y": 684,
+      "width": 900,
+      "height": 551
+    },
+    {
+      "photoIndex": 2,
+      "x": 90,
+      "y": 1268,
+      "width": 900,
+      "height": 551
+    }
+  ]
+}

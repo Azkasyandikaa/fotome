@@ -1,0 +1,5 @@
+{
+  "name": "Glow Pink",
+  "css": "brightness(1.05) saturate(1.1)",
+  "fit": "cover"
+}

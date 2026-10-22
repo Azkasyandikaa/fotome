@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#fff9fb" />
+    <meta name="description" content="Fotome — photobooth online. Pilih frame, ambil foto sesuai slotnya, hias stiker, unduh. Semua diproses di perangkatmu, tanpa upload." />
+    <title>Fotome — Photobooth Online</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Upgrade font v7 "Comic-Candy-Aesthetic-Modern": display komik →
+         Bangers + Luckiest Guy; body geometris → Plus Jakarta Sans;
+         JetBrains Mono untuk label teknis (readout presisi, badge admin). -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bangers&family=Baloo+2:wght@400..800&family=Fredoka:wght@400..700&family=JetBrains+Mono:ital,wght@0,400..700;1,400..700&family=Luckiest+Guy&family=Nunito:ital,wght@0,400..1000;1,400..1000&family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23ff6b99'/%3E%3Crect x='9' y='6' width='14' height='20' rx='2' fill='%23ffffff'/%3E%3Crect x='11' y='8' width='10' height='9' rx='1' fill='%231a1a24'/%3E%3Ccircle cx='16' cy='12.5' r='2.2' fill='%23a682ff'/%3E%3Crect x='11' y='19' width='10' height='1.8' fill='%231a1a24'/%3E%3Crect x='11' y='22' width='6' height='1.8' fill='%231a1a24'/%3E%3C/svg%3E" />
+    <style>
+      /* Boot screen: ditulis inline karena tampil sebelum bundle CSS ikut
+         dimuat. Warna & font dijaga sedekat mungkin dengan tokens.css. */
+      html,
+      body { margin: 0; background: #fff9fb; }
+      #boot {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(34rem 26rem at 12% -6%, rgb(255 107 153 / 0.16), transparent 62%),
+          radial-gradient(30rem 26rem at 104% 8%, rgb(166 130 255 / 0.16), transparent 64%),
+          #fff9fb;
+      }
+      .boot__card { display: grid; justify-items: center; gap: 16px; }
+      .boot__mark { display: flex; gap: 7px; }
+      .boot__mark i {
+        width: 15px;
+        height: 20px;
+        border: 1.5px solid #ff9dbd;
+        border-radius: 5px;
+        background: #ffd9e8;
+        animation: boot-slot 1s ease-in-out infinite;
+      }
+      .boot__mark i:nth-child(2) { animation-delay: 0.14s; }
+      .boot__mark i:nth-child(3) { animation-delay: 0.28s; }
+      .boot__word {
+        font-family: 'Bangers', 'Luckiest Guy', Fredoka, system-ui, sans-serif;
+        font-weight: 400;
+        font-size: 26px;
+        letter-spacing: 0.04em;
+        color: #1a1a24;
+      }
+      .boot__word em { font-style: normal; color: #ff6b99; }
+      .boot__dots { display: flex; gap: 8px; }
+      .boot__dots i {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ffd3e4;
+        animation: boot-dot 1s ease-in-out infinite;
+      }      .boot__dots i:nth-child(2) { animation-delay: 0.14s; }
+      .boot__dots i:nth-child(3) { animation-delay: 0.28s; }
+      @keyframes boot-slot { 50% { transform: translateY(-7px); background: #ffe066; border-color: #f5c93a; } }
+      @keyframes boot-dot { 50% { transform: scale(1.35); background: #ff85b8; } }
+      @media (prefers-reduced-motion: reduce) {
+        .boot__mark i,
+        .boot__dots i { animation: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading screen: tampil sebelum JS jalan, di-hide oleh main.ts saat app siap -->
+    <div id="boot" aria-hidden="true">
+      <div class="boot__card">
+        <span class="boot__mark"><i></i><i></i><i></i></span>
+        <span class="boot__word">fotome<em>.</em></span>
+        <span class="boot__dots"><i></i><i></i><i></i></span>
+      </div>
+    </div>
+
+    <div id="app" hidden></div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

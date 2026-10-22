@@ -1,0 +1,476 @@
+/* ============================================================
+   FOTOME — editor page v4 "candy glow"
+   Kanvas besar kiri, panel alat kanan: tabs, pen, stiker, slider manual.
+   ============================================================ */
+
+.editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 350px;
+  gap: 22px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(14px, 3vw, 28px) 20px;
+  align-items: start;
+}
+
+/* Fullview: editor memenuhi viewport, panel kanan yang scroll — bukan halaman. */
+.editor.is-fullview {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  padding: 14px clamp(16px, 3vw, 32px) 18px;
+  align-items: stretch;
+  grid-template-rows: minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.editor.is-fullview .editor__stage-wrap {
+  height: auto;
+  min-height: 0;
+  max-height: 100%;
+}
+
+.editor.is-fullview .editor__panel {
+  position: static;
+  top: auto;
+  max-height: 100%;
+  min-height: 0;
+}
+
+.editor__stage-wrap {
+  background: var(--glass);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card), 5px 5px 16px var(--red-glow);
+  height: calc(100dvh - 200px);
+  min-height: 320px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 14px;
+  position: relative;
+  background-image: radial-gradient(rgba(15, 14, 23, 0.04) 1px, transparent 1.3px);
+  background-size: 16px 16px;
+}
+
+.editor__stage { display: grid; place-items: center; max-width: 100%; max-height: 100%; }
+
+.editor__canvas {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgb(255 107 153 / 0.18), 0 0 24px rgba(255, 158, 195, 0.3);
+  touch-action: none;
+  cursor: grab;
+}
+
+.editor__canvas:active { cursor: grabbing; }
+
+.editor__panel {
+  background: var(--glass);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card), 5px 5px 16px var(--red-glow);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  position: sticky;
+  top: 82px;
+  max-height: calc(100dvh - 102px);
+  overflow-y: auto;
+}
+
+/* ---- Panel head (judul + info frame) ---- */
+.editor__panel-head {
+  display: grid;
+  gap: 2px;
+  padding-bottom: 10px;
+  border-bottom: 2px dashed var(--line);
+}
+
+.editor__panel-kicker {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+
+.editor__panel-frame {
+  margin: 0;
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+/* ---- Photo tabs (thumbnail asli + nomor) ---- */
+.editor__photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+  gap: 8px;
+}
+
+.editor__photo-tab {
+  border: 1.5px solid var(--color-border-strong);
+  background: var(--paper);
+  border-radius: 10px;
+  padding: 5px 5px 7px;
+  font-weight: 800;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--ink);
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  transition: all 0.2s var(--spring);
+}
+
+.editor__photo-thumb {
+  display: block;
+  width: 100%;
+  border-radius: 7px;
+  overflow: hidden;
+  border: 1.5px solid var(--line);
+  background: var(--paper-3);
+  line-height: 0;
+  transition: border-color 0.15s ease;
+}
+
+.editor__photo-thumb canvas {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.editor__photo-tab.is-active .editor__photo-thumb { border-color: #fff; }
+
+.editor__photo-tab:hover { transform: translateY(-2px) rotate(-1deg); background: var(--red-soft); }
+
+.editor__photo-tab.is-active {
+  background: var(--grad-pink);
+  color: #fff;
+  box-shadow: var(--shadow-card), 0 0 14px var(--red-glow);
+  transform: translateY(-1px);
+}
+
+.editor__photo-tab.is-active::after { content: ' ♡'; }
+
+.editor__photo-tab.is-done { border-color: var(--red); }
+
+/* ---- Tools ---- */
+.editor__section-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+.editor__tools { display: grid; gap: 8px; }
+
+.editor__tool-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.editor__tool-row .chip { flex: 1 1 auto; justify-content: center; }
+
+.pen-colors { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+.pen-color {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border-strong);
+  cursor: pointer;
+  transition: transform 0.2s var(--spring), box-shadow 0.2s var(--spring);
+}
+
+.pen-color:hover { transform: scale(1.14) rotate(10deg); }
+
+.pen-color.is-active {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 3px var(--red-soft), 0 6px 14px rgb(255 107 153 / 0.3);
+}
+
+.pen-size { flex: 1; min-width: 70px; }
+
+/* ---- Eraser size control ---- */
+.eraser-size {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.eraser-size__label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.eraser-size-input { flex: 1; min-width: 70px; }
+
+/* ---- Sticker picker ---- */
+.editor__stickers { border-top: 2px dashed var(--line); padding-top: 12px; }
+
+.sticker-picker { display: grid; gap: 9px; }
+
+.sticker-picker__grid,
+.sticker-picker__emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
+  gap: 7px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.sticker-btn,
+.emoji-btn {
+  aspect-ratio: 1;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  font-size: 21px;
+  line-height: 1;
+  transition: all 0.2s var(--spring);
+}
+
+.sticker-btn:hover,
+.emoji-btn:hover {
+  border-color: var(--ink);
+  background: var(--red-soft);
+  transform: translateY(-3px) rotate(-4deg) scale(1.06);
+  box-shadow: var(--shadow-card), 0 0 12px var(--red-glow);
+}
+
+.sticker-btn:active,
+.emoji-btn:active { transform: scale(0.92); transition-duration: 0.06s; }
+
+.sticker-btn img { width: 100%; height: 100%; object-fit: contain; }
+
+/* ---- Selected layer props ---- */
+.editor__props {
+  border-top: 2px dashed var(--line);
+  padding-top: 12px;
+  display: grid;
+  gap: 9px;
+}
+
+/* ---- Panel foto tersorot (ukuran/putar di dalam lubang frame) ---- */
+.editor__photo-props {
+  border-top: 2px dashed var(--line);
+  padding-top: 12px;
+  display: grid;
+  gap: 9px;
+}
+
+.photo-controls__title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.editor__photo-props .manual-ctrl {
+  background: var(--paper);
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+}
+
+.prop-row { display: flex; gap: 6px; }
+
+.prop-row .btn--sm { flex: 1; }
+
+/* Toggle posisi layer terhadap frame template (di atas / di belakang). */
+.prop-frame-toggle {
+  width: 100%;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.prop-frame-toggle.is-active {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--ink);
+}
+
+/* ---- Manual transform panel (lebar/tinggi/ukuran/putar) ---- */
+.manual-controls {
+  background: var(--paper);
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  padding: 11px 12px 12px;
+  display: grid;
+  gap: 8px;
+  box-shadow: inset 0 0 0 1px var(--paper-2);
+}
+
+.manual-controls__title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin: 0 0 1px;
+}
+
+.manual-controls__title::before { content: '⚙ '; color: var(--red); }
+
+.manual-ctrl {
+  display: grid;
+  grid-template-columns: 52px 1fr 44px;
+  align-items: center;
+  gap: 8px;
+}
+
+.manual-ctrl > span {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* Slim cute sliders everywhere */
+.manual-ctrl input[type='range'],
+.pen-size,
+.eraser-size-input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--red) 0 40%, var(--paper-3) 40%);
+  background: var(--paper-3);
+  outline: none;
+  cursor: pointer;
+  border: 1.5px solid var(--line);
+}
+
+.manual-ctrl input[type='range']::-webkit-slider-thumb,
+.pen-size::-webkit-slider-thumb,
+.eraser-size-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: var(--grad-pink);
+  border: 1.5px solid var(--color-border-strong);
+  box-shadow: var(--shadow-card), 0 0 10px var(--red-glow);
+  cursor: grab;
+  transition: transform 0.15s var(--spring), box-shadow 0.15s ease;
+}
+
+.manual-ctrl input[type='range']::-webkit-slider-thumb:hover,
+.pen-size::-webkit-slider-thumb:hover,
+.eraser-size-input::-webkit-slider-thumb:hover { transform: scale(1.2); box-shadow: var(--shadow-card), 0 0 16px rgba(255, 107, 157, 0.6); }
+
+.manual-ctrl input[type='range']::-moz-range-thumb,
+.pen-size::-moz-range-thumb,
+.eraser-size-input::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--red);
+  border: 1.5px solid var(--color-border-strong);
+  cursor: grab;
+}
+
+.manual-ctrl output {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--red-deep);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.prop-row--tiny { margin-top: 2px; }
+
+.prop-row--tiny .chip {
+  flex: 1;
+  font-size: 12px;
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.props-hint { color: var(--ink-2); font-size: 11.5px; margin: 0; line-height: 1.45; }
+
+.editor__actions { display: flex; gap: 8px; }
+
+.editor__actions .btn--sm { flex: 1; }
+
+/* ---- Custom frame upload ---- */
+.custom-frame {
+  margin-top: 18px;
+  border: 2px dashed rgba(15, 14, 23, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.custom-frame__title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  margin: 0 0 4px;
+}
+
+.custom-frame__desc {
+  color: var(--ink-2);
+  font-size: 12.5px;
+  margin: 0 0 10px;
+}
+
+.custom-frame__drop { display: inline-block; cursor: pointer; }
+
+.custom-frame__status {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  margin: 8px 0 0;
+}
+
+.custom-frame__status strong { color: var(--ink); }
+
+.custom-frame__clear { margin-left: 6px; }
+
+/* ---- Mobile ---- */
+@media (max-width: 860px) {
+  .editor { grid-template-columns: 1fr; }
+
+  .editor__stage-wrap { height: auto; min-height: 0; padding: 10px; box-shadow: none; }
+
+  .editor__canvas { max-height: 56dvh; }
+
+  .editor__panel { position: static; max-height: none; }
+
+  .sticker-picker__grid,
+  .sticker-picker__emoji-grid { max-height: 120px; }
+}
+
+/* ---- Sentuhan imut ekstra (cute upgrade) ---- */
+.manual-controls__title::before {
+  display: inline-block;
+  animation: gear-spin 6s linear infinite;
+}
+
+@keyframes gear-spin {
+  to { transform: rotate(360deg); }
+}

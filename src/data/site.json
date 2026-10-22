@@ -1,0 +1,32 @@
+{
+  "title": "Fotome",
+  "tagline": "Tiap jepretan, jadi satu strip, milik kamu!",
+  "description": "Photobooth online GRATISS!!, Punya 300++ tamplate, Dan bisa di gunakan dimana saja, HANYA DI FOTOME!!",
+  "developer": {
+    "name": "Azka syandika al musafa",
+    "bio": "Haloo aku azka, aku membuat website ini sebagai eksperimen saja, saya hosting website ini hanya dengan mini server stb, jadi mohon maaf jika ada kendala, dan terimakasih.",
+    "avatar": "/assets/images/azka.png",
+    "tech": ["TypeScript", "Vite", "Canvas API", "Express", "Node.js"],
+    "links": [
+      { "label": "GitHub", "url": "https://github.com/azkasyandikaa" },
+      { "label": "Instagram", "url": "https://instagram.com/syxndka" }
+    ]
+  },
+  "admin": {
+    "enabled": true,
+    "prompt": "Kalau iya, kirim fotonya ke admin lewat WhatsApp — nanti bisa kamu pamer di Galeri fotome ✦",
+    "buttonLabel": "💬 Ya, kirim ke admin",
+    "message": "Halo kak admin 👋 foto hasil Fotome-ku ini mau dipajang di website ya. Ini fotonya!",
+    "chatUrl": ""
+  },
+  "donation": {
+    "enabled": true,
+    "note": "Donasi bersifat sukarela. Seikhlasnya — booth ini gratis untuk semua orang.",
+    "qrImage": "/qr.png",
+    "methods": [
+      { "name": "GoPay", "account": "0877136295" },
+      { "name": "DANA", "account": "0877136295" },
+      { "name": "Bank BCA", "account": "comiing soon(Your Name)" }
+    ]
+  }
+}
