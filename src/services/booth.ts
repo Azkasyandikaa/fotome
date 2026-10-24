@@ -431,14 +431,30 @@ export async function saveBoothTemplateConfig(
 }
 
 /** Status editor frame admin: butuh login? password sudah disetel? */
-export async function fetchBoothAdminStatus(): Promise<{ authRequired: boolean; authConfigured: boolean }> {
+/**
+ * Status gerbang admin dari server: `reachable=false` kalau /api/booth/admin-status
+ * tidak bisa dihubungi (server belum jalan / bukan alamat server) — supaya halaman
+ * bisa menampilkan petunjuk yang benar, bukan fitur yang terlihat "mati".
+ */
+export async function fetchBoothAdminStatus(): Promise<{
+  authRequired: boolean;
+  authConfigured: boolean;
+  reachable: boolean;
+}> {
   try {
     const res = await fetch('/api/booth/admin-status');
-    if (res.ok) return (await res.json()) as { authRequired: boolean; authConfigured: boolean };
+    if (res.ok) {
+      const data = (await res.json()) as { authRequired?: boolean; authConfigured?: boolean };
+      return {
+        authRequired: data.authRequired === true,
+        authConfigured: data.authConfigured === true,
+        reachable: true,
+      };
+    }
   } catch {
-    /* dev tanpa middleware — anggap terbuka */
+    /* di luar alamat server (atau server mati) — ditandai reachable=false */
   }
-  return { authRequired: false, authConfigured: false };
+  return { authRequired: false, authConfigured: false, reachable: false };
 }
 
 /**

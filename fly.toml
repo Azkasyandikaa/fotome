@@ -1,0 +1,56 @@
+# Konfigurasi deploy Fly.io untuk Fotome (frontend + server Express satu container).
+#
+# Ganti `app` di bawah sesuai nama app Fly kamu, atau biarkan lalu isi via:
+#   fly launch --no-deploy --copy-config
+#
+# Volume harus dibuat manual SEBELUM deploy pertama (dengan nama & region yang sama):
+#   fly volumes create fotome_data --region sin --size 3
+#
+# Deploy:
+#   fly deploy
+# Password admin (wajib sebelum dipakai publik):
+#   fly secrets set GALLERY_ADMIN_PASSWORD="password-baru-yang-kuat"
+
+app = "fotome"
+primary_region = "sin"
+
+# Build memakai Dockerfile di root repo (multi-stage: frontend + server build →
+# runtime kecil). Tidak perlu konfigurasi build tambahan.
+
+[env]
+  PORT = "3000"
+  # Semua state mutabel (frame upload-an, kategori, leaderboard, showcase,
+  # cache galeri) disimpan di folder ini — di-mount ke persistent volume.
+  DATA_DIR = "/app/data"
+
+# --- Persistent volume: frame & galeri tidak hilang saat redeploy ---
+# Buat sekali: fly volumes create fotome_data --region sin --size 3
+# Fly otomatis attach volume dengan nama source ini ke setiap machine baru.
+[[mounts]]
+  source = "fotome_data"
+  destination = "/app/data"
+
+# --- HTTP service ---
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_start_machines = true
+  # Dengan volume ter-attach, auto-stop dimatikan supaya machine menempel
+  # stabil pada volumenya (biaya machine kecil: shared-cpu-1x).
+  auto_stop_machines = false
+  min_machines_running = 0
+  processes = ["app"]
+
+# Health check: server Express punya /healthz yang ringan.
+# grace_period beri waktu cukup: boot pertama men-seed DATA_DIR dari public/booth.
+[[http_service.checks]]
+  interval = "15s"
+  timeout = "4s"
+  grace_period = "60s"
+  method = "get"
+  path = "/healthz"
+
+[vm]
+  size = "shared-cpu-1x"
+  # Server + 23 frame inline kecil — 512 MB cukup; naikkan kalau ramai.
+  memory_mb = 512

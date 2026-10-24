@@ -45,6 +45,11 @@ export function mountDevLoginPage(host: HTMLElement): () => void {
           </button>
         </form>
 
+        <p class="devlogin__conn" data-devlogin-conn hidden>
+          <span class="devlogin__conn-dot" aria-hidden="true"></span>
+          <span data-devlogin-conn-text></span>
+        </p>
+
         <p class="devlogin__note" data-devlogin-loading>Memeriksa server…</p>
 
         <a class="devlogin__back" href="#/">← Kembali ke beranda</a>
@@ -56,8 +61,18 @@ export function mountDevLoginPage(host: HTMLElement): () => void {
   const input = host.querySelector<HTMLInputElement>('[data-devlogin-pw]')!;
   const hint = host.querySelector<HTMLElement>('[data-devlogin-hint]')!;
   const note = host.querySelector<HTMLElement>('[data-devlogin-loading]')!;
+  const conn = host.querySelector<HTMLElement>('[data-devlogin-conn]')!;
+  const connText = host.querySelector<HTMLElement>('[data-devlogin-conn-text]')!;
   const submitBtn = host.querySelector<HTMLButtonElement>('[data-devlogin-submit]')!;
   const card = host.querySelector<HTMLElement>('.devlogin__card')!;
+
+  /** Chip status koneksi server Express (hijau = terjangkau, merah = belum jalan). */
+  const setConn = (ok: boolean, text: string): void => {
+    conn.hidden = false;
+    conn.classList.toggle('is-ok', ok);
+    conn.classList.toggle('is-off', !ok);
+    connText.textContent = text;
+  };
 
   const showError = (msg: string): void => {
     hint.textContent = msg;
@@ -88,6 +103,16 @@ export function mountDevLoginPage(host: HTMLElement): () => void {
     submitBtn.disabled = true;
     submitBtn.textContent = 'Memeriksa…';
     void (async () => {
+      // Cek koneksi dulu: kalau server mati, pesan "Password salah" menyesatkan.
+      const st = await fetchBoothAdminStatus();
+      if (destroyed) return;
+      if (!st.reachable) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Buka dashboard ✦';
+        setConn(false, 'Server Express belum terjangkau');
+        showError('Server Express belum terjangkau — jalankan `npm run serve` dulu, lalu coba lagi.');
+        return;
+      }
       const ok = await adminLogin(pw);
       if (destroyed) return;
       submitBtn.disabled = false;
@@ -111,6 +136,15 @@ export function mountDevLoginPage(host: HTMLElement): () => void {
   void (async () => {
     const status = await fetchBoothAdminStatus();
     if (destroyed) return;
+    if (!status.reachable) {
+      // Server mati / bukan alamat server: jangan teruskan ke dashboard yang
+      // pasti menampilkan "server belum terdeteksi" — beri tahu di sini saja.
+      note.hidden = true;
+      setConn(false, 'Server Express belum terjangkau');
+      showError('Server Express belum terjangkau. Jalankan `npm run serve` dulu, lalu muat ulang halaman ini.');
+      return;
+    }
+    setConn(true, 'Terhubung ke server Express');
     if (!status.authRequired) {
       // Mode dev (vite tanpa server) — tidak perlu password, langsung dashboard.
       navigate('/admin');

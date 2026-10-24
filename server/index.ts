@@ -52,9 +52,13 @@ app.disable('x-powered-by');
 app.set('trust proxy', 1);
 app.use(compression());
 
-// Small global rate limiter (no external store needed for one box).
+// Small rate limiter untuk API saja (no external store needed for one box).
+// Aset statis TIDAK dihitung: memuat galeri/frame penuh gambar bisa ratusan
+// request/menit dan membuat kuota habis → API ikut 429 → dashboard terlihat
+// "offline" padahal server jalan. Login tetap punya limiter sendiri (auth.ts).
 const hits = new Map<string, { count: number; reset: number }>();
 app.use((req, res, next) => {
+  if (!req.path.startsWith('/api/')) return next();
   const ip = req.ip ?? 'unknown';
   const now = Date.now();
   let rec = hits.get(ip);

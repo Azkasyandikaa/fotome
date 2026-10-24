@@ -169,7 +169,8 @@ node scripts/e2e-smoke.mjs
 
 ```bash
 npm run build      # typecheck + vite build ke folder dist/
-npm run serve      # compile server + jalankan Express di port 3000 (ubah via PORT=xxxx)
+npm run serve      # build frontend + server, lalu jalankan Express di port 3000 (ubah via PORT=xxxx)
+                   # (serve selalu build ulang dulu — UI yang disajikan dijamin tidak basi)
 ```
 
 Server mengirim file statis (HTML/CSS/JS, template, sticker) dengan gzip,
@@ -519,20 +520,22 @@ docs/                    DESAIN & GALLERY-GDRIVE
 
 ### Deploy ke Fly.io (pakai volume)
 
-```bash
-# 1. Install CLI (sekali saja) — pilih sesuai OS: brew/shell script/powershell
-fly version || fly version 2>/dev/null || curl -L https://fly.io/install.sh | sh
+> Konfigurasi Fly sudah disertakan di `fly.toml` (volume `/app/data`, health
+> check `/healthz`, region Singapore). Ganti `app = "fotome"` di file itu
+> dengan nama app kamu.
 
-# 2. Buat app + volume di region terdekat
-fly launch --no-deploy --region singapore   # kalau ada prompt, jangan pilih database tambahan
-fly volumes create fotome-data --region singapore --size 3
+```bash
+# 1. Install CLI (sekali saja) — pilih sesuai OS: brew / shell script / powershell
+fly version 2>/dev/null || curl -L https://fly.io/install.sh | sh
+
+# 2. Buat app + volume memakai fly.toml dari repo (jangan buat konfigurasi baru)
+fly launch --no-deploy --copy-config
+fly volumes create fotome_data --region sin --size 3
 fly deploy
 
 # 3. Password admin (WAJIB sebelum dipakai publik)
 fly secrets set GALLERY_ADMIN_PASSWORD="password-baru-yang-kuat"
 ```
-`Dockerfile` sudah set `DATA_DIR=/app/data`; volume di-mounted ke `/app/data`
-(mis. `fly volumes list` untuk cek attach). Health check: `/healthz`.
 
 ### Deploy ke Zeabur
 

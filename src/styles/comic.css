@@ -1536,3 +1536,141 @@ textarea:focus-visible {
   .admin__head::before,
   .site-footer__ticker { animation: none !important; }
 }
+
+/* ============================================================
+   PASS v9 — HALAMAN DEVELOPER (#/admin + #/devlogin)
+   CTA utama gradasi, lencana centang bentuk showcase, aurora +
+   chip koneksi di gerbang password, panel offline ramah-retry.
+   ============================================================ */
+
+/* ---- Aksi utama "＋ Frame baru" — CTA gradasi menonjol di antara tombol ghost ---- */
+.admin__head-actions [data-act='toggle-upload'] {
+  background: var(--grad-pop);
+  color: #fff;
+  border: 2px solid var(--color-ink);
+  box-shadow: 3px 4px 0 var(--color-ink), 0 14px 24px -12px rgb(255 107 153 / 0.85);
+}
+
+.admin__head-actions [data-act='toggle-upload']:hover {
+  box-shadow: 5px 6px 0 var(--color-ink), 0 18px 30px -12px rgb(255 107 153 / 0.95);
+}
+
+/* ---- Bentuk showcase aktif: lencana centang pelangi di pojok kartu ---- */
+.sc-shape { position: relative; }
+
+.sc-shape.is-active::after {
+  content: '✓';
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  width: 17px;
+  height: 17px;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--color-ink);
+  background: var(--grad-pop);
+  border: 1.5px solid var(--color-ink);
+  border-radius: 50%;
+  box-shadow: 1px 2px 0 rgb(26 26 36 / 0.7);
+}
+
+/* ---- Chip koneksi server di gerbang developer ---- */
+.devlogin__conn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 6px 14px;
+  border: 2px solid var(--color-ink);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: 2px 3px 0 rgb(26 26 36 / 0.8);
+}
+
+.devlogin__conn-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+  box-shadow: 0 0 0 3px rgb(26 26 36 / 0.12);
+  flex-shrink: 0;
+}
+
+.devlogin__conn.is-ok { background: #eafbee; }
+.devlogin__conn.is-ok .devlogin__conn-dot {
+  background: #16a34a;
+  box-shadow: 0 0 0 3px rgb(22 163 74 / 0.22);
+}
+
+.devlogin__conn.is-off { background: #ffebf0; }
+.devlogin__conn.is-off .devlogin__conn-dot {
+  background: var(--color-primary, #ff6b99);
+  box-shadow: 0 0 0 3px rgb(255 107 153 / 0.25);
+}
+
+/* ---- Aurora permen lembut di belakang kartu gerbang developer ---- */
+.devlogin {
+  position: relative;
+  isolation: isolate;
+}
+
+.devlogin::before,
+.devlogin::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: min(420px, 64vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  filter: blur(64px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.devlogin::before {
+  top: 4%;
+  left: 6%;
+  background: radial-gradient(circle, rgb(255 107 153 / 0.85), transparent 70%);
+  animation: devlogin-drift-a 16s ease-in-out infinite alternate;
+}
+
+.devlogin::after {
+  bottom: 6%;
+  right: 6%;
+  background: radial-gradient(circle, rgb(166 130 255 / 0.9), transparent 70%);
+  animation: devlogin-drift-b 19s ease-in-out infinite alternate;
+}
+
+@keyframes devlogin-drift-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(46px, -34px, 0) scale(1.14); }
+}
+
+@keyframes devlogin-drift-b {
+  from { transform: translate3d(0, 0, 0) scale(1.08); }
+  to { transform: translate3d(-42px, 30px, 0) scale(0.96); }
+}
+
+/* Lencana gembok ikut mengambang pelan. */
+.devlogin__badge {
+  animation: devlogin-bob 3.6s ease-in-out infinite;
+}
+
+@keyframes devlogin-bob {
+  0%, 100% { transform: rotate(-6deg) translateY(0); }
+  50% { transform: rotate(-2deg) translateY(-6px); }
+}
+
+/* ---- Reduced motion (PASS v9) ---- */
+@media (prefers-reduced-motion: reduce) {
+  .devlogin::before,
+  .devlogin::after,
+  .devlogin__badge { animation: none !important; }
+}

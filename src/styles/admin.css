@@ -235,6 +235,10 @@
 }
 
 .admin__offline {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
   background: linear-gradient(135deg, var(--color-warning-soft, #fff3d6) 0%, #ffffff 85%);
   border: 2.5px dashed var(--color-ink);
   border-radius: var(--radius-lg);
@@ -243,6 +247,34 @@
   font-weight: 600;
   line-height: 1.65;
   box-shadow: 5px 6px 0 rgb(26 26 36 / 0.85), 0 26px 44px -30px rgb(26 26 36 / 0.55);
+}
+
+.admin__offline-icon {
+  font-size: 28px;
+  line-height: 1;
+  filter: drop-shadow(2px 3px 0 rgb(26 26 36 / 0.35));
+}
+
+.admin__offline-detail {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.admin__offline-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+@media (max-width: 560px) {
+  .admin__offline { grid-template-columns: 1fr; }
+  .admin__offline-icon { font-size: 22px; }
 }
 
 .admin__offline b {
@@ -413,15 +445,28 @@
 .admin__editor { display: grid; gap: var(--space-3); min-width: 0; }
 
 .admin__bar {
+  /* Sticky: Simpan/Undo tetap terjangkau saat menggeser lubang foto
+     yang jauh di bawah — tidak perlu scroll bolak-balik ke atas. */
+  position: sticky;
+  top: calc(var(--site-header-h) + 10px);
+  z-index: 6;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
   flex-wrap: wrap;
-  background: var(--glass);
-  border: 1.5px solid var(--color-border-strong);
+  background: rgb(255 255 255 / 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid var(--color-ink);
   border-radius: var(--radius);
   padding: 10px 14px;
+  box-shadow: 0 10px 22px -16px rgb(26 26 36 / 0.6);
+  transition: box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.admin__bar.is-stuck {
+  box-shadow: 4px 5px 0 rgb(26 26 36 / 0.85), 0 16px 30px -20px rgb(26 26 36 / 0.55);
 }
 
 /* Semua panel kerja studio: bayangan melayang + rim kaca di atas. */

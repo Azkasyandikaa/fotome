@@ -128,13 +128,20 @@ export function mountAdminFramesPage(host: HTMLElement): () => void {
         </div>
       </form>
 
-      <p class="admin__offline" data-offline hidden>
-        <b>Server belum terdeteksi.</b> Fitur edit frame butuh server dengan
-        <code>GALLERY_ADMIN_PASSWORD</code> disetel. Jalankan
-        <code>npm run build</code> lalu <code>GALLERY_ADMIN_PASSWORD=rahasia npm run serve</code>,
-        dan buka lewat alamat server — misal <code>http://localhost:3000/#/admin</code>
-        (bukan dev server <code>:5173</code>).
-      </p>
+      <div class="admin__offline" data-offline hidden>
+        <span class="admin__offline-icon" aria-hidden="true">📡</span>
+        <div class="admin__offline-body">
+          <b>Server belum terdeteksi.</b> Fitur edit frame butuh server Express dengan
+          <code>GALLERY_ADMIN_PASSWORD</code> disetel. Jalankan
+          <code>GALLERY_ADMIN_PASSWORD=rahasia npm run serve</code> (otomatis build ulang frontend),
+          lalu buka lewat alamat server — misal <code>http://localhost:3000/#/admin</code>
+          (bukan dev server <code>:5173</code>).
+          <span class="admin__offline-detail" data-offline-detail></span>
+          <span class="admin__offline-actions">
+            <button type="button" class="btn btn--primary btn--sm" data-act="retry">🔄 Coba lagi</button>
+          </span>
+        </div>
+      </div>
 
       <form class="admin__upload panel-card" data-cats-form hidden>
         <p class="admin__tool-title">Kelola kategori</p>
@@ -327,6 +334,7 @@ export function mountAdminFramesPage(host: HTMLElement): () => void {
   const loginEl = host.querySelector<HTMLElement>('[data-login]')!;
   const loginHint = host.querySelector<HTMLElement>('[data-login-hint]')!;
   const offlineEl = host.querySelector<HTMLElement>('[data-offline]')!;
+  const offlineDetailEl = host.querySelector<HTMLElement>('[data-offline-detail]')!;
   const workEl = host.querySelector<HTMLElement>('[data-work]')!;
   const cardsEl = host.querySelector<HTMLElement>('[data-cards]')!;
   const editorEl = host.querySelector<HTMLElement>('[data-editor]')!;
@@ -343,6 +351,19 @@ export function mountAdminFramesPage(host: HTMLElement): () => void {
   let showcaseShape: string = DEFAULT_SHOWCASE_SHAPE;
 
   host.querySelector('[data-act="reload"]')?.addEventListener('click', () => void boot(true));
+  // Panel offline: coba lagi tanpa harus menebak-nebak reload halaman.
+  host.querySelector('[data-act="retry"]')?.addEventListener('click', () => {
+    offlineEl.hidden = true;
+    void boot();
+  });
+  // Bar aksi studio melekat (sticky) di bawah header — tambah bayangan saat
+  // menempel supaya terlihat "terangkat" dari konten yang lewat di bawahnya.
+  const barEl = host.querySelector<HTMLElement>('.admin__bar');
+  const updateBarStuck = (): void => {
+    if (!barEl) return;
+    barEl.classList.toggle('is-stuck', barEl.getBoundingClientRect().top <= 68);
+  };
+  window.addEventListener('scroll', updateBarStuck, { passive: true });
   host.querySelectorAll('[data-act="toggle-upload"]').forEach((btn) => {
     btn.addEventListener('click', () => {
       uploadEl.hidden = !uploadEl.hidden;
@@ -878,10 +899,23 @@ export function mountAdminFramesPage(host: HTMLElement): () => void {
     })();
   });
 
+  /** Tampilkan panel offline lengkap dengan penyebabnya (tidak "mati tanpa keterangan"). */
+  function showOffline(detail: string): void {
+    offlineEl.hidden = false;
+    offlineDetailEl.textContent = detail;
+    workEl.hidden = true;
+  }
+
   async function boot(force = false): Promise<void> {
     if (force) rev++;
     const status = await fetchBoothAdminStatus();
     if (destroyed) return;
+    if (!status.reachable) {
+      showOffline(
+        'Detail: /api/booth/admin-status tidak terjangkau — kemungkinan halaman dibuka lewat dev server / alamat lain, atau server Express belum dijalankan.',
+      );
+      return;
+    }
     if (status.authRequired) {
       // Belum login → langsung alihkan ke gerbang password (#/devlogin).
       // Setelah password benar, halaman itu membuka #/admin kembali; sesi
@@ -902,7 +936,13 @@ export function mountAdminFramesPage(host: HTMLElement): () => void {
   async function loadList(): Promise<void> {
     try {
       const res = await fetch(`/api/booth?rev=${rev}`);
-      if (!res.ok) throw new Error(String(res.status));
+      if (!res.ok) {
+        throw new Error(
+          res.status === 429
+            ? 'Server membatasi permintaan (HTTP 429) — tunggu satu menit lalu tekan Coba lagi.'
+            : `Server menolak permintaan (HTTP ${res.status}).`,
+        );
+      }
       const m = (await res.json()) as {
         templates: BoothTemplateEntry[];
         categories?: string[];
@@ -916,9 +956,11 @@ export function mountAdminFramesPage(host: HTMLElement): () => void {
       if (typeof m.showcase?.shape === 'string') showcaseShape = m.showcase.shape;
       renderShapes();
       renderLeaderboard();
-    } catch {
+    } catch (err) {
       if (destroyed) return;
-      offlineEl.hidden = false;
+      showOffline(
+        `Detail: ${err instanceof Error && err.message ? err.message : 'gagal memuat /api/booth.'}`,
+      );
       return;
     }
     offlineEl.hidden = true;
@@ -1762,5 +1804,6 @@ export function mountAdminFramesPage(host: HTMLElement): () => void {
 
   return () => {
     destroyed = true;
+    window.removeEventListener('scroll', updateBarStuck);
   };
 }

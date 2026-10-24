@@ -180,5 +180,8 @@ requestAnimationFrame(() => {
   document.getElementById('app')!.hidden = false;
   document.body.classList.add('is-booted');
   // Onboarding sekali per browser: pilih HP/Desktop, lalu pilihan baca guide.
-  runOnboarding();
+  // Halaman developer (#/admin, #/devlogin) dilewati — modal layout/guide
+  // memblokir dashboard studio frame saat dibuka langsung lewat alamat server.
+  const bootPath = location.hash.replace(/^#/, '') || '/';
+  if (bootPath !== '/admin' && bootPath !== '/devlogin') runOnboarding();
 });

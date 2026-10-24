@@ -1,4 +1,4 @@
-# 🎨 Stitch AI Prompts — Fotome (Photobooth Online)
+🎨 Stitch AI Prompts — Fotome (Photobooth Online)
 
 > Cara pakai: salin **satu prompt per satu screen** ke Stitch AI, berurutan.
 > Tempel blok "DESIGN SYSTEM" sebagai prompt pertama (atau gabung ke setiap prompt).
