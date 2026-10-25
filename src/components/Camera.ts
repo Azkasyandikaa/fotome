@@ -349,6 +349,18 @@ export class Camera {
   }
 
   /**
+   * Rasio (lebar/tinggi) stage kamera yang sedang tampil. Dipakai buat
+   * memotong hasil jepretan supaya sama persis dengan preview.
+   */
+  private previewAspect(): number | undefined {
+    const stage = this.host.querySelector<HTMLElement>('.camera__stage');
+    if (!stage) return undefined;
+    const { width, height } = stage.getBoundingClientRect();
+    if (width <= 0 || height <= 0) return undefined;
+    return width / height;
+  }
+
+  /**
    * Resumable capture: 3× (countdown → shot → pause for Ulangi/Lanjut),
    * then a final review. 'restart' loops the whole sequence again; 'confirm'
    * ends it (navigation tears the component down).
@@ -376,7 +388,9 @@ export class Camera {
           }
           if (this.stopped) return;
 
-          const frame = await grabFrame(this.video, this.mirror);
+          // Potong frame ke rasio preview — hasil = yang terlihat di layar,
+          // jadi tidak ada lagi "kelihatan full di kamera, ke-crop di frame".
+          const frame = await grabFrame(this.video, this.mirror, this.previewAspect());
           if (!frame) throw new Error('capture failed');
           const baked = await applyFilterToFrame(frame, filter.css, filter.overlay, filter.fit);
           this.photos.push(baked);

@@ -333,7 +333,7 @@ try {
   check('hero privacy line removed', privacyGone);
 
   const bg = await evalJs("getComputedStyle(document.body).backgroundColor");
-  check('body uses --color-bg (#fffbfd)', bg === 'rgb(255, 251, 253)', bg);
+  check('body uses --color-bg (#edeffc stardust)', bg === 'rgb(237, 239, 252)', bg);
 
   const font = await evalJs("getComputedStyle(document.body).fontFamily");
   check('UI font is Nunito', /Nunito/.test(font), font.split(',')[0]);
@@ -398,14 +398,15 @@ try {
   );
   check('camera preview has rounded frame', parseFloat(previewRadius) > 0, previewRadius);
 
-  // Ukuran kamera: harus elemen terbesar di layar foto (desktop).
+  // Ukuran kamera: harus elemen terbesar di layar foto (desktop) —
+  // kini POTRET tinggi (rasio ±3:4, lebar dibatasi), bukan lanskap lebar.
   const stageBox = await evalJs(
     "JSON.stringify({ w: Math.round(document.querySelector('.camera__stage').getBoundingClientRect().width), h: Math.round(document.querySelector('.camera__stage').getBoundingClientRect().height), vw: innerWidth })",
   );
   const parsedStage = JSON.parse(stageBox);
   check(
-    'camera stage dominates the capture screen on desktop',
-    parsedStage.w >= 850 && parsedStage.h >= 420 && parsedStage.w > parsedStage.vw * 0.55,
+    'camera stage is tall & narrow (portrait) on desktop',
+    parsedStage.h >= 420 && parsedStage.h > parsedStage.w * 1.2 && parsedStage.w <= 560,
     stageBox,
   );
 

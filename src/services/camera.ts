@@ -72,19 +72,49 @@ export function hasCamera(): boolean {
   return current !== null;
 }
 
-/** Grab the current video frame as an ImageBitmap (caller owns it). */
-export async function grabFrame(video: HTMLVideoElement, mirror: boolean): Promise<ImageBitmap | null> {
-  if (video.videoWidth === 0 || video.videoHeight === 0) return null;
+/**
+ * Grab the current video frame as an ImageBitmap (caller owns it).
+ *
+ * `targetAspect` (width/height) memotong frame ke rasio yang SAMA dengan
+ * yang sedang ditampilkan preview (`object-fit: cover` di tengah) — jadi
+ * hasil jepretan = yang terlihat di layar kamera, bukan bingkai penuh
+ * sensor yang jauh lebih lebar. Tanpa argumen ini perilaku lama dipertahankan.
+ */
+export async function grabFrame(
+  video: HTMLVideoElement,
+  mirror: boolean,
+  targetAspect?: number,
+): Promise<ImageBitmap | null> {
+  const vw = video.videoWidth;
+  const vh = video.videoHeight;
+  if (vw === 0 || vh === 0) return null;
+
+  // Center-crop ke rasio preview: buang sisi yang kelebihan.
+  let sx = 0;
+  let sy = 0;
+  let sw = vw;
+  let sh = vh;
+  if (targetAspect && targetAspect > 0 && Number.isFinite(targetAspect)) {
+    const current = vw / vh;
+    if (current > targetAspect) {
+      sw = Math.max(1, Math.round(vh * targetAspect));
+      sx = Math.round((vw - sw) / 2);
+    } else if (current < targetAspect) {
+      sh = Math.max(1, Math.round(vw / targetAspect));
+      sy = Math.round((vh - sh) / 2);
+    }
+  }
+
   const canvas = document.createElement('canvas');
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
+  canvas.width = sw;
+  canvas.height = sh;
   const ctx = canvas.getContext('2d');
   if (!ctx) return null;
   if (mirror) {
     ctx.translate(canvas.width, 0);
     ctx.scale(-1, 1);
   }
-  ctx.drawImage(video, 0, 0);
+  ctx.drawImage(video, sx, sy, sw, sh, 0, 0, sw, sh);
   // createImageBitmap keeps the raw frame; filter is applied at render time.
   return createImageBitmap(canvas);
 }

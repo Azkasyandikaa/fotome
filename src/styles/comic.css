@@ -1,22 +1,35 @@
 /* ============================================================
-   COMIC PASS — gaya komik untuk SELURUH aplikasi
+   COMIC PASS — gaya komik ASTRONOMI untuk SELURUH aplikasi
    Diimpor TERAKHIR di main.ts (setelah tokens/global/capture/editor/admin)
    supaya aturan di sini menang atas file stylesheet lain.
 
-   Isi: kertas halftone · outline tinta tebal · bayangan keras tanpa blur ·
-   judul font komik (Luckiest Guy) · balon komik & hiasan homepage.
+   Isi: langit stardust (halftone + bintang + nebula) · outline tinta tebal ·
+   bayangan keras tanpa blur · judul font komik (Bangers/Luckiest Guy) ·
+   balon komik & doodle astronomi (planet, komet) di homepage.
    ============================================================ */
 
 /* ------------------------------------------------------------
-   1. KERTAS KOMIK — halftone tinta + pink di seluruh latar
+   1. LANGIT STARDUST — halftone tinta + bintang bertabur + kabut nebula
+   Latar = kertas komik yang jadi langit: grid halftone (DNA komik),
+   bintang 4 ukuran/warna, lalu 4 halo nebula indigo·magenta·cyan·gold.
    ------------------------------------------------------------ */
 html body {
   background-color: var(--color-bg);
   background-image:
-    radial-gradient(rgb(26 26 36 / 0.075) 1.1px, transparent 1.3px),
-    radial-gradient(rgb(255 107 153 / 0.18) 1.7px, transparent 1.9px);
-  background-size: 18px 18px, 18px 18px;
-  background-position: 0 0, 9px 9px;
+    /* halftone tinta */
+    radial-gradient(rgb(21 20 46 / 0.075) 1.1px, transparent 1.3px),
+    /* bintang stardust: tinta · indigo · nebula magenta · solar gold */
+    radial-gradient(rgb(21 20 46 / 0.26) 1px, transparent 1.4px),
+    radial-gradient(rgb(79 59 234 / 0.3) 1.5px, transparent 1.9px),
+    radial-gradient(rgb(255 78 155 / 0.26) 1.7px, transparent 2.1px),
+    radial-gradient(rgb(255 197 61 / 0.3) 1.2px, transparent 1.6px),
+    /* kabut nebula di keempat penjuru */
+    radial-gradient(54rem 38rem at 6% -10%, rgb(79 59 234 / 0.16), transparent 62%),
+    radial-gradient(48rem 36rem at 106% 6%, rgb(255 78 155 / 0.15), transparent 60%),
+    radial-gradient(44rem 34rem at 52% 114%, rgb(47 214 201 / 0.16), transparent 60%),
+    radial-gradient(30rem 24rem at 86% 58%, rgb(255 197 61 / 0.13), transparent 65%);
+  background-size: 18px 18px, 36px 36px, 92px 92px, 138px 138px, 182px 182px, auto, auto, auto, auto;
+  background-position: 0 0, 11px 14px, 24px 42px, 62px 16px, 7px 78px, 0 0, 0 0, 0 0, 0 0;
 }
 
 /* ------------------------------------------------------------
@@ -113,7 +126,7 @@ h2,
    ------------------------------------------------------------ */
 .panel-card {
   border-width: 3px;
-  box-shadow: 7px 8px 0 rgb(26 26 36 / 0.9);
+  box-shadow: 7px 8px 0 rgb(21 20 46 / 0.9);
 }
 
 .feature-card {
@@ -151,21 +164,21 @@ h2,
 
 /* Kartu halaman developer (#/admin). */
 .admin-card {
-  box-shadow: 3px 3px 0 rgb(26 26 36 / 0.8);
+  box-shadow: 3px 3px 0 rgb(21 20 46 / 0.8);
 }
 .admin-card:hover {
-  box-shadow: 4px 5px 0 rgb(26 26 36 / 0.9);
+  box-shadow: 4px 5px 0 rgb(21 20 46 / 0.9);
 }
 .admin-card.is-selected {
-  box-shadow: 0 0 0 2px var(--color-primary), 4px 5px 0 rgb(26 26 36 / 0.9);
+  box-shadow: 0 0 0 2px var(--color-primary), 4px 5px 0 rgb(21 20 46 / 0.9);
 }
 
 .sc-card {
   border-width: 2px;
-  box-shadow: 3px 3px 0 rgb(26 26 36 / 0.8);
+  box-shadow: 3px 3px 0 rgb(21 20 46 / 0.8);
 }
 .sc-card:hover {
-  box-shadow: 5px 6px 0 rgb(26 26 36 / 0.9);
+  box-shadow: 5px 6px 0 rgb(21 20 46 / 0.9);
 }
 
 .admin__cats-row,
@@ -178,10 +191,10 @@ h2,
 
 /* Leaderboard homepage: kartu miring ala panel komik. */
 .home__popular-item {
-  box-shadow: 4px 4px 0 rgb(26 26 36 / 0.85);
+  box-shadow: 4px 4px 0 rgb(21 20 46 / 0.85);
 }
 .home__popular-item:hover {
-  box-shadow: 7px 7px 0 rgb(26 26 36 / 0.9);
+  box-shadow: 7px 7px 0 rgb(21 20 46 / 0.9);
 }
 
 /* ------------------------------------------------------------
@@ -219,7 +232,7 @@ textarea {
   text-shadow: 5px 5px 0 var(--color-lemon);
 }
 .home__title em {
-  text-shadow: 5px 5px 0 rgb(26 26 36 / 0.85);
+  text-shadow: 5px 5px 0 rgb(21 20 46 / 0.85);
 }
 
 /* Tagline jadi balon komik dengan ekor. */
@@ -262,7 +275,7 @@ textarea {
   z-index: -1;
   background: repeating-conic-gradient(
     from -12deg at 46% 44%,
-    rgb(255 224 102 / 0.55) 0deg 5deg,
+    rgb(255 197 61 / 0.55) 0deg 5deg,
     transparent 5deg 12deg
   );
   -webkit-mask-image: radial-gradient(closest-side at 46% 44%, #000 25%, transparent 78%);
@@ -284,10 +297,10 @@ textarea {
 
 /* Frame homepage: bayangan offset tipis supaya tetap "canvas tanpa kotak". */
 .home__showcase-frame {
-  box-shadow: 6px 7px 0 rgb(26 26 36 / 0.28);
+  box-shadow: 6px 7px 0 rgb(21 20 46 / 0.28);
 }
 .home__showcase-frame:hover {
-  box-shadow: 8px 10px 0 rgb(26 26 36 / 0.35);
+  box-shadow: 8px 10px 0 rgb(21 20 46 / 0.35);
 }
 
 /* ============================================================
@@ -318,12 +331,12 @@ textarea {
 
 /* ---- Tombol: gradasi permen + kilau gloss di atas outline tinta ---- */
 .btn--primary {
-  background: linear-gradient(180deg, #ffa8cf 0%, var(--color-primary) 55%, var(--color-primary-active) 100%);
-  text-shadow: 0 1px 0 rgb(26 26 36 / 0.25);
+  background: linear-gradient(180deg, #a99bff 0%, var(--color-primary) 55%, var(--color-primary-active) 100%);
+  text-shadow: 0 1px 0 rgb(21 20 46 / 0.25);
 }
 
 .btn--primary:hover:not(:disabled) {
-  background: linear-gradient(180deg, #ffb9da 0%, var(--color-primary-hover) 55%, var(--color-primary-active) 100%);
+  background: linear-gradient(180deg, #b7aeff 0%, var(--color-primary-hover) 55%, var(--color-primary-active) 100%);
 }
 
 /* Kilau gloss ala permen mengkilap — hanya tombol utama. */
@@ -348,8 +361,8 @@ textarea {
 .tpl-cat.is-active,
 .sticker-cat.is-active,
 .cat-chip.is-active {
-  background: linear-gradient(180deg, #ffa8cf 0%, var(--color-primary) 60%, var(--color-primary-active) 100%);
-  text-shadow: 0 1px 0 rgb(26 26 36 / 0.25);
+  background: linear-gradient(180deg, #a99bff 0%, var(--color-primary) 60%, var(--color-primary-active) 100%);
+  text-shadow: 0 1px 0 rgb(21 20 46 / 0.25);
 }
 
 /* Kategori ikut Bubblegum Pop saat aktif (spesifikasi #/frames: chip
@@ -357,9 +370,9 @@ textarea {
 .tpl-cat.is-active,
 .sticker-cat.is-active,
 .cat-chip.is-active {
-  background: linear-gradient(180deg, #ff8fb3 0%, var(--color-primary) 60%, var(--color-primary-active) 100%);
+  background: linear-gradient(180deg, #9c8bff 0%, var(--color-primary) 60%, var(--color-primary-active) 100%);
   color: #fff;
-  text-shadow: 0 1px 0 rgb(26 26 36 / 0.25);
+  text-shadow: 0 1px 0 rgb(21 20 46 / 0.25);
 }
 
 /* ---- Form: fokus candy glow + placeholder rapi ---- */
@@ -368,7 +381,7 @@ select:focus-visible,
 textarea:focus-visible {
   outline: none;
   border-color: var(--color-ink);
-  box-shadow: 0 0 0 3px rgb(255 107 153 / 0.35), 3px 4px 0 var(--color-ink);
+  box-shadow: 0 0 0 3px rgb(255 78 155 / 0.35), 3px 4px 0 var(--color-ink);
 }
 
 ::placeholder { color: var(--color-text-muted); opacity: 1; }
@@ -416,11 +429,14 @@ h3 {
 
 /* ---- Util dekor: SVG tangan dipakai ulang ---- */
 :root {
-  --deco-squiggle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 12' preserveAspectRatio='none'%3E%3Cpath d='M2 7c10-6 18 6 28 0s18 6 28 0 18 6 28 0 18 6 28 0 18 6 28 0 18 6 28 0' fill='none' stroke='%23ff5fa2' stroke-width='3.6' stroke-linecap='round'/%3E%3C/svg%3E");
-  --deco-squiggle-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 12' preserveAspectRatio='none'%3E%3Cpath d='M2 7c10-6 18 6 28 0s18 6 28 0 18 6 28 0 18 6 28 0 18 6 28 0 18 6 28 0' fill='none' stroke='%2333253d' stroke-width='3.6' stroke-linecap='round'/%3E%3C/svg%3E");
-  --deco-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.4l2.5 6.3 6.6.5-5 4.3 1.6 6.4L12 16.4.3 19.9l1.6-6.4-5-4.3 6.6-.5z' fill='%23ffe066' stroke='%2333253d' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E");
-  --deco-spark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3c.9 4.6 3.5 7.2 8 8-4.5.9-7.1 3.5-8 8-.9-4.5-3.5-7.1-8-8 4.5-.8 7.1-3.4 8-8z' fill='%23ff5fa2' stroke='%2333253d' stroke-width='1.3' stroke-linejoin='round'/%3E%3C/svg%3E");
-  --deco-heart: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 20.5C6.5 16.6 3 13.6 3 9.9A4.6 4.6 0 0 1 12 7.4 4.6 4.6 0 0 1 21 9.9c0 3.7-3.5 6.7-9 10.6z' fill='%23b8a4fb' stroke='%2333253d' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --deco-squiggle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 12' preserveAspectRatio='none'%3E%3Cpath d='M2 7c10-6 18 6 28 0s18 6 28 0 18 6 28 0 18 6 28 0 18 6 28 0 18 6 28 0' fill='none' stroke='%23ff4e9b' stroke-width='3.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  --deco-squiggle-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 12' preserveAspectRatio='none'%3E%3Cpath d='M2 7c10-6 18 6 28 0s18 6 28 0 18 6 28 0 18 6 28 0 18 6 28 0 18 6 28 0' fill='none' stroke='%2315142e' stroke-width='3.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  --deco-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.4l2.5 6.3 6.6.5-5 4.3 1.6 6.4L12 16.4.3 19.9l1.6-6.4-5-4.3 6.6-.5z' fill='%23ffc53d' stroke='%2315142e' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --deco-spark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3c.9 4.6 3.5 7.2 8 8-4.5.9-7.1 3.5-8 8-.9-4.5-3.5-7.1-8-8 4.5-.8 7.1-3.4 8-8z' fill='%23ff4e9b' stroke='%2315142e' stroke-width='1.3' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --deco-heart: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 20.5C6.5 16.6 3 13.6 3 9.9A4.6 4.6 0 0 1 12 7.4 4.6 4.6 0 0 1 21 9.9c0 3.7-3.5 6.7-9 10.6z' fill='%23a08aff' stroke='%2315142e' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E");
+  /* Astronomi: planet bercincin & komet — doodle komik buat latar halaman. */
+  --deco-planet: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Cellipse cx='22' cy='22' rx='20' ry='7' fill='none' stroke='%23ffc53d' stroke-width='4' transform='rotate(-22 22 22)'/%3E%3Cellipse cx='22' cy='22' rx='20' ry='7' fill='none' stroke='%2315142e' stroke-width='1.8' transform='rotate(-22 22 22)'/%3E%3Ccircle cx='22' cy='22' r='12' fill='%234f3bea' stroke='%2315142e' stroke-width='2'/%3E%3Cpath d='M12.5 26c5 2.6 14 2.4 19-2' fill='none' stroke='%232fd6c9' stroke-width='2.6' stroke-linecap='round'/%3E%3Ccircle cx='18' cy='17' r='2.6' fill='%23ff4e9b'/%3E%3C/svg%3E");
+  --deco-comet: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52 28'%3E%3Cpath d='M3 24C13 22 24 16 33 5' fill='none' stroke='%232fd6c9' stroke-width='3.4' stroke-linecap='round'/%3E%3Cpath d='M33 5c5 1.4 8.4 4.8 10 10-5.2-1.4-8.6 2-10 7.4-1.4-5.4-4.8-8.8-10-7.4 1.6-5.2 5-8.6 10-10z' fill='%23ffc53d' stroke='%2315142e' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 /* ---- 1. JUDUL HALAMAN — garis spidol tangan di bawah huruf ---- */
@@ -453,7 +469,7 @@ h3 {
 .gallery__title,
 .download__title,
 .admin__title {
-  text-shadow: 3px 3px 0 rgb(255 224 102 / 0.9);
+  text-shadow: 3px 3px 0 rgb(255 197 61 / 0.9);
 }
 
 /* ---- 2. KICKER / LABEL — pil seret + halftone ---- */
@@ -465,7 +481,7 @@ h3 {
 .admin__kicker {
   position: relative;
   overflow: hidden;
-  background-image: radial-gradient(rgb(26 26 36 / 0.08) 1.1px, transparent 1.25px);
+  background-image: radial-gradient(rgb(21 20 46 / 0.08) 1.1px, transparent 1.25px);
   background-size: 9px 9px;
   font-size: var(--text-xs);
   padding: 5px 14px;
@@ -512,7 +528,7 @@ h3 {
 .btn:focus-visible {
   outline: 3px solid var(--color-ink);
   outline-offset: 3px;
-  box-shadow: 0 0 0 6px rgb(255 224 102 / 0.75), 4px 5px 0 var(--color-ink);
+  box-shadow: 0 0 0 6px rgb(255 197 61 / 0.75), 4px 5px 0 var(--color-ink);
 }
 
 /* ---- 4. CHIP AKTIF — pop singkat tiap kali dipilih ---- */
@@ -556,11 +572,11 @@ input[type='range'] {
   border-radius: var(--radius-pill);
   background: repeating-linear-gradient(
     -45deg,
-    rgb(255 107 153 / 0.28) 0 7px,
-    rgb(255 224 102 / 0.45) 7px 14px
+    rgb(255 78 155 / 0.28) 0 7px,
+    rgb(255 197 61 / 0.45) 7px 14px
   );
   cursor: pointer;
-  box-shadow: 2px 3px 0 rgb(26 26 36 / 0.4);
+  box-shadow: 2px 3px 0 rgb(21 20 46 / 0.4);
 }
 
 input[type='range']::-webkit-slider-thumb {
@@ -626,18 +642,18 @@ select {
   height: 24px;
   background: repeating-linear-gradient(
     -45deg,
-    rgb(166 130 255 / 0.75) 0 9px,
-    rgb(184 164 251 / 0.55) 9px 18px
+    rgb(125 92 255 / 0.75) 0 9px,
+    rgb(160 138 255 / 0.55) 9px 18px
   );
-  border-left: 1.5px dashed rgb(26 26 36 / 0.55);
-  border-right: 1.5px dashed rgb(26 26 36 / 0.55);
+  border-left: 1.5px dashed rgb(21 20 46 / 0.55);
+  border-right: 1.5px dashed rgb(21 20 46 / 0.55);
   transform: rotate(-4deg);
   pointer-events: none;
   z-index: 1;
 }
 
-.credit__card::before { right: auto; left: 30px; transform: rotate(3deg); background: repeating-linear-gradient(-45deg, rgb(255 224 102 / 0.9) 0 9px, rgb(255 154 92 / 0.6) 9px 18px); }
-.frame-settings::before { top: -12px; right: 40px; background: repeating-linear-gradient(-45deg, rgb(255 107 153 / 0.7) 0 9px, rgb(255 107 153 / 0.5) 9px 18px); }
+.credit__card::before { right: auto; left: 30px; transform: rotate(3deg); background: repeating-linear-gradient(-45deg, rgb(255 197 61 / 0.9) 0 9px, rgb(255 138 76 / 0.6) 9px 18px); }
+.frame-settings::before { top: -12px; right: 40px; background: repeating-linear-gradient(-45deg, rgb(255 78 155 / 0.7) 0 9px, rgb(255 78 155 / 0.5) 9px 18px); }
 
 /* Halftone di sudut kanan-bawah panel besar. */
 .frame-group::after,
@@ -649,7 +665,7 @@ select {
   bottom: -2px;
   width: 120px;
   height: 90px;
-  background-image: radial-gradient(rgb(26 26 36 / 0.16) 1.3px, transparent 1.5px);
+  background-image: radial-gradient(rgb(21 20 46 / 0.16) 1.3px, transparent 1.5px);
   background-size: 9px 9px;
   -webkit-mask-image: radial-gradient(closest-side at 100% 100%, #000 20%, transparent 85%);
   mask-image: radial-gradient(closest-side at 100% 100%, #000 20%, transparent 85%);
@@ -662,7 +678,7 @@ select {
   background: var(--color-surface);
   border: 2.5px solid var(--color-ink);
   border-radius: var(--radius-xl);
-  box-shadow: 6px 7px 0 rgb(26 26 36 / 0.85);
+  box-shadow: 6px 7px 0 rgb(21 20 46 / 0.85);
   overflow: visible;
 }
 
@@ -706,14 +722,14 @@ select {
   background: var(--color-surface);
   border-width: 2.5px;
   border-radius: var(--radius-pill);
-  box-shadow: 3px 4px 0 rgb(26 26 36 / 0.8);
+  box-shadow: 3px 4px 0 rgb(21 20 46 / 0.8);
   transition: transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out);
 }
 
 .tpl-search__input:hover { background: var(--color-primary-soft); }
 .tpl-search__input:focus {
   transform: translate(-1px, -2px);
-  box-shadow: 5px 6px 0 rgb(26 26 36 / 0.9), 0 0 0 4px rgb(255 224 102 / 0.6);
+  box-shadow: 5px 6px 0 rgb(21 20 46 / 0.9), 0 0 0 4px rgb(255 197 61 / 0.6);
   background: #fff;
 }
 
@@ -756,40 +772,40 @@ select {
 .frame-settings__item {
   background: var(--color-surface);
   border-width: 2px;
-  box-shadow: 3px 4px 0 rgb(26 26 36 / 0.8);
+  box-shadow: 3px 4px 0 rgb(21 20 46 / 0.8);
 }
 
 .frame-settings__item strong { font-family: var(--font-comic); font-weight: 400; font-size: 17px; }
 
 /* ---- 8. HALAMAN LAIN — arsitektur seragam ---- */
-.guide-step { box-shadow: 6px 7px 0 rgb(26 26 36 / 0.85); border-width: 2.5px; }
+.guide-step { box-shadow: 6px 7px 0 rgb(21 20 46 / 0.85); border-width: 2.5px; }
 .guide-step__num { border-width: 2.5px; box-shadow: 2px 3px 0 var(--color-ink); }
-.guide-step__icon { border-width: 2.5px; border-color: var(--color-ink); box-shadow: 3px 4px 0 rgb(26 26 36 / 0.75); }
+.guide-step__icon { border-width: 2.5px; border-color: var(--color-ink); box-shadow: 3px 4px 0 rgb(21 20 46 / 0.75); }
 
 .tip-card { border: 2.5px solid var(--color-ink); background: var(--color-surface); }
 .tip-card:nth-child(odd) { transform: rotate(-0.6deg); }
 .tip-card:nth-child(even) { transform: rotate(0.6deg); }
-.tip-card:hover { transform: rotate(0) translateY(-4px); box-shadow: 6px 7px 0 rgb(26 26 36 / 0.8); }
+.tip-card:hover { transform: rotate(0) translateY(-4px); box-shadow: 6px 7px 0 rgb(21 20 46 / 0.8); }
 
 .guide-flow {
   border: 2.5px solid var(--color-ink);
   background-color: var(--color-surface);
   background-image: var(--pattern-halftone);
   background-size: 10px 10px;
-  box-shadow: 6px 7px 0 rgb(26 26 36 / 0.8);
+  box-shadow: 6px 7px 0 rgb(21 20 46 / 0.8);
 }
 
 .guide-flow__dot { background: var(--color-lemon); box-shadow: 2px 3px 0 var(--color-ink); border-width: 2.5px; }
 .guide-flow__arrow { font-size: 20px; }
 
-.gallery__card { border-width: 2.5px; box-shadow: 5px 6px 0 rgb(26 26 36 / 0.85); }
+.gallery__card { border-width: 2.5px; box-shadow: 5px 6px 0 rgb(21 20 46 / 0.85); }
 .gallery__card:nth-child(3n + 1) { transform: rotate(-0.7deg); }
 .gallery__card:nth-child(3n + 2) { transform: rotate(0.5deg); }
-.gallery__card:hover { transform: rotate(0) translateY(-5px); box-shadow: 7px 9px 0 rgb(26 26 36 / 0.9); }
+.gallery__card:hover { transform: rotate(0) translateY(-5px); box-shadow: 7px 9px 0 rgb(21 20 46 / 0.9); }
 .gallery__card { animation: candy-pop 0.42s var(--ease-out) backwards; }
 
-.credit__card { box-shadow: 6px 7px 0 rgb(26 26 36 / 0.85); border-width: 2.5px; }
-.credit__support { border-width: 2.5px; box-shadow: 6px 7px 0 rgb(26 26 36 / 0.85); }
+.credit__card { box-shadow: 6px 7px 0 rgb(21 20 46 / 0.85); border-width: 2.5px; }
+.credit__support { border-width: 2.5px; box-shadow: 6px 7px 0 rgb(21 20 46 / 0.85); }
 .credit__tech-item { border-width: 2px; border-color: var(--color-ink); font-weight: 900; box-shadow: 2px 2px 0 var(--color-ink); }
 
 /* Baris hasil unduh — ala struk kasir. */
@@ -797,15 +813,15 @@ select {
   background: var(--color-surface);
   border: 2px dashed var(--color-ink);
   border-radius: var(--radius-sm);
-  box-shadow: 3px 4px 0 rgb(26 26 36 / 0.55);
+  box-shadow: 3px 4px 0 rgb(21 20 46 / 0.55);
 }
 
 .download__frame canvas,
-.download__frame > img { border: 3px solid var(--color-ink); box-shadow: 8px 9px 0 rgb(26 26 36 / 0.85); }
+.download__frame > img { border: 3px solid var(--color-ink); box-shadow: 8px 9px 0 rgb(21 20 46 / 0.85); }
 
 .download__panel .panel-card {
   background: var(--color-surface);
-  box-shadow: 7px 8px 0 rgb(26 26 36 / 0.88);
+  box-shadow: 7px 8px 0 rgb(21 20 46 / 0.88);
 }
 
 /* Empty state & skeleton: kertas komik, bukan kotak abu. */
@@ -816,7 +832,7 @@ select {
   background-size: 12px 12px;
   border-color: var(--color-ink);
   border-style: solid;
-  box-shadow: 6px 7px 0 rgb(26 26 36 / 0.7);
+  box-shadow: 6px 7px 0 rgb(21 20 46 / 0.7);
 }
 
 .skeleton { border: 2.5px dashed var(--color-ink); background-color: var(--color-surface); background-image: var(--pattern-halftone); background-size: 10px 10px; }
@@ -824,15 +840,16 @@ select {
 /* ---- 9. HOMEPAGE — doodle latar, band langkah, CTA penutup ---- */
 .home { position: relative; }
 
+/* Doodle astronomi: bintang · planet bercincin · komet · bintang kecil. */
 .home::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: var(--deco-star), var(--deco-spark), var(--deco-heart), var(--deco-star);
+  background-image: var(--deco-planet), var(--deco-comet), var(--deco-star), var(--deco-spark), var(--deco-star);
   background-repeat: no-repeat;
-  background-position: 1% 16%, 99% 34%, 1.5% 64%, 97% 82%;
-  background-size: 34px, 26px, 30px, 22px;
-  opacity: 0.75;
+  background-position: 1% 12%, 97% 26%, 2% 58%, 99% 68%, 96% 92%;
+  background-size: 64px, 66px, 34px, 26px, 24px;
+  opacity: 0.8;
   pointer-events: none;
 }
 
@@ -891,7 +908,7 @@ select {
   font-weight: 400;
   font-size: var(--text-3xl);
   letter-spacing: 0.01em;
-  text-shadow: 4px 4px 0 rgb(255 224 102 / 0.9);
+  text-shadow: 4px 4px 0 rgb(255 197 61 / 0.9);
   margin: 0;
 }
 
@@ -986,7 +1003,7 @@ select {
   font-size: var(--text-3xl);
   letter-spacing: 0.01em;
   margin: 0;
-  text-shadow: 4px 4px 0 #fff, 7px 7px 0 rgb(26 26 36 / 0.35);
+  text-shadow: 4px 4px 0 #fff, 7px 7px 0 rgb(21 20 46 / 0.35);
 }
 
 .home__cta-sub { margin: 0; font-size: var(--text-sm); font-weight: 700; color: var(--color-text-secondary); max-width: 48ch; }
@@ -1004,7 +1021,7 @@ select {
 .sticky-bar {
   background: var(--color-surface);
   border-top: 3px solid var(--color-ink);
-  box-shadow: 0 -5px 0 rgb(26 26 36 / 0.14);
+  box-shadow: 0 -5px 0 rgb(21 20 46 / 0.14);
 }
 
 .sticky-bar::before {
@@ -1069,7 +1086,7 @@ select {
     0 2px 0 var(--color-ink),
     -2px 0 0 var(--color-ink),
     2px 0 0 var(--color-ink),
-    7px 8px 0 rgb(26 26 36 / 0.5);
+    7px 8px 0 rgb(21 20 46 / 0.5);
 }
 
 .lightbox__img { border: 3px solid #fff; box-shadow: 10px 11px 0 rgb(0 0 0 / 0.5); }
@@ -1098,7 +1115,7 @@ select {
   background-color: var(--color-ink);
   background-image: radial-gradient(rgb(255 255 255 / 0.18) 1.1px, transparent 1.25px);
   background-size: 8px 8px;
-  box-shadow: 3px 4px 0 rgb(26 26 36 / 0.55);
+  box-shadow: 3px 4px 0 rgb(21 20 46 / 0.55);
 }
 
 .capture.is-fullview .tpl-preview__badge { padding-left: 20px; }
@@ -1112,7 +1129,7 @@ select {
   background-color: var(--color-surface);
   background-image: var(--pattern-halftone);
   background-size: 13px 13px;
-  box-shadow: 7px 8px 0 rgb(26 26 36 / 0.8);
+  box-shadow: 7px 8px 0 rgb(21 20 46 / 0.8);
   transform: rotate(-0.7deg);
   gap: var(--space-2);
   font-weight: 700;
@@ -1125,7 +1142,7 @@ select {
   font-size: var(--text-xl);
   letter-spacing: 0.02em;
   color: var(--color-text);
-  text-shadow: 3px 3px 0 rgb(255 224 102 / 0.9);
+  text-shadow: 3px 3px 0 rgb(255 197 61 / 0.9);
 }
 
 .tpl-preview__hint:only-child::before {
@@ -1170,23 +1187,25 @@ select {
 body.is-fullview {
   background-color: var(--color-canvas-dark);
   background-image:
-    /* partikel bintang kecil: putih, bubblegum, lavender */
-    radial-gradient(rgb(255 249 251 / 0.55) 1px, transparent 1.3px),
-    radial-gradient(rgb(255 107 153 / 0.4) 1.2px, transparent 1.5px),
-    radial-gradient(rgb(166 130 255 / 0.38) 1.1px, transparent 1.4px),
-    radial-gradient(rgb(255 209 102 / 0.3) 1px, transparent 1.3px),
-    /* dua glow candy lembut di luber halaman */
-    radial-gradient(52rem 36rem at 10% -10%, rgb(255 107 153 / 0.14), transparent 60%),
-    radial-gradient(48rem 34rem at 95% 110%, rgb(166 130 255 / 0.16), transparent 62%);
+    /* bintang: putih · nebula magenta · indigo · solar gold */
+    radial-gradient(rgb(253 253 255 / 0.8) 1px, transparent 1.3px),
+    radial-gradient(rgb(255 78 155 / 0.45) 1.2px, transparent 1.5px),
+    radial-gradient(rgb(125 92 255 / 0.5) 1.1px, transparent 1.4px),
+    radial-gradient(rgb(255 197 61 / 0.4) 1px, transparent 1.3px),
+    /* dua kabut nebula di luber halaman */
+    radial-gradient(52rem 36rem at 10% -10%, rgb(79 59 234 / 0.4), transparent 62%),
+    radial-gradient(48rem 34rem at 95% 110%, rgb(255 78 155 / 0.3), transparent 64%),
+    radial-gradient(40rem 30rem at 78% 8%, rgb(47 214 201 / 0.18), transparent 66%);
   background-size:
     236px 210px,
     320px 264px,
     188px 166px,
     404px 348px,
     auto,
+    auto,
     auto;
   background-attachment: fixed;
-  color: #f6f2ff; /* teks candy langsung di langit gelap */
+  color: #eceaff; /* teks langsung di langit angkasa */
 }
 
 /* Semua UI capture/editor hidup di kartu terang — di sana teks tetap tinta
@@ -1207,7 +1226,7 @@ body.is-fullview .editor__panel {
 /* Tombol jepret di langit gelap: ring putus-putus bubblegum ala cetakan
    komik lawas — kontras di atas Canvas Dark jadi mustahil terlewat. */
 body.is-fullview .camera__shutter {
-  outline: 2.5px dashed rgb(255 107 153 / 0.85);
+  outline: 2.5px dashed rgb(255 78 155 / 0.85);
   outline-offset: 5px;
 }
 
@@ -1215,32 +1234,44 @@ body.is-fullview .camera__shutter {
    14. REDUCED MOTION — hormati preferensi pengguna
    ------------------------------------------------------------ */
 /* ============================================================
-   PASS v8 — AESTHETIC PREMIUM (upgrade "lebih keren & aesthetic")
-   Aurora candy di latar · header kaca berpita gradien pelangi ·
+   PASS v8 — COSMIC PREMIUM (upgrade "astronomi + komik")
+   Langit stardust di latar · header kaca berpita gradien kosmik ·
    kartu melayang (bayangan berlapis: offset tinta + ambient lembut) ·
-   glow berwarna saat hover · kicker gradien · sentuhan micro-interaction.
+   glow berwarna saat hover · kicker gradien · micro-interaction.
    Diimpor paling akhir — menang atas semua pass sebelumnya.
    ============================================================ */
 
-/* ---- 1. LATAR — aurora permen di balik halftone kertas ---- */
+/* ---- 1. LATAR — langit stardust: halftone komik + bintang + nebula ---- */
 html body {
   background-image:
-    radial-gradient(rgb(26 26 36 / 0.075) 1.1px, transparent 1.3px),
-    radial-gradient(rgb(255 107 153 / 0.18) 1.7px, transparent 1.9px),
-    radial-gradient(54rem 38rem at 6% -10%, rgb(255 107 153 / 0.17), transparent 62%),
-    radial-gradient(48rem 36rem at 106% 6%, rgb(166 130 255 / 0.17), transparent 60%),
-    radial-gradient(44rem 34rem at 52% 114%, rgb(78 204 163 / 0.15), transparent 60%),
-    radial-gradient(30rem 24rem at 86% 58%, rgb(255 209 102 / 0.13), transparent 65%);
-  background-size: 18px 18px, 18px 18px, auto, auto, auto, auto;
-  background-position: 0 0, 9px 9px, 0 0, 0 0, 0 0, 0 0;
+    /* halftone tinta */
+    radial-gradient(rgb(21 20 46 / 0.075) 1.1px, transparent 1.3px),
+    /* bintang stardust: tinta · indigo · nebula magenta · solar gold */
+    radial-gradient(rgb(21 20 46 / 0.26) 1px, transparent 1.4px),
+    radial-gradient(rgb(79 59 234 / 0.3) 1.5px, transparent 1.9px),
+    radial-gradient(rgb(255 78 155 / 0.26) 1.7px, transparent 2.1px),
+    radial-gradient(rgb(255 197 61 / 0.3) 1.2px, transparent 1.6px),
+    /* kabut nebula */
+    radial-gradient(54rem 38rem at 6% -10%, rgb(79 59 234 / 0.16), transparent 62%),
+    radial-gradient(48rem 36rem at 106% 6%, rgb(255 78 155 / 0.15), transparent 60%),
+    radial-gradient(44rem 34rem at 52% 114%, rgb(47 214 201 / 0.16), transparent 60%),
+    radial-gradient(30rem 24rem at 86% 58%, rgb(255 197 61 / 0.13), transparent 65%);
+  background-size: 18px 18px, 36px 36px, 92px 92px, 138px 138px, 182px 182px, auto, auto, auto, auto;
+  background-position: 0 0, 11px 14px, 24px 42px, 62px 16px, 7px 78px, 0 0, 0 0, 0 0, 0 0;
 }
 
 /* ---- 2. HEADER — kaca premium + pita gradien pelangi yang mengalir ---- */
 .site-header {
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.92) 0%, rgb(255 249 251 / 0.74) 100%);
+  background:
+    radial-gradient(1.3px 1.3px at 22px 13px, rgb(79 59 234 / 0.4) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 74px 24px, rgb(255 78 155 / 0.34) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 132px 11px, rgb(255 197 61 / 0.45) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 196px 27px, rgb(47 214 201 / 0.4) 50%, transparent 51%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.93) 0%, rgb(240 242 255 / 0.78) 100%);
+  background-size: 240px 40px, 240px 40px, 240px 40px, 240px 40px, auto;
   backdrop-filter: blur(18px) saturate(1.6);
   -webkit-backdrop-filter: blur(18px) saturate(1.6);
-  box-shadow: 0 14px 30px -20px rgb(26 26 36 / 0.5);
+  box-shadow: 0 14px 30px -20px rgb(21 20 46 / 0.5);
 }
 
 .site-header::before {
@@ -1264,27 +1295,27 @@ html body {
 /* ---- 3. BRAND & IKON AKSI — mark gradien + glow lembut ---- */
 .brand-mark {
   background: var(--grad-pop);
-  box-shadow: 3px 3px 0 var(--color-ink), 0 10px 18px -8px rgb(255 107 153 / 0.95);
+  box-shadow: 3px 3px 0 var(--color-ink), 0 10px 18px -8px rgb(255 78 155 / 0.95);
 }
 
-.icon-btn { background: linear-gradient(180deg, #ffffff 0%, #fff6fa 100%); }
+.icon-btn { background: linear-gradient(180deg, #ffffff 0%, #f7f7ff 100%); }
 .icon-btn:hover {
-  box-shadow: 5px 6px 0 var(--color-ink), 0 12px 20px -12px rgb(166 130 255 / 0.85);
+  box-shadow: 5px 6px 0 var(--color-ink), 0 12px 20px -12px rgb(125 92 255 / 0.85);
 }
 
 /* ---- 4. NAVIGASI — hover gradien + glow pink ---- */
 .site-nav__link:hover {
   background: linear-gradient(180deg, #ffffff 0%, var(--color-primary-soft) 100%);
-  box-shadow: 5px 6px 0 var(--color-ink), 0 12px 20px -12px rgb(255 107 153 / 0.75);
+  box-shadow: 5px 6px 0 var(--color-ink), 0 12px 20px -12px rgb(255 78 155 / 0.75);
 }
 
 /* ---- 5. TOMBOL — offset tinta + glow permen, CTA utama makin "hidup" ---- */
 .btn {
-  box-shadow: 4px 5px 0 var(--color-ink), 0 14px 24px -14px rgb(26 26 36 / 0.6);
+  box-shadow: 4px 5px 0 var(--color-ink), 0 14px 24px -14px rgb(21 20 46 / 0.6);
 }
 
 .btn:hover:not(:disabled) {
-  box-shadow: 6px 8px 0 var(--color-ink), 0 22px 32px -14px rgb(26 26 36 / 0.55);
+  box-shadow: 6px 8px 0 var(--color-ink), 0 22px 32px -14px rgb(21 20 46 / 0.55);
 }
 
 .btn:active:not(:disabled) {
@@ -1298,15 +1329,15 @@ html body {
 
 .btn--ghost:hover:not(:disabled),
 .btn--secondary:hover:not(:disabled) {
-  box-shadow: 6px 8px 0 var(--color-ink), 0 18px 28px -14px rgb(166 130 255 / 0.6);
+  box-shadow: 6px 8px 0 var(--color-ink), 0 18px 28px -14px rgb(125 92 255 / 0.6);
 }
 
 .btn--primary {
-  box-shadow: 4px 5px 0 var(--color-ink), 0 16px 28px -12px rgb(255 107 153 / 0.95);
+  box-shadow: 4px 5px 0 var(--color-ink), 0 16px 28px -12px rgb(255 78 155 / 0.95);
 }
 
 .btn--primary:hover:not(:disabled) {
-  box-shadow: 6px 8px 0 var(--color-ink), 0 24px 36px -12px rgb(255 107 153 / 1);
+  box-shadow: 6px 8px 0 var(--color-ink), 0 24px 36px -12px rgb(255 78 155 / 1);
   filter: saturate(1.07);
 }
 
@@ -1318,7 +1349,7 @@ html body {
 .admin__slot-chip:hover,
 .sc-shape:hover,
 .slot-filter__btn:hover {
-  box-shadow: 5px 6px 0 var(--color-ink), 0 14px 22px -14px rgb(166 130 255 / 0.85);
+  box-shadow: 5px 6px 0 var(--color-ink), 0 14px 22px -14px rgb(125 92 255 / 0.85);
 }
 
 .chip.is-active,
@@ -1327,28 +1358,28 @@ html body {
 .cat-chip.is-active,
 .slot-filter__btn.is-active,
 .segmented__btn.is-active {
-  box-shadow: 4px 5px 0 var(--color-ink), 0 14px 26px -10px rgb(255 107 153 / 0.95);
+  box-shadow: 4px 5px 0 var(--color-ink), 0 14px 26px -10px rgb(255 78 155 / 0.95);
 }
 
 /* ---- 7. KARTU MELAYANG — offset tinta + bayangan ambient lembut ---- */
 .panel-card {
-  box-shadow: 7px 8px 0 rgb(26 26 36 / 0.9), 0 32px 52px -32px rgb(26 26 36 / 0.55);
+  box-shadow: 7px 8px 0 rgb(21 20 46 / 0.9), 0 32px 52px -32px rgb(21 20 46 / 0.55);
 }
 
 .feature-card {
-  box-shadow: 6px 7px 0 var(--color-ink), 0 30px 48px -30px rgb(26 26 36 / 0.55);
+  box-shadow: 6px 7px 0 var(--color-ink), 0 30px 48px -30px rgb(21 20 46 / 0.55);
 }
 
 .feature-card:hover {
-  box-shadow: 9px 11px 0 var(--color-ink), 0 42px 60px -32px rgb(26 26 36 / 0.6);
+  box-shadow: 9px 11px 0 var(--color-ink), 0 42px 60px -32px rgb(21 20 46 / 0.6);
 }
 
 .frame-group {
-  box-shadow: 6px 7px 0 rgb(26 26 36 / 0.85), 0 30px 48px -30px rgb(26 26 36 / 0.55);
+  box-shadow: 6px 7px 0 rgb(21 20 46 / 0.85), 0 30px 48px -30px rgb(21 20 46 / 0.55);
 }
 
 .guide-step {
-  box-shadow: 6px 7px 0 rgb(26 26 36 / 0.85), 0 28px 46px -30px rgb(26 26 36 / 0.55);
+  box-shadow: 6px 7px 0 rgb(21 20 46 / 0.85), 0 28px 46px -30px rgb(21 20 46 / 0.55);
 }
 
 .guide-flow,
@@ -1359,24 +1390,24 @@ html body {
 .gallery__empty,
 .frame-settings,
 .tip-card {
-  box-shadow: 6px 7px 0 rgb(26 26 36 / 0.82), 0 28px 46px -30px rgb(26 26 36 / 0.5);
+  box-shadow: 6px 7px 0 rgb(21 20 46 / 0.82), 0 28px 46px -30px rgb(21 20 46 / 0.5);
 }
 
 .tip-card:hover {
-  box-shadow: 6px 7px 0 rgb(26 26 36 / 0.85), 0 34px 50px -30px rgb(26 26 36 / 0.55);
+  box-shadow: 6px 7px 0 rgb(21 20 46 / 0.85), 0 34px 50px -30px rgb(21 20 46 / 0.55);
 }
 
 .gallery__card {
-  box-shadow: 5px 6px 0 rgb(26 26 36 / 0.85), 0 26px 44px -28px rgb(26 26 36 / 0.55);
+  box-shadow: 5px 6px 0 rgb(21 20 46 / 0.85), 0 26px 44px -28px rgb(21 20 46 / 0.55);
 }
 
 .gallery__card:hover {
-  box-shadow: 7px 9px 0 rgb(26 26 36 / 0.9), 0 38px 56px -30px rgb(26 26 36 / 0.6);
+  box-shadow: 7px 9px 0 rgb(21 20 46 / 0.9), 0 38px 56px -30px rgb(21 20 46 / 0.6);
 }
 
 .devlogin__card {
-  box-shadow: 7px 8px 0 rgb(26 26 36 / 0.9), 0 38px 64px -32px rgb(166 130 255 / 0.55),
-    0 22px 44px -30px rgb(255 107 153 / 0.5);
+  box-shadow: 7px 8px 0 rgb(21 20 46 / 0.9), 0 38px 64px -32px rgb(125 92 255 / 0.55),
+    0 22px 44px -30px rgb(255 78 155 / 0.5);
 }
 
 .modal {
@@ -1384,40 +1415,40 @@ html body {
 }
 
 .toast {
-  box-shadow: 5px 5px 0 var(--color-ink), 0 24px 40px -22px rgb(26 26 36 / 0.6);
+  box-shadow: 5px 5px 0 var(--color-ink), 0 24px 40px -22px rgb(21 20 46 / 0.6);
 }
 
 .music-widget {
-  box-shadow: 5px 6px 0 var(--color-ink), 0 22px 38px -20px rgb(26 26 36 / 0.6);
+  box-shadow: 5px 6px 0 var(--color-ink), 0 22px 38px -20px rgb(21 20 46 / 0.6);
 }
 
 .download__panel .panel-card {
-  box-shadow: 7px 8px 0 rgb(26 26 36 / 0.88), 0 32px 52px -32px rgb(26 26 36 / 0.55);
+  box-shadow: 7px 8px 0 rgb(21 20 46 / 0.88), 0 32px 52px -32px rgb(21 20 46 / 0.55);
 }
 
 .download__frame canvas,
 .download__frame > img {
-  box-shadow: 8px 9px 0 rgb(26 26 36 / 0.85), 0 36px 60px -32px rgb(26 26 36 / 0.6);
+  box-shadow: 8px 9px 0 rgb(21 20 46 / 0.85), 0 36px 60px -32px rgb(21 20 46 / 0.6);
 }
 
 .home__popular-item {
-  box-shadow: 4px 4px 0 rgb(26 26 36 / 0.85), 0 20px 34px -24px rgb(26 26 36 / 0.55);
+  box-shadow: 4px 4px 0 rgb(21 20 46 / 0.85), 0 20px 34px -24px rgb(21 20 46 / 0.55);
 }
 
 .home__popular-item:hover {
-  box-shadow: 7px 7px 0 rgb(26 26 36 / 0.9), 0 30px 44px -26px rgb(26 26 36 / 0.6);
+  box-shadow: 7px 7px 0 rgb(21 20 46 / 0.9), 0 30px 44px -26px rgb(21 20 46 / 0.6);
 }
 
 .home__cta {
-  box-shadow: 9px 10px 0 var(--color-ink), 0 40px 66px -34px rgb(166 130 255 / 0.55);
+  box-shadow: 9px 10px 0 var(--color-ink), 0 40px 66px -34px rgb(125 92 255 / 0.55);
 }
 
 .sc-card {
-  box-shadow: 3px 3px 0 rgb(26 26 36 / 0.8), 0 18px 32px -22px rgb(26 26 36 / 0.5);
+  box-shadow: 3px 3px 0 rgb(21 20 46 / 0.8), 0 18px 32px -22px rgb(21 20 46 / 0.5);
 }
 
 .sc-card:hover {
-  box-shadow: 5px 6px 0 rgb(26 26 36 / 0.9), 0 26px 40px -24px rgb(26 26 36 / 0.55);
+  box-shadow: 5px 6px 0 rgb(21 20 46 / 0.9), 0 26px 40px -24px rgb(21 20 46 / 0.55);
 }
 
 /* ---- 8. KICKER / PIL LABEL — gradien permen + halftone di atasnya ---- */
@@ -1425,10 +1456,10 @@ html body {
 .home__popular-kicker,
 .section-head__kicker {
   background-color: transparent;
-  background-image: radial-gradient(rgb(26 26 36 / 0.1) 1.1px, transparent 1.25px), var(--grad-sunrise);
+  background-image: radial-gradient(rgb(21 20 46 / 0.1) 1.1px, transparent 1.25px), var(--grad-sunrise);
   background-size: 9px 9px, auto;
   color: var(--color-ink);
-  box-shadow: 3px 4px 0 var(--color-ink), 0 12px 20px -12px rgb(255 154 92 / 0.95);
+  box-shadow: 3px 4px 0 var(--color-ink), 0 12px 20px -12px rgb(255 138 76 / 0.95);
 }
 
 /* Kicker admin = <p> block di dalam div biasa — rapatkan jadi pill
@@ -1446,10 +1477,10 @@ html body {
 .home__kicker,
 .devlogin__kicker {
   background-color: transparent;
-  background-image: radial-gradient(rgb(26 26 36 / 0.1) 1.1px, transparent 1.25px), var(--grad-pop);
+  background-image: radial-gradient(rgb(21 20 46 / 0.1) 1.1px, transparent 1.25px), var(--grad-pop);
   background-size: 9px 9px, auto;
   color: var(--color-ink);
-  box-shadow: 3px 4px 0 var(--color-ink), 0 12px 20px -12px rgb(255 107 153 / 0.6);
+  box-shadow: 3px 4px 0 var(--color-ink), 0 12px 20px -12px rgb(255 78 155 / 0.6);
 }
 
 /* ---- 9. JUDUL — offset tinta + glow lembut di bawahnya ---- */
@@ -1458,30 +1489,30 @@ html body {
 .gallery__title,
 .download__title,
 .admin__title {
-  text-shadow: 3px 3px 0 rgb(255 224 102 / 0.95), 0 18px 32px rgb(166 130 255 / 0.3);
+  text-shadow: 3px 3px 0 rgb(255 197 61 / 0.95), 0 18px 32px rgb(125 92 255 / 0.3);
 }
 
 .section-head__title {
-  text-shadow: 4px 4px 0 rgb(255 224 102 / 0.95), 0 20px 34px rgb(255 107 153 / 0.3);
+  text-shadow: 4px 4px 0 rgb(255 197 61 / 0.95), 0 20px 34px rgb(255 78 155 / 0.3);
 }
 
 .home__title {
-  text-shadow: 5px 5px 0 var(--color-lemon), 0 24px 40px rgb(166 130 255 / 0.35);
+  text-shadow: 5px 5px 0 var(--color-lemon), 0 24px 40px rgb(125 92 255 / 0.35);
 }
 
 .home__title em {
-  text-shadow: 5px 5px 0 rgb(26 26 36 / 0.85), 0 24px 40px rgb(255 107 153 / 0.4);
+  text-shadow: 5px 5px 0 rgb(21 20 46 / 0.85), 0 24px 40px rgb(255 78 155 / 0.4);
 }
 
 .home__cta-title {
-  text-shadow: 4px 4px 0 #fff, 7px 7px 0 rgb(26 26 36 / 0.35), 0 22px 38px rgb(255 107 153 / 0.35);
+  text-shadow: 4px 4px 0 #fff, 7px 7px 0 rgb(21 20 46 / 0.35), 0 22px 38px rgb(255 78 155 / 0.35);
 }
 
 /* ---- 10. FORM — cincin fokus dua warna (pink + lavender) ---- */
 input:not([type='checkbox']):not([type='radio']):not([type='range']):focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  box-shadow: 0 0 0 3px rgb(255 107 153 / 0.4), 0 0 0 6px rgb(166 130 255 / 0.24),
+  box-shadow: 0 0 0 3px rgb(255 78 155 / 0.4), 0 0 0 6px rgb(125 92 255 / 0.24),
     3px 4px 0 var(--color-ink);
 }
 
@@ -1493,18 +1524,18 @@ textarea:focus-visible {
 .devlogin__badge {
   background: var(--grad-pop);
   color: #fff;
-  box-shadow: 3px 4px 0 var(--color-ink), 0 12px 22px -10px rgb(255 107 153 / 0.9);
+  box-shadow: 3px 4px 0 var(--color-ink), 0 12px 22px -10px rgb(255 78 155 / 0.9);
 }
 
 .devlogin__badge svg { stroke: currentColor; }
 
 /* ---- 12. FOOTER — gradasi lembut + pita pelangi berjalan ---- */
 .site-footer {
-  background: linear-gradient(180deg, var(--color-surface) 0%, #fff5f9 55%, #fdeef7 100%);
+  background: linear-gradient(180deg, var(--color-surface) 0%, #f7f8ff 55%, #eceeff 100%);
 }
 
 .site-footer__ticker {
-  background: linear-gradient(90deg, #ffd166, #ff9a5c, #ff6b99, #a682ff, #ff6b99);
+  background: linear-gradient(90deg, #ffc53d, #ff8a4c, #ff4e9b, #4f3bea, #2fd6c9);
   background-size: 200% 100%;
   animation: candy-ribbon 12s linear infinite;
 }
@@ -1548,11 +1579,11 @@ textarea:focus-visible {
   background: var(--grad-pop);
   color: #fff;
   border: 2px solid var(--color-ink);
-  box-shadow: 3px 4px 0 var(--color-ink), 0 14px 24px -12px rgb(255 107 153 / 0.85);
+  box-shadow: 3px 4px 0 var(--color-ink), 0 14px 24px -12px rgb(255 78 155 / 0.85);
 }
 
 .admin__head-actions [data-act='toggle-upload']:hover {
-  box-shadow: 5px 6px 0 var(--color-ink), 0 18px 30px -12px rgb(255 107 153 / 0.95);
+  box-shadow: 5px 6px 0 var(--color-ink), 0 18px 30px -12px rgb(255 78 155 / 0.95);
 }
 
 /* ---- Bentuk showcase aktif: lencana centang pelangi di pojok kartu ---- */
@@ -1574,7 +1605,7 @@ textarea:focus-visible {
   background: var(--grad-pop);
   border: 1.5px solid var(--color-ink);
   border-radius: 50%;
-  box-shadow: 1px 2px 0 rgb(26 26 36 / 0.7);
+  box-shadow: 1px 2px 0 rgb(21 20 46 / 0.7);
 }
 
 /* ---- Chip koneksi server di gerbang developer ---- */
@@ -1591,7 +1622,7 @@ textarea:focus-visible {
   font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.02em;
-  box-shadow: 2px 3px 0 rgb(26 26 36 / 0.8);
+  box-shadow: 2px 3px 0 rgb(21 20 46 / 0.8);
 }
 
 .devlogin__conn-dot {
@@ -1599,7 +1630,7 @@ textarea:focus-visible {
   height: 8px;
   border-radius: 50%;
   background: var(--color-text-muted);
-  box-shadow: 0 0 0 3px rgb(26 26 36 / 0.12);
+  box-shadow: 0 0 0 3px rgb(21 20 46 / 0.12);
   flex-shrink: 0;
 }
 
@@ -1609,10 +1640,10 @@ textarea:focus-visible {
   box-shadow: 0 0 0 3px rgb(22 163 74 / 0.22);
 }
 
-.devlogin__conn.is-off { background: #ffebf0; }
+.devlogin__conn.is-off { background: #ffe8ec; }
 .devlogin__conn.is-off .devlogin__conn-dot {
-  background: var(--color-primary, #ff6b99);
-  box-shadow: 0 0 0 3px rgb(255 107 153 / 0.25);
+  background: var(--color-primary, #4f3bea);
+  box-shadow: 0 0 0 3px rgb(255 78 155 / 0.25);
 }
 
 /* ---- Aurora permen lembut di belakang kartu gerbang developer ---- */
@@ -1637,14 +1668,14 @@ textarea:focus-visible {
 .devlogin::before {
   top: 4%;
   left: 6%;
-  background: radial-gradient(circle, rgb(255 107 153 / 0.85), transparent 70%);
+  background: radial-gradient(circle, rgb(255 78 155 / 0.85), transparent 70%);
   animation: devlogin-drift-a 16s ease-in-out infinite alternate;
 }
 
 .devlogin::after {
   bottom: 6%;
   right: 6%;
-  background: radial-gradient(circle, rgb(166 130 255 / 0.9), transparent 70%);
+  background: radial-gradient(circle, rgb(125 92 255 / 0.9), transparent 70%);
   animation: devlogin-drift-b 19s ease-in-out infinite alternate;
 }
 

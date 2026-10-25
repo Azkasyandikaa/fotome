@@ -61,7 +61,7 @@
   max-width: 100%;
   max-height: 100%;
   border-radius: 10px;
-  box-shadow: 0 10px 24px rgb(255 107 153 / 0.18), 0 0 24px rgba(255, 158, 195, 0.3);
+  box-shadow: 0 10px 24px rgb(255 78 155 / 0.18), 0 0 24px rgba(255, 110, 175, 0.32);
   touch-action: none;
   cursor: grab;
 }
@@ -198,7 +198,7 @@
 
 .pen-color.is-active {
   transform: scale(1.2);
-  box-shadow: 0 0 0 3px var(--red-soft), 0 6px 14px rgb(255 107 153 / 0.3);
+  box-shadow: 0 0 0 3px var(--red-soft), 0 6px 14px rgb(255 78 155 / 0.3);
 }
 
 .pen-size { flex: 1; min-width: 70px; }
