@@ -1,0 +1,29 @@
+{
+  "name": "mother day4",
+  "category": "Mother day",
+  "categories": [
+    "Mother day"
+  ],
+  "photoSlots": [
+    {
+      "photoIndex": 0,
+      "x": 52,
+      "y": 259,
+      "width": 531,
+      "height": 731
+    },
+    {
+      "photoIndex": 1,
+      "x": 53,
+      "y": 976,
+      "width": 534,
+      "height": 843
+    }
+  ],
+  "description": "Drop-in frame dari public/booth/templates.",
+  "canvas": {
+    "width": 640,
+    "height": 1920
+  },
+  "background": "#fffdf8"
+}
