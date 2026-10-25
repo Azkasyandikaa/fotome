@@ -43,7 +43,7 @@ const FEATURES: FeatureCard[] = [
   {
     icon: ICON_FRAME,
     title: 'Pilih frame',
-    text: 'Ratusan bingkai 1–5 slot, lengkap dengan kategori & settingan otomatisnya.',
+    text: 'Ratusan bingkai 1–5 slot, lengkap dengan kategori masing-masing.',
     cta: 'Buka pilihan frame',
     href: '/frames',
     accent: 'pink',
