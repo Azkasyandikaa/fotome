@@ -1,0 +1,36 @@
+{
+  "name": "ramadhan3",
+  "category": "Ramadhan",
+  "categories": [
+    "Ramadhan"
+  ],
+  "photoSlots": [
+    {
+      "photoIndex": 0,
+      "x": 56,
+      "y": 450,
+      "width": 530,
+      "height": 481
+    },
+    {
+      "photoIndex": 1,
+      "x": 51,
+      "y": 918,
+      "width": 533,
+      "height": 463
+    },
+    {
+      "photoIndex": 2,
+      "x": 54,
+      "y": 1369,
+      "width": 530,
+      "height": 465
+    }
+  ],
+  "description": "Drop-in frame dari public/booth/templates.",
+  "canvas": {
+    "width": 640,
+    "height": 1920
+  },
+  "background": "#fffdf8"
+}

@@ -1091,15 +1091,17 @@ select {
 
 .lightbox__img { border: 3px solid #fff; box-shadow: 10px 11px 0 rgb(0 0 0 / 0.5); }
 
-.music-widget {
+.music-widget__card {
   border-width: 2.5px;
   border-color: var(--color-ink);
   background: var(--color-surface);
   box-shadow: 5px 6px 0 var(--color-ink);
 }
 
-.music-widget__btn { border: 2.5px solid var(--color-ink); box-shadow: 2px 3px 0 var(--color-ink); }
+.music-widget__disc { border: 2.5px solid var(--color-ink); box-shadow: 3px 4px 0 var(--color-ink); }
+.music-widget__prev,
 .music-widget__next { border-width: 2px; border-color: var(--color-ink); }
+.music-widget__close { border-width: 2px; border-color: var(--color-ink); }
 
 .modal__header { border-bottom: 2.5px solid var(--color-ink); background: var(--color-primary-soft); }
 .modal__footer { border-top: 2.5px dashed var(--color-ink); background: var(--color-surface-muted); }
@@ -1118,7 +1120,9 @@ select {
   box-shadow: 3px 4px 0 rgb(21 20 46 / 0.55);
 }
 
-.capture.is-fullview .tpl-preview__badge { padding-left: 20px; }
+/* Pita badge PREVIEW membentang ke kiri — chip coming-soon ikut bendungan
+   flex di tengah, jadi dikecualikan dari padding pita. */
+.capture.is-fullview .tpl-preview__badge:not(.tpl-preview__badge--soon) { padding-left: 20px; }
 
 /* Keadaan kosong preview: panel komik besar, bukan satu baris teks tipis. */
 .tpl-preview__hint:only-child {
@@ -1418,7 +1422,7 @@ html body {
   box-shadow: 5px 5px 0 var(--color-ink), 0 24px 40px -22px rgb(21 20 46 / 0.6);
 }
 
-.music-widget {
+.music-widget__card {
   box-shadow: 5px 6px 0 var(--color-ink), 0 22px 38px -20px rgb(21 20 46 / 0.6);
 }
 

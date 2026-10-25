@@ -1,0 +1,36 @@
+{
+  "name": "merry christmas1",
+  "category": "Merry christmas",
+  "categories": [
+    "Merry christmas"
+  ],
+  "photoSlots": [
+    {
+      "photoIndex": 0,
+      "x": 45,
+      "y": 258,
+      "width": 551,
+      "height": 454
+    },
+    {
+      "photoIndex": 1,
+      "x": 53,
+      "y": 684,
+      "width": 530,
+      "height": 443
+    },
+    {
+      "photoIndex": 2,
+      "x": 50,
+      "y": 1135,
+      "width": 547,
+      "height": 469
+    }
+  ],
+  "description": "Drop-in frame dari public/booth/templates.",
+  "canvas": {
+    "width": 640,
+    "height": 1920
+  },
+  "background": "#fffdf8"
+}

@@ -18,6 +18,10 @@ export interface MusicStatus {
   index: number;
   total: number;
   title: string;
+  /** Posisi pemutaran (detik) — untuk progress bar player. */
+  time: number;
+  /** Durasi lagu berjalan (detik), 0 kalau belum diketahui. */
+  duration: number;
 }
 
 type StatusListener = (s: MusicStatus) => void;
@@ -46,6 +50,8 @@ function status(): MusicStatus {
     index,
     total: tracks.length,
     title: tracks[index]?.title ?? '',
+    time: audio && Number.isFinite(audio.currentTime) ? audio.currentTime : 0,
+    duration: audio && Number.isFinite(audio.duration) ? audio.duration : 0,
   };
 }
 
@@ -56,6 +62,10 @@ function emit(): void {
 
 function nextIndex(): number {
   return tracks.length ? (index + 1) % tracks.length : 0;
+}
+
+function prevIndex(): number {
+  return tracks.length ? (index - 1 + tracks.length) % tracks.length : 0;
 }
 
 function playCurrent(): void {
@@ -70,9 +80,11 @@ function playCurrent(): void {
 
 function loadTrack(i: number, autoplay: boolean): void {
   if (!audio || !tracks.length) return;
-  const t = tracks[index] ?? tracks[0];
-  if (!t) return;
+  // Index DULU, baru ambil lagunya — kalau tidak, src yang terpasang adalah
+  // lagu LAMA (index sebelum digeser) dan tombol skip terasa tidak bekerja.
   index = ((i % tracks.length) + tracks.length) % tracks.length;
+  const t = tracks[index];
+  if (!t) return;
   audio.src = t.src;
   audio.load();
   if (autoplay) playCurrent();
@@ -146,6 +158,10 @@ export async function initMusic(): Promise<void> {
   audio.addEventListener('ended', onEnded);
   audio.addEventListener('play', emit);
   audio.addEventListener('pause', emit);
+  // Progress bar: timeupdate ~4x/detik — cukup halus untuk UI, murah untuk DOM.
+  audio.addEventListener('timeupdate', emit);
+  // Durasi baru diketahui setelah metadata lagu termuat.
+  audio.addEventListener('loadedmetadata', emit);
 
   // Restart from the first track — kept simple and predictable.
   loadTrack(0, false);
@@ -181,6 +197,32 @@ export function skipMusic(): void {
   unlocked = true;
   persist(true);
   loadTrack(nextIndex(), true);
+}
+
+/**
+ * Mundur satu lagu. Kalau lagu sudah jalan > 3 detik, perlakukan sebagai
+ * "ulang dari awal" — perilaku standar tombol prev di player musik.
+ */
+export function prevMusic(): void {
+  if (!audio || !tracks.length) return;
+  wantPlay = true;
+  unlocked = true;
+  persist(true);
+  if (audio.currentTime > 3 || index === 0) {
+    audio.currentTime = 0;
+    playCurrent();
+    return;
+  }
+  loadTrack(prevIndex(), true);
+}
+
+/** Seek ke posisi tertentu (detik) — dipakai progress bar player. */
+export function seekMusic(seconds: number): void {
+  if (!audio || !tracks.length) return;
+  const dur = Number.isFinite(audio.duration) ? audio.duration : 0;
+  if (dur <= 0) return;
+  audio.currentTime = Math.min(Math.max(0, seconds), dur);
+  emit();
 }
 
 export function musicTitle(): string {

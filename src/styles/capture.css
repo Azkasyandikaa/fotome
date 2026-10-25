@@ -322,15 +322,39 @@
 
 .tpl-preview__card {
   background: var(--color-surface);
-  border: 1.5px solid var(--color-border-strong);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-card);
+  background-image: var(--pattern-halftone-ink);
+  background-size: 9px 9px;
+  border: var(--line-comic);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-comic);
   padding: 16px 16px 14px;
   display: grid;
   justify-items: center;
   gap: 12px;
   max-width: min(100%, 520px);
   position: relative;
+}
+
+/* Pita gradien kosmik di tepi kartu — cetakan komik yang meleset register. */
+.tpl-preview__card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 7px;
+  background: var(--grad-rainbow);
+  border-bottom: 2px solid var(--color-ink);
+  border-radius: calc(var(--radius-xl) - 3px) calc(var(--radius-xl) - 3px) 0 0;
+  pointer-events: none;
+}
+
+/* Baris badge: PREVIEW + chip "slot yang belum punya contoh foto". */
+.tpl-preview__badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
 }
 
 .tpl-preview__hint {
@@ -352,6 +376,21 @@
   color: #fff;
   border-color: var(--ink);
   box-shadow: var(--shadow-card);
+}
+
+/* Catatan slot tanpa contoh foto — pil putus-putus, tenang tapi kebaca.
+   (Kalimat pembuka hint tetap tersembunyi di mode fullview, pil ini tidak.) */
+.tpl-preview__hint-soon {
+  max-width: 56ch;
+  padding: 5px 14px;
+  border: 2px dashed var(--color-ink);
+  border-radius: var(--radius-pill);
+  background: var(--color-warning-soft);
+  color: var(--color-text);
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.45;
+  box-shadow: var(--shadow-xs);
 }
 
 .tpl-preview__hint em {
@@ -377,26 +416,103 @@
 
 .tpl-preview__badge.is-demo { background: var(--grad-pink); box-shadow: var(--shadow-card); }
 
+/* Chip "slot 4–5 · coming soon" — pita gradien matahari yang berkedip
+   pelan, tegas berbeda dari badge PREVIEW di sebelahnya. */
+.tpl-preview__badge--soon {
+  font-family: var(--font-comic);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--color-ink);
+  background: var(--grad-sunrise);
+  border: 2px dashed var(--color-ink);
+  box-shadow: var(--shadow-offset-lemon);
+  animation: soon-chip 2.6s ease-in-out infinite;
+}
+
+@keyframes soon-chip {
+  50% { transform: translateY(-2px) rotate(-1.2deg); }
+}
+
+/* ---- Panggung preview: ETALASE SOROT ----------------------------------
+   Kartu putih di belakang frame kini punya "jendela" yang terlihat sengaja:
+   latar gradien indigo→violet (bukan kotak hitam bolong), sorot lampu radial
+   tepat di belakang frame, bintang halus, dan bingkai dalam putus-putus plus
+   tanda sudut jendela bidik — frame terlihat dipajang, bukan tertanam lubang. */
 .tpl-preview__stage {
+  position: relative;
   width: 100%;
   height: min(64dvh, 620px);
   display: grid;
   place-items: center;
-  /* film-strip peg holes on the left, printed on paper */
+  isolation: isolate;
+  background-color: var(--color-canvas-dark);
   background-image:
-    repeating-linear-gradient(to bottom, transparent 0 10px, rgba(15, 14, 23, 0.1) 10px 22px, transparent 22px 34px);
-  background-size: 14px 100%;
-  background-repeat: no-repeat;
-  background-position: left center;
-  border-radius: 10px;
+    /* sorot lampu dari atas — pusatnya menempel di posisi frame */
+    radial-gradient(58% 46% at 50% 38%, rgb(143 179 255 / 0.3), transparent 72%),
+    radial-gradient(90% 70% at 50% 108%, rgb(255 78 155 / 0.26), transparent 70%),
+    /* bintang halus 3 ukuran/warna */
+    radial-gradient(1.6px 1.6px at 16% 24%, rgb(255 255 255 / 0.85) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 78% 16%, rgb(255 197 61 / 0.9) 50%, transparent 51%),
+    radial-gradient(1.7px 1.7px at 86% 68%, rgb(143 179 255 / 0.85) 50%, transparent 51%),
+    /* halftone komik tipis biar permukaannya "bermaterial", bukan ruang hampa */
+    radial-gradient(rgb(255 255 255 / 0.08) 1.1px, transparent 1.3px),
+    /* gradien dasar etalase */
+    linear-gradient(158deg, #1a1550 0%, #0b0f2c 52%, #2a1150 100%);
+  background-size:
+    auto,
+    auto,
+    150px 130px,
+    190px 170px,
+    210px 190px,
+    14px 14px,
+    auto;
+  border: 2px solid var(--color-ink);
+  border-radius: var(--radius-md);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.1),
+    inset 0 20px 46px -28px rgb(0 0 0 / 0.95);
+}
+
+/* Bingkai dalam putus-putus + tanda sudut: menegaskan ini jendela pajangan.
+   z-index -1 + isolation: isolate di stage → dekorasi di ATAS latar tapi di
+   BELAKANG kanvas frame (tidak pernah menimpa foto preview). */
+.tpl-preview__stage::before {
+  content: '';
+  position: absolute;
+  inset: 9px;
+  border: 2px dashed rgb(255 255 255 / 0.24);
+  border-radius: calc(var(--radius-md) - 4px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Empat tanda sudut ala jendela bidik — dua sudut per pseudo-element. */
+.tpl-preview__stage::after {
+  content: '';
+  position: absolute;
+  inset: 9px;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--color-lemon), var(--color-lemon)) top left / 22px 3px no-repeat,
+    linear-gradient(var(--color-lemon), var(--color-lemon)) top left / 3px 22px no-repeat,
+    linear-gradient(var(--color-lemon), var(--color-lemon)) top right / 22px 3px no-repeat,
+    linear-gradient(var(--color-lemon), var(--color-lemon)) top right / 3px 22px no-repeat,
+    linear-gradient(var(--color-lemon), var(--color-lemon)) bottom left / 22px 3px no-repeat,
+    linear-gradient(var(--color-lemon), var(--color-lemon)) bottom left / 3px 22px no-repeat,
+    linear-gradient(var(--color-lemon), var(--color-lemon)) bottom right / 22px 3px no-repeat,
+    linear-gradient(var(--color-lemon), var(--color-lemon)) bottom right / 3px 22px no-repeat;
+  z-index: -1;
 }
 
 .tpl-preview__canvas {
   max-width: 100%;
   max-height: 100%;
   border-radius: 10px;
-  border: 1.5px solid var(--color-border-strong);
-  box-shadow: var(--shadow-card);
+  border: 3px solid var(--color-ink);
+  box-shadow:
+    0 0 0 2px rgb(255 255 255 / 0.88),
+    var(--shadow-card),
+    0 0 46px -10px rgb(79 59 234 / 0.95);
 }
 
 .tpl-preview__meta { color: var(--ink-2); font-size: 13.5px; text-align: center; max-width: 46ch; }
@@ -493,19 +609,19 @@
    berada di dalam viewport (halaman tidak bisa di-scroll). */
 .capture.is-fullview .camera { flex: 1; min-height: 0; height: 100%; justify-content: flex-start; }
 
-/* Fullview: kamera mengisi SEMUA ruang tersisa, tapi bentuknya POTRET
-   3:4 — tinggi diambil dari sisa kolom, lebar ikut rasio (bukan stretch)
-   biar hasil jepretan mendekati frame potret dan tidak ke-crop lagi.
-   max-width tetap jadi pengaman supaya tidak pernah melebar jadi lanskap. */
+/* Fullview: kamera mengisi SEMUA ruang tersisa. Tinggi = sisa kolom (sudah
+   pas), LEBAR ikut rasio 5:4 supaya tidak terasa sempit — bukan stretch,
+   jadi proporsinya stabil di segala tinggi layar. max-width 640px tetap jadi
+   pengaman supaya tidak pernah melebar jadi lanskap lebar. */
 .capture.is-fullview .camera__stage {
   flex: 1 1 0;
   min-height: 240px;
   min-width: 260px;
   height: auto;
   width: auto;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 5 / 4;
   align-self: center;
-  max-width: min(560px, 100%);
+  max-width: min(640px, 100%);
   margin-inline: auto;
 }
 

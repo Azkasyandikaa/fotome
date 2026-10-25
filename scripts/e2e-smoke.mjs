@@ -398,15 +398,16 @@ try {
   );
   check('camera preview has rounded frame', parseFloat(previewRadius) > 0, previewRadius);
 
-  // Ukuran kamera: harus elemen terbesar di layar foto (desktop) —
-  // kini POTRET tinggi (rasio ±3:4, lebar dibatasi), bukan lanskap lebar.
+  // Ukuran kamera: elemen terbesar di layar foto (desktop) — kini LEBAR 5:4
+  // (cap 640px): tinggi tetap penuh, lebar naik dari cap 560 → 640 biar
+  // tidak sempit. HP tetap potret 3:4 (aturan media query terpisah).
   const stageBox = await evalJs(
     "JSON.stringify({ w: Math.round(document.querySelector('.camera__stage').getBoundingClientRect().width), h: Math.round(document.querySelector('.camera__stage').getBoundingClientRect().height), vw: innerWidth })",
   );
   const parsedStage = JSON.parse(stageBox);
   check(
-    'camera stage is tall & narrow (portrait) on desktop',
-    parsedStage.h >= 420 && parsedStage.h > parsedStage.w * 1.2 && parsedStage.w <= 560,
+    'camera stage is wide (5:4, capped 640px) on desktop',
+    parsedStage.h >= 420 && parsedStage.w <= 640 && parsedStage.w >= 520,
     stageBox,
   );
 

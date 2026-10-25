@@ -2743,69 +2743,191 @@ body.is-party::before {
 
 .lightbox__acts { display: flex; gap: var(--space-2); flex-shrink: 0; }
 
-/* ---- 21. Widget musik + modal upload galeri ------------------------ */
+/* ---- 21. Widget musik (disc → kartu player) + modal upload galeri ------ */
+/* Kontainer KOSONG di pojok kanan-bawah — semua chrome ada di dalam disc /
+   kartu, jadi saat kolap yang terlihat hanya piringan hitam bulat. */
 .music-widget {
   position: fixed;
   right: 14px;
   bottom: 14px;
   z-index: 60;
   display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 6px 8px 6px 15px;
-  background: var(--color-surface);
-  border: 1.5px solid var(--color-border-strong);
-  border-radius: var(--radius-pill);
-  box-shadow: var(--shadow-pop);
+  align-items: flex-end;
+  gap: 12px;
 }
 
-.music-widget__label {
-  max-width: 34vw;
+/* Kartu player: tersembunyi sampai disc dipencet (is-open). */
+.music-widget__card {
+  width: min(320px, calc(100vw - 108px));
+  display: grid;
+  gap: 11px;
+  padding: 13px 14px 15px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-pop);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(14px) scale(0.94);
+  transform-origin: bottom right;
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    transform var(--duration-normal) var(--spring),
+    visibility 0s linear var(--duration-normal);
+}
+
+.music-widget.is-open .music-widget__card {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    transform var(--duration-normal) var(--spring),
+    visibility 0s;
+}
+
+.music-widget__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.music-widget__art {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-canvas-dark);
+  border: 1.5px solid var(--color-ink);
+  overflow: hidden;
+}
+
+.music-widget__meta {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.music-widget__title {
+  font-size: var(--text-sm);
+  font-weight: 800;
+  line-height: 1.25;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: var(--text-xs);
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  color: var(--color-text-secondary);
 }
 
-.music-widget__btn {
-  width: 42px;
-  height: 42px;
+.music-widget__sub {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.music-widget__close {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
   display: grid;
   place-items: center;
   padding: 0;
-  border: 1.5px solid var(--color-ink);
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: 50%;
+  background: var(--color-surface-muted);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+}
+
+.music-widget__close:hover {
+  background: var(--color-accent-soft);
+  color: var(--color-danger);
+  transform: rotate(90deg);
+}
+
+/* Progress: waktu · bar · waktu */
+.music-widget__progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.music-widget__t-now,
+.music-widget__t-dur {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  min-width: 34px;
+}
+
+.music-widget__t-now { text-align: right; }
+.music-widget__t-dur { text-align: left; }
+
+.music-widget__bar {
+  position: relative;
+  flex: 1;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-muted);
+  border: 1.5px solid var(--color-border-strong);
+  cursor: pointer;
+  touch-action: none;
+  overflow: visible;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.music-widget__bar:hover { transform: scaleY(1.35); }
+
+.music-widget__bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  border-radius: var(--radius-pill);
+  background: var(--grad-pop);
+  pointer-events: none;
+}
+
+.music-widget__knob {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
   background: var(--color-primary);
-  cursor: pointer;
-  transition: transform var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1.5px var(--color-ink);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out), left var(--duration-fast) linear;
+  pointer-events: none;
 }
 
-.music-widget__btn:hover { background: var(--color-primary-hover); transform: scale(1.05); }
-.music-widget__btn:active { transform: scale(0.94); }
+.music-widget__bar-fill + .music-widget__knob { left: 0; }
+.music-widget.is-playing .music-widget__knob,
+.music-widget__bar:hover .music-widget__knob { opacity: 1; }
 
-.music-widget__disc {
-  position: relative;
-  display: block;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 50% 50%, var(--color-lemon) 0 3.5px, transparent 4px),
-    repeating-radial-gradient(circle at 50% 50%, #3d2f47 0 2px, #554266 2px 3.5px);
+/* Kontrol: prev · play (besar, gradien) · next */
+.music-widget__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
 }
 
-.music-widget__disc i { display: none; }
-
-.music-widget__btn.is-playing .music-widget__disc { animation: disc-spin 3.6s linear infinite; }
-
-@keyframes disc-spin { to { transform: rotate(360deg); } }
-
+.music-widget__prev,
 .music-widget__next {
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
   padding: 0;
@@ -2813,18 +2935,126 @@ body.is-party::before {
   border-radius: 50%;
   background: var(--color-surface);
   color: var(--color-text);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1;
   cursor: pointer;
   transition: background var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
 }
 
-.music-widget__next:hover { background: var(--color-primary-soft); transform: translateX(2px); }
+.music-widget__prev:hover,
+.music-widget__next:hover {
+  background: var(--color-primary-soft);
+  transform: scale(1.1);
+}
 
-/* Sticky bar (HP) ada di bawah — piringan hitam naik di atasnya. */
+.music-widget__play {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 2px solid var(--color-ink);
+  border-radius: 50%;
+  background: var(--grad-pop);
+  color: #fff;
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgb(79 59 234 / 0.4);
+  transition: transform var(--duration-fast) var(--ease-out), filter var(--duration-fast) var(--ease-out);
+}
+
+.music-widget__play:hover { transform: scale(1.08); filter: brightness(1.08); }
+.music-widget__play:active { transform: scale(0.94); }
+
+/* ---- Piringan hitam (bentuk awal) ---- */
+.music-widget__disc {
+  position: relative;
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 2px solid var(--color-ink);
+  border-radius: 50%;
+  background: var(--color-canvas-dark);
+  cursor: pointer;
+  box-shadow: var(--shadow-pop);
+  transition: transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.music-widget__disc:hover { transform: scale(1.08); }
+.music-widget__disc:active { transform: scale(0.94); }
+
+/* Wajah vinyl: alur putar + label tengah. */
+.music-widget__disc-face {
+  position: relative;
+  display: block;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, var(--color-lemon) 0 4px, transparent 4.5px),
+    radial-gradient(circle at 50% 50%, transparent 0 9px, rgb(255 255 255 / 0.22) 9px 10.5px, transparent 11px),
+    repeating-radial-gradient(circle at 50% 50%, #232042 0 2px, #3a3560 2px 3.5px);
+}
+
+.music-widget__disc-face i {
+  position: absolute;
+  inset: 0;
+  display: none;
+}
+
+/* Not musik kecil yang berdenyut pelan saat diam, hilang saat berputar. */
+.music-widget__disc-note {
+  position: absolute;
+  top: 5px;
+  right: 7px;
+  font-size: 13px;
+  color: var(--color-lemon);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.6);
+  animation: note-bob 1.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes note-bob {
+  0%, 100% { transform: translateY(0) rotate(-8deg); }
+  50% { transform: translateY(-3px) rotate(8deg); }
+}
+
+/* Piringan berputar saat musik jalan; not-nya ikut sembunyi (sudah "nyala"). */
+.music-widget.is-playing .music-widget__disc-face,
+.music-widget.is-playing .music-widget__disc--art {
+  animation: disc-spin 3.6s linear infinite;
+}
+
+.music-widget.is-playing .music-widget__disc-note { animation: none; opacity: 0; }
+
+@keyframes disc-spin { to { transform: rotate(360deg); } }
+
+/* Disc di dalam kartu: wajah vinyl kecil yang ikut berputar. */
+.music-widget__disc--art {
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, var(--color-lemon) 0 3px, transparent 3.5px),
+    repeating-radial-gradient(circle at 50% 50%, #232042 0 2px, #3a3560 2px 3.5px);
+  /* Bukan tombol: batalkan efek tombol disc yang diwarisi. */
+  cursor: default;
+  box-shadow: none;
+  border-width: 1.5px;
+}
+
+.music-widget__disc--art:hover,
+.music-widget__disc--art:active { transform: none; }
+
+.music-widget__disc--art i { display: none; }
+
+/* Sticky bar (HP) ada di bawah — widget naik di atasnya. */
 @media (max-width: 767px) {
   .music-widget { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); right: 10px; }
-  .music-widget__label { max-width: 30vw; }
 }
 
 .dl-drive { display: grid; gap: var(--space-4); }
