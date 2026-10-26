@@ -85,6 +85,16 @@
   overflow-y: auto;
 }
 
+/* CTA unduh: panel kanan panjang & discroll — tombolnya di-sticky di bawah
+   supaya "Lanjut ke Unduh" tidak pernah tenggelam di bawah layar. */
+.editor__next {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  background: var(--grad-pink);
+  box-shadow: 0 -10px 18px -12px rgb(21 20 46 / 0.45);
+}
+
 /* ---- Panel head (judul + info frame) ---- */
 .editor__panel-head {
   display: grid;

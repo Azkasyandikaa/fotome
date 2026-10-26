@@ -1,0 +1,43 @@
+{
+  "name": "back to school2",
+  "category": "Back to school",
+  "categories": [
+    "Back to school"
+  ],
+  "photoSlots": [
+    {
+      "photoIndex": 0,
+      "x": 62,
+      "y": 311,
+      "width": 527,
+      "height": 407
+    },
+    {
+      "photoIndex": 1,
+      "x": 55,
+      "y": 700,
+      "width": 547,
+      "height": 418
+    },
+    {
+      "photoIndex": 2,
+      "x": 55,
+      "y": 1104,
+      "width": 556,
+      "height": 399
+    },
+    {
+      "photoIndex": 3,
+      "x": 57,
+      "y": 1490,
+      "width": 534,
+      "height": 405
+    }
+  ],
+  "description": "Drop-in frame dari public/booth/templates.",
+  "canvas": {
+    "width": 640,
+    "height": 1920
+  },
+  "background": "#fffdf8"
+}

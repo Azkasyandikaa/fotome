@@ -1,0 +1,43 @@
+{
+  "name": "graduation1",
+  "photoSlots": [
+    {
+      "photoIndex": 0,
+      "x": 146,
+      "y": 117,
+      "width": 494,
+      "height": 382
+    },
+    {
+      "photoIndex": 1,
+      "x": 142,
+      "y": 528,
+      "width": 498,
+      "height": 372
+    },
+    {
+      "photoIndex": 2,
+      "x": 137,
+      "y": 908,
+      "width": 503,
+      "height": 417
+    },
+    {
+      "photoIndex": 3,
+      "x": 147,
+      "y": 1324,
+      "width": 493,
+      "height": 390
+    }
+  ],
+  "category": "Graduation",
+  "categories": [
+    "Graduation"
+  ],
+  "description": "Drop-in frame dari public/booth/templates.",
+  "canvas": {
+    "width": 640,
+    "height": 1920
+  },
+  "background": "#fffdf8"
+}

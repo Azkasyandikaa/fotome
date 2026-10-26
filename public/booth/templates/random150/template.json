@@ -1,0 +1,32 @@
+{
+  "name": "Random 150",
+  "photoSlots": [
+    {
+      "photoIndex": 0,
+      "x": 179,
+      "y": 119,
+      "width": 287,
+      "height": 447
+    },
+    {
+      "photoIndex": 1,
+      "x": 179,
+      "y": 710,
+      "width": 288,
+      "height": 447
+    },
+    {
+      "photoIndex": 2,
+      "x": 179,
+      "y": 1299,
+      "width": 287,
+      "height": 447
+    }
+  ],
+  "description": "Drop-in frame dari public/booth/templates.",
+  "canvas": {
+    "width": 640,
+    "height": 1920
+  },
+  "background": "#fffdf8"
+}

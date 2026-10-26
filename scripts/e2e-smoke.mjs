@@ -321,12 +321,20 @@ try {
   );
   check('frame settings panel reports the shot count', /foto/.test(JSON.parse(frameSettings).shots ?? ''), frameSettings);
 
-  // Filter slot tanpa frame → pesan kosong yang jelas, lalu kembali.
+  // Filter slot 5 foto — sekarang ADA frame 5 slot (batch Random), jadi yang
+  // dites adalah hasilnya tampil; kalau suatu saat kosong, pesan kosongnya.
   await evalJs("document.querySelector('[data-slotfilter] [data-slots=\"5\"]').click()");
   await sleep(300);
-  const emptyTitle = await textOf('.empty-state__title');
-  check('5-slot filter explains there is no such frame yet', /Belum ada frame dengan 5 slot/.test(emptyTitle ?? ''), emptyTitle);
-  await evalJs("document.querySelector('[data-resetfilter]')?.click()");
+  const fiveCount = await evalJs("document.querySelectorAll('.template-card').length");
+  const fiveEmpty = await textOf('.empty-state__title');
+  check(
+    '5-slot filter lists the 5-photo frames (or an honest empty state)',
+    fiveCount > 0 || /Belum ada frame dengan 5 slot/.test(fiveEmpty ?? ''),
+    `cards=${fiveCount} empty="${fiveEmpty}"`,
+  );
+  await evalJs(
+    "(() => { const r = document.querySelector('[data-resetfilter]'); if (r) r.click(); else document.querySelector('[data-slotfilter] [data-slots=\"all\"]').click(); return true; })()",
+  );
   await sleep(300);
 
   const privacyGone = await evalJs("document.querySelector('.home__privacy') === null");
@@ -398,16 +406,19 @@ try {
   );
   check('camera preview has rounded frame', parseFloat(previewRadius) > 0, previewRadius);
 
-  // Ukuran kamera: elemen terbesar di layar foto (desktop) — kini LEBAR 5:4
-  // (cap 640px): tinggi tetap penuh, lebar naik dari cap 560 → 640 biar
-  // tidak sempit. HP tetap potret 3:4 (aturan media query terpisah).
+  // Ukuran kamera: stage dan kartu filter memakai SATU kolom booth (cap
+  // 760px) — lebarnya harus sama persis, jadi kamera tidak pernah lebih
+  // sempit dari dock filternya. HP tetap potret 3:4 (media query terpisah).
   const stageBox = await evalJs(
-    "JSON.stringify({ w: Math.round(document.querySelector('.camera__stage').getBoundingClientRect().width), h: Math.round(document.querySelector('.camera__stage').getBoundingClientRect().height), vw: innerWidth })",
+    "JSON.stringify({ w: Math.round(document.querySelector('.camera__stage').getBoundingClientRect().width), h: Math.round(document.querySelector('.camera__stage').getBoundingClientRect().height), dock: Math.round(document.querySelector('.camera__dock').getBoundingClientRect().width), vw: innerWidth })",
   );
   const parsedStage = JSON.parse(stageBox);
   check(
-    'camera stage is wide (5:4, capped 640px) on desktop',
-    parsedStage.h >= 420 && parsedStage.w <= 640 && parsedStage.w >= 520,
+    'camera stage is wide and exactly as wide as the filter card (cap 760px)',
+    parsedStage.h >= 420 &&
+      parsedStage.w <= 760 &&
+      parsedStage.w >= 520 &&
+      parsedStage.w === parsedStage.dock,
     stageBox,
   );
 
@@ -506,6 +517,35 @@ try {
   const nextLabel = await textOf('[data-ed="download"]');
   check('editor primary CTA copy', nextLabel === 'Lanjut ke Unduh', `"${nextLabel}"`);
 
+  // Di layar pendek panel kanan jauh lebih panjang dari viewport — CTA unduh
+  // harus tetap nempel (sticky) di bawah panel, bukan tenggelam di bawah.
+  await send('Emulation.setDeviceMetricsOverride', {
+    width: 1440,
+    height: 760,
+    deviceScaleFactor: 1,
+    mobile: false,
+  });
+  await sleep(400);
+  const ctaPinned = await evalJs(`(() => {
+    const panel = document.querySelector('.editor__panel');
+    const btn = document.querySelector('[data-ed="download"]');
+    if (!panel || !btn) return false;
+    panel.scrollTop = Math.round(panel.scrollHeight / 2);
+    const r = btn.getBoundingClientRect();
+    const p = panel.getBoundingClientRect();
+    const visible = r.height > 0 && r.bottom <= p.bottom + 1 && r.top >= p.top - 1;
+    panel.scrollTop = 0;
+    return visible;
+  })()`);
+  check('editor download CTA stays pinned while the tool panel scrolls', ctaPinned === true);
+  await send('Emulation.setDeviceMetricsOverride', {
+    width: 1440,
+    height: 1200,
+    deviceScaleFactor: 1,
+    mobile: false,
+  });
+  await sleep(400);
+
   // Add a sticker through the sticker picker, then undo/redo.
   await waitFor(
     "document.querySelectorAll('.editor__stickers .sticker-btn').length > 0",
@@ -584,14 +624,20 @@ try {
   );
   const dlPrompt = await textOf('.dl-modal__prompt');
   check('…with the admin pitch below it', /kirim fotonya ke admin/i.test(dlPrompt ?? ''), dlPrompt);
-  const adminBtn = await evalJs(
-    "Array.from(document.querySelectorAll('.dl-modal a')).some((a) => (a.getAttribute('href') || '').includes('wa.me'))",
+  const adminLinks = await evalJs(
+    "JSON.stringify(Array.from(document.querySelectorAll('.dl-modal a')).map((a) => ({ href: a.getAttribute('href') || '', target: a.getAttribute('target') || '' })))",
   );
-  check('WhatsApp link stays inactive until admin.chatUrl is configured', adminBtn === false);
-  const disabledYes = await evalJs(
-    "document.querySelector('.dl-modal .btn--primary')?.disabled === true",
+  const parsedAdminLinks = JSON.parse(adminLinks);
+  const waLink = parsedAdminLinks.find((a) => a.href.includes('wa.me'));
+  check(
+    'success popup links to WhatsApp (admin.chatUrl) with a prefilled message',
+    Boolean(waLink) && waLink.target === '_blank' && waLink.href.includes('text='),
+    adminLinks,
   );
-  check('…the "Ya, kirim ke admin" button shows but is disabled', disabledYes === true);
+  const yesDisabled = await evalJs(
+    "document.querySelector('.dl-modal .btn--primary')?.hasAttribute('disabled') ?? true",
+  );
+  check('…the "Ya, kirim ke admin" button is live (not disabled)', yesDisabled === false);
   await shot('06b-download-success-modal.png');
   await evalJs("document.querySelector('.dl-modal [data-close]').click()");
   await sleep(400);

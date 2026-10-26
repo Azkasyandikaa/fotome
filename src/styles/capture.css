@@ -672,22 +672,31 @@
 /* Fullview: kamera selalu terlihat utuh — stage mengecil bila perlu.
    PENTING: stage yang fleksibel, bukan tombol — shutter harus selalu
    berada di dalam viewport (halaman tidak bisa di-scroll). */
-.capture.is-fullview .camera { flex: 1; min-height: 0; height: 100%; justify-content: flex-start; }
+/* Lebar bersama: stage kamera, dock filter, dan baris kontrol memakai kolom
+   yang SAMA — jadi kamera tidak pernah lebih sempit dari kartu filter di
+   bawahnya, dan tidak ada lagi sisa ruang kosong besar di kanan stage. */
+.capture.is-fullview .camera {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  justify-content: flex-start;
+  width: min(760px, 100%);
+  margin-inline: auto;
+}
 
-/* Fullview: kamera mengisi SEMUA ruang tersisa. Tinggi = sisa kolom (sudah
-   pas), LEBAR ikut rasio 5:4 supaya tidak terasa sempit — bukan stretch,
-   jadi proporsinya stabil di segala tinggi layar. max-width 640px tetap jadi
-   pengaman supaya tidak pernah melebar jadi lanskap lebar. */
+/* Fullview: kamera mengisi SEMUA ruang tersisa — LEBAR = kolom booth
+   (sama persis dengan dock filter di bawahnya), TINGGI jatuh ke sisa tinggi
+   layar. Rasio preview selalu mengikut kotak terakhir, jadi hasil jepretan
+   tetap 100% sama dengan yang terlihat di layar (WYSIWYG). */
 .capture.is-fullview .camera__stage {
   flex: 1 1 0;
   min-height: 240px;
   min-width: 260px;
   height: auto;
-  width: auto;
-  aspect-ratio: 5 / 4;
-  align-self: center;
-  max-width: min(640px, 100%);
-  margin-inline: auto;
+  width: 100%;
+  align-self: stretch;
+  max-width: none;
+  margin-inline: 0;
 }
 
 .capture.is-fullview .camera__dock { margin-top: 6px; flex-shrink: 0; }
@@ -830,13 +839,14 @@
 .camera__dock {
   position: relative;
   margin: 8px auto 0;
-  /* Selaras dengan lebar maksimum stage kamera — panel kontrol ikut
-     kolom potret, bukan melebar jauh lebih lebar dari kameranya. */
-  max-width: min(560px, 100%);
+  /* Selaras dengan lebar stage kamera (keduanya memakai kolom booth yang
+     sama) — kartu filter dan kamera kelihatan sebagai satu ketukan rapi. */
+  width: 100%;
+  max-width: min(760px, 100%);
   z-index: 3;
   background: var(--color-surface);
   border: 1px solid var(--color-border-strong);
-  border-radius: 16px;
+  border-radius: var(--radius);
   box-shadow: var(--shadow-card);
   padding: 6px;
 }
@@ -1001,13 +1011,26 @@
   color: var(--paper-2);
 }
 
-/* Shutter controls */
+/* Shutter controls — grid 3 kolom (1fr auto 1fr) supaya tombol jepret
+   selalu PAS di tengah kolom booth, seimbang dengan tombol kiri/kanannya. */
 .camera__controls {
-  display: flex;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: center;
+  gap: 16px;
+  /* Kolom kontrol sengaja dirapatkan — tombol kiri/kanan tetap dekat
+     shutter, cuma shutter-nya yang selalu pas di tengah kolom booth. */
+  width: min(400px, 100%);
+  margin-inline: auto;
 }
+
+.camera__controls-side {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.camera__controls-side--end { justify-content: flex-end; }
 
 .camera__side-btn--timer[aria-pressed='true'] {
   background: var(--red-soft);

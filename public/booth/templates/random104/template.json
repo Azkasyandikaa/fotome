@@ -1,0 +1,39 @@
+{
+  "name": "Random 104",
+  "photoSlots": [
+    {
+      "photoIndex": 0,
+      "x": 92,
+      "y": 46,
+      "width": 456,
+      "height": 466
+    },
+    {
+      "photoIndex": 1,
+      "x": 92,
+      "y": 562,
+      "width": 456,
+      "height": 459
+    },
+    {
+      "photoIndex": 2,
+      "x": 92,
+      "y": 1071,
+      "width": 456,
+      "height": 459
+    },
+    {
+      "photoIndex": 3,
+      "x": 92,
+      "y": 1580,
+      "width": 456,
+      "height": 328
+    }
+  ],
+  "description": "Drop-in frame dari public/booth/templates.",
+  "canvas": {
+    "width": 640,
+    "height": 1920
+  },
+  "background": "#fffdf8"
+}

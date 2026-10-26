@@ -104,11 +104,15 @@ export class Camera {
           </div>
         </div>
         <div class="camera__controls">
-          <button type="button" class="camera__side-btn" data-act="retake-shot" aria-label="Ulangi foto ini" title="Ulangi foto ini" hidden>↺</button>
+          <div class="camera__controls-side">
+            <button type="button" class="camera__side-btn" data-act="retake-shot" aria-label="Ulangi foto ini" title="Ulangi foto ini" hidden>↺</button>
+            <button type="button" class="camera__side-btn" data-act="mirror" aria-label="Mode cermin" aria-pressed="true" title="Mode cermin">⇋</button>
+            <button type="button" class="camera__side-btn camera__side-btn--timer" data-act="timer" aria-label="Timer countdown" aria-pressed="false" title="Timer countdown">⏱</button>
+          </div>
           <button type="button" class="camera__shutter" data-act="capture" aria-label="Ambil satu foto"><span></span></button>
-          <button type="button" class="camera__side-btn" data-act="mirror" aria-label="Mode cermin" aria-pressed="true" title="Mode cermin">⇋</button>
-          <button type="button" class="camera__side-btn camera__side-btn--timer" data-act="timer" aria-label="Timer countdown" aria-pressed="false" title="Timer countdown">⏱</button>
-          <button type="button" class="camera__side-btn" data-act="dock" aria-label="Panel filter" title="Panel filter">🎛</button>
+          <div class="camera__controls-side camera__controls-side--end">
+            <button type="button" class="camera__side-btn" data-act="dock" aria-label="Panel filter" title="Panel filter">🎛</button>
+          </div>
         </div>
         <div class="camera__review" hidden>
           <button type="button" class="btn btn--ghost" data-act="retake-all">MULAI ULANG</button>
