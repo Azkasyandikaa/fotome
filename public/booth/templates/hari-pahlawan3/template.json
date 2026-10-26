@@ -1,0 +1,30 @@
+{
+  "name": "hari pahlawan3",
+  "category": "Hari pahlawan",
+  "categories": [
+    "Hari pahlawan"
+  ],
+  "photoSlots": [
+    {
+      "photoIndex": 0,
+      "x": 90,
+      "y": 100,
+      "width": 900,
+      "height": 551
+    },
+    {
+      "photoIndex": 1,
+      "x": 90,
+      "y": 684,
+      "width": 900,
+      "height": 551
+    },
+    {
+      "photoIndex": 2,
+      "x": 90,
+      "y": 1268,
+      "width": 900,
+      "height": 551
+    }
+  ]
+}

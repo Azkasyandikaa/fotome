@@ -93,8 +93,29 @@ export function createTemplatePicker(host: HTMLElement, onPick: (t: TemplateDef)
       (t) => slotFilter === 'all' || t.engine.photoSlots.length === slotFilter,
     );
     if (list.length === 0) {
-      cards.innerHTML =
-        '<p class="tpl-empty">Tidak ada frame yang cocok.<br /><small>Taruh folder baru di <code>public/booth/templates/</code> lalu refresh.</small></p>';
+      // Bukan instruksi teknis (folder/refresh) — pengunjung cukup dikasih
+      // tahu frame-nya menyusul, plus cara balikin tampilan normal.
+      cards.innerHTML = `
+        <div class="tpl-empty tpl-empty--soon">
+          <span class="tpl-empty__spark" aria-hidden="true">✦</span>
+          <strong class="tpl-empty__soon">Coming soon</strong>
+          <small class="tpl-empty__note">Belum ada frame yang cocok — frame baru lagi disiapkan.</small>
+          <button type="button" class="btn btn--secondary btn--sm" data-showall>Tampilkan semua</button>
+        </div>
+      `;
+      cards.querySelector('[data-showall]')?.addEventListener('click', () => {
+        query = '';
+        category = 'all';
+        slotFilter = 'all';
+        if (searchInput) searchInput.value = '';
+        slotRow.querySelectorAll<HTMLButtonElement>('.tpl-slotfilter__btn').forEach((x) => {
+          const on = x.dataset.slots === 'all';
+          x.classList.toggle('is-active', on);
+          x.setAttribute('aria-checked', String(on));
+        });
+        renderCategories();
+        renderCards();
+      });
       return;
     }
     const selectedId = store.get('selectedTemplateId');

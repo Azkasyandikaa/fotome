@@ -286,6 +286,71 @@
   border-radius: 4px;
 }
 
+/* Empty state "coming soon" — kartu komik, bukan teks teknis ke developer. */
+.tpl-empty--soon {
+  grid-column: 1 / -1;
+  display: grid;
+  justify-items: center;
+  /* Baris kartu ikut meregang mengisi tinggi panel — kumpulkan isinya di
+     tengah supaya tidak ada jeda kosong besar antar teks. */
+  align-content: center;
+  gap: 10px;
+  text-align: center;
+  padding: 26px 16px 22px;
+  background: var(--color-surface);
+  background-image: var(--pattern-halftone-ink);
+  background-size: 9px 9px;
+  border: var(--line-comic);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-comic);
+  animation: soon-pop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.tpl-empty__spark {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--grad-pink);
+  border: var(--line-comic);
+  font-size: 20px;
+  color: var(--color-ink);
+  animation: soon-spin 3.2s ease-in-out infinite;
+}
+
+.tpl-empty__soon {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.tpl-empty__note {
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 34ch;
+}
+
+.tpl-empty--soon .btn { margin-top: 6px; }
+
+@keyframes soon-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes soon-spin {
+  0%, 100% { transform: rotate(-12deg) scale(1); }
+  50% { transform: rotate(12deg) scale(1.08); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tpl-empty--soon,
+  .tpl-empty__spark { animation: none; }
+}
+
 .strip-pick { display: flex; flex-direction: column; gap: 12px; }
 
 /* ---- Fase 1: preview besar (kanan) ---- */

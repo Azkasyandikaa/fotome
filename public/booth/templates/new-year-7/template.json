@@ -1,0 +1,27 @@
+{
+  "name": "new year 7",
+  "category": "",
+  "categories": [],
+  "photoSlots": [
+    {
+      "photoIndex": 0,
+      "x": 57,
+      "y": 56,
+      "width": 545,
+      "height": 597
+    },
+    {
+      "photoIndex": 1,
+      "x": 53,
+      "y": 651,
+      "width": 544,
+      "height": 613
+    }
+  ],
+  "description": "Drop-in frame dari public/booth/templates.",
+  "canvas": {
+    "width": 640,
+    "height": 1920
+  },
+  "background": "#fffdf8"
+}

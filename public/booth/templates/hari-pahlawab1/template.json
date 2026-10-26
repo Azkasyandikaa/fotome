@@ -1,0 +1,43 @@
+{
+  "name": "hari pahlawan1",
+  "photoSlots": [
+    {
+      "photoIndex": 0,
+      "x": 50,
+      "y": 92,
+      "width": 543,
+      "height": 424
+    },
+    {
+      "photoIndex": 1,
+      "x": 49,
+      "y": 500,
+      "width": 561,
+      "height": 452
+    },
+    {
+      "photoIndex": 2,
+      "x": 51,
+      "y": 954,
+      "width": 552,
+      "height": 433
+    },
+    {
+      "photoIndex": 3,
+      "x": 53,
+      "y": 1414,
+      "width": 534,
+      "height": 405
+    }
+  ],
+  "category": "Hari pahlawan",
+  "categories": [
+    "Hari pahlawan"
+  ],
+  "description": "Drop-in frame dari public/booth/templates.",
+  "canvas": {
+    "width": 640,
+    "height": 1920
+  },
+  "background": "#fffdf8"
+}

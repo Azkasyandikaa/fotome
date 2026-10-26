@@ -1,0 +1,36 @@
+{
+  "name": "new year1",
+  "category": "New year 2027",
+  "categories": [
+    "New year 2027"
+  ],
+  "photoSlots": [
+    {
+      "photoIndex": 0,
+      "x": 62,
+      "y": 396,
+      "width": 518,
+      "height": 435
+    },
+    {
+      "photoIndex": 1,
+      "x": 63,
+      "y": 807,
+      "width": 523,
+      "height": 436
+    },
+    {
+      "photoIndex": 2,
+      "x": 55,
+      "y": 1238,
+      "width": 536,
+      "height": 439
+    }
+  ],
+  "description": "Drop-in frame dari public/booth/templates.",
+  "canvas": {
+    "width": 640,
+    "height": 1920
+  },
+  "background": "#fffdf8"
+}

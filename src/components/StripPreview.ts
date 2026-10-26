@@ -81,9 +81,10 @@ export class StripPreview {
     await preloadTemplateAssets(t);
     if (this.mode !== 'pick' || (this.template && this.template.id !== t.id)) return;
     const allDemo = await loadDemoPhotos();
-    // Slot yang BELUM punya contoh foto (pool demo cuma 3) → tile
-    // "COMING SOON" di kanvas + chip badge di atas preview, biar jelas
-    // itu slot kosong, bukan render yang rusak.
+    // Pool foto sample kini 5 — semua slot di katalog (maks 4) kebagian
+    // contoh foto. Tile "COMING SOON" tetap disiapkan sebagai cadangan kalau
+    // ada template dengan slot di atas pool, biar tidak pernah ada lubang
+    // kosong yang terlihat seperti render rusak.
     const maxPhotoIndex = Math.max(0, ...t.engine.photoSlots.map((s) => s.photoIndex));
     const soonIndexes = t.engine.photoSlots
       .map((s) => s.photoIndex)
@@ -269,8 +270,8 @@ export class StripPreview {
 }
 
 /**
- * Tile "COMING SOON" untuk slot yang belum punya contoh foto (pool demo
- * cuma 3, jadi slot 4 & 5 pada template 4/5-foto dulu kosong).
+ * Tile "COMING SOON" untuk slot yang belum punya contoh foto — cadangan
+ * kalau jumlah slot melebihi pool foto sample (5).
  * Dibuat SE-RASIO slot supaya fit "cover" tidak memotong tulisannya,
  * lalu di-cache per rasio — bitmap tidak pernah di-close (seperti demoCache).
  */
@@ -424,47 +425,395 @@ function paintComingSoon(ctx: CanvasRenderingContext2D, w: number, h: number): v
 let demoCache: ImageBitmap[] | null = null;
 
 /**
- * Cute gradient placeholders shown inside template preview slots.
+ * Satu "orang" untuk foto sample: palet, warna kulit, baju, dan gaya rambut
+ * berbeda per slot — jadi slot 1–5 terlihat lima foto, bukan salinan sama
+ * persis yang diulang.
+ */
+interface DemoLook {
+  bg: [string, string];
+  glow: [string, string];
+  skin: string;
+  hair: string;
+  shirt: string;
+  accent: string;
+  style: 'bob' | 'curl' | 'short' | 'hijab' | 'pony';
+}
+
+const DEMO_LOOKS: DemoLook[] = [
+  {
+    bg: ['#ffd9ea', '#ff87b4'],
+    glow: ['rgba(255,255,255,0.55)', 'rgba(255,90,150,0.35)'],
+    skin: '#ffd9bd', hair: '#3b2540', shirt: '#ff5f9e', accent: '#ffe27a', style: 'bob',
+  },
+  {
+    bg: ['#ffeccb', '#ffab5c'],
+    glow: ['rgba(255,255,255,0.5)', 'rgba(255,140,60,0.32)'],
+    skin: '#f7cba2', hair: '#4a2b17', shirt: '#ff8a3d', accent: '#fff3c4', style: 'curl',
+  },
+  {
+    bg: ['#dce8ff', '#7ea8ff'],
+    glow: ['rgba(255,255,255,0.55)', 'rgba(70,110,255,0.3)'],
+    skin: '#f3d0ad', hair: '#243152', shirt: '#4f7dff', accent: '#ffffff', style: 'short',
+  },
+  {
+    bg: ['#d3fff1', '#3fcfb6'],
+    glow: ['rgba(255,255,255,0.5)', 'rgba(20,180,150,0.3)'],
+    skin: '#c98d5b', hair: '#17312a', shirt: '#12b39a', accent: '#ffe27a', style: 'hijab',
+  },
+  {
+    bg: ['#f0e2ff', '#a97bff'],
+    glow: ['rgba(255,255,255,0.5)', 'rgba(160,90,255,0.3)'],
+    skin: '#ffe0c4', hair: '#5b2a86', shirt: '#8c4dff', accent: '#ffd6f5', style: 'pony',
+  },
+];
+
+/**
+ * Foto sample yang duduk di dalam lubang foto preview — kini SATU per slot
+ * (pool = 5, katalog maks 4 slot), jadi slot 4 & 5 kebagian contoh foto
+ * seperti slot 1–3, bukan tile coming soon.
  * Bitmaps live for the whole tab and are only ever drawn (read-only) —
  * never close() them, the cache would break on the second template.
  */
 async function loadDemoPhotos(): Promise<ImageBitmap[]> {
   if (demoCache) return demoCache;
   if (demoCache === null) demoCache = [];
-  const palettes: Array<[string, string, string]> = [
-    ['#ffd1e3', '#ff8fb6', '#8a4d6f'],
-    ['#ffe9c9', '#ffb570', '#8a5a2b'],
-    ['#d9e6ff', '#8fb3ff', '#3d4d80'],
-  ];
   const out: ImageBitmap[] = [];
-  for (const [a, b, c] of palettes) {
+  for (let i = 0; i < DEMO_LOOKS.length; i++) {
     const cnv = document.createElement('canvas');
     cnv.width = 900;
     cnv.height = 520;
     const ctx = cnv.getContext('2d');
-    if (ctx) {
-      const grad = ctx.createLinearGradient(0, 0, 900, 520);
-      grad.addColorStop(0, a);
-      grad.addColorStop(1, b);
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 900, 520);
-      ctx.fillStyle = c;
-      ctx.beginPath();
-      ctx.arc(450, 250, 95, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(450, 215, 38, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.ellipse(450, 330, 130, 80, 0, Math.PI, 0);
-      ctx.fill();
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
-      ctx.font = "700 44px 'Trebuchet MS', sans-serif";
-      ctx.textAlign = 'center';
-      ctx.fillText('✦ foto demo ✦', 450, 470);
-    }
+    if (ctx) paintDemoPhoto(ctx, cnv.width, cnv.height, i);
     out.push(await createImageBitmap(cnv));
   }
   demoCache = out;
   return out;
+}
+
+/** Isi persegi membulat (roundRect) — ditulis sendiri biar kompatibel. */
+function fillRoundRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+): void {
+  const rad = Math.max(0, Math.min(r, w / 2, h / 2));
+  ctx.beginPath();
+  ctx.moveTo(x + rad, y);
+  ctx.arcTo(x + w, y, x + w, y + h, rad);
+  ctx.arcTo(x + w, y + h, x, y + h, rad);
+  ctx.arcTo(x, y + h, x, y, rad);
+  ctx.arcTo(x, y, x + w, y, rad);
+  ctx.closePath();
+  ctx.fill();
+}
+
+/** Kilau bintang 4 titik buat latar. */
+function fillSpark(ctx: CanvasRenderingContext2D, x: number, y: number, r: number): void {
+  ctx.beginPath();
+  ctx.moveTo(x, y - r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.quadraticCurveTo(x, y, x, y + r);
+  ctx.quadraticCurveTo(x, y, x - r, y);
+  ctx.closePath();
+  ctx.fill();
+}
+
+/** Rambut di BELAKANG kepala: volume + aksen gaya (ekor, kerudung, keriting). */
+function drawHairBack(ctx: CanvasRenderingContext2D, look: DemoLook, cx: number, headY: number, r: number): void {
+  ctx.fillStyle = look.hair;
+  switch (look.style) {
+    case 'pony': {
+      // ekor kuda di samping
+      ctx.beginPath();
+      ctx.ellipse(cx + r + 26, headY + 48, 42, 58, -0.35, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(cx, headY + 6, r + 12, r + 16, 0, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    }
+    case 'hijab': {
+      // kerudung: melebar ke bawah sampai menutup bahu
+      ctx.beginPath();
+      ctx.moveTo(cx - r - 26, headY + 30);
+      ctx.quadraticCurveTo(cx - r - 44, headY + 150, cx - r - 8, headY + 216);
+      ctx.lineTo(cx + r + 8, headY + 216);
+      ctx.quadraticCurveTo(cx + r + 44, headY + 150, cx + r + 26, headY + 30);
+      ctx.quadraticCurveTo(cx, headY - r - 36, cx - r - 26, headY + 30);
+      ctx.closePath();
+      ctx.fill();
+      break;
+    }
+    case 'curl': {
+      // kepang keriting: lingkaran-lingkaran kecil keliling kepala
+      ctx.beginPath();
+      ctx.ellipse(cx, headY + 6, r + 12, r + 16, 0, 0, Math.PI * 2);
+      ctx.fill();
+      for (let k = 0; k <= 10; k++) {
+        const a = Math.PI + (k / 10) * Math.PI;
+        ctx.beginPath();
+        ctx.arc(cx + Math.cos(a) * (r + 4), headY + Math.sin(a) * (r + 4), 26, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      break;
+    }
+    case 'bob': {
+      ctx.beginPath();
+      ctx.ellipse(cx, headY + 10, r + 16, r + 24, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // dua helai rambut turun di samping wajah
+      fillRoundRect(ctx, cx - r - 16, headY - 26, 34, 148, 18);
+      fillRoundRect(ctx, cx + r - 18, headY - 26, 34, 148, 18);
+      break;
+    }
+    default: {
+      // rambut pendek
+      ctx.beginPath();
+      ctx.ellipse(cx, headY - 2, r + 8, r + 6, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+}
+
+/**
+ * Tutup bagian ATAS kepala sampai garis rambut. Wajah digambar sebagai
+ * elips utuh (sampai puncak kepala), jadi tanpa "cap" ini ada jalur kulit
+ * kosong di ubun-ubun — terlihat seperti plontos / topi putih.
+ */
+function fillHairCap(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  headY: number,
+  r: number,
+  hairlineY: number,
+  sweep: number,
+  dip: number,
+): void {
+  ctx.beginPath();
+  ctx.arc(cx, headY, r, Math.PI, 2 * Math.PI); // kiri → atas → kanan
+  ctx.lineTo(cx + r, hairlineY);
+  ctx.quadraticCurveTo(cx + sweep, hairlineY + dip, cx - r, hairlineY);
+  ctx.lineTo(cx - r, headY);
+  ctx.closePath();
+  ctx.fill();
+}
+
+/** Rambut di DEPAN kepala (poni) — digambar setelah wajah, sebelum fitur. */
+function drawHairFront(ctx: CanvasRenderingContext2D, look: DemoLook, cx: number, headY: number, r: number): void {
+  ctx.fillStyle = look.hair;
+  switch (look.style) {
+    case 'curl': {
+      fillHairCap(ctx, cx, headY, r - 4, headY - 32, 0, 34);
+      // keriting di garis rambut
+      for (let k = 0; k <= 8; k++) {
+        const a = Math.PI + (k / 8) * Math.PI;
+        ctx.beginPath();
+        ctx.arc(cx + Math.cos(a) * (r - 20), headY - 24 + Math.sin(a) * (r - 20), 24, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      break;
+    }
+    case 'hijab':
+      // kerudung menutup ubun-ubun sampai dahi
+      fillHairCap(ctx, cx, headY, r + 4, headY - 26, 0, 30);
+      break;
+    case 'short':
+      fillHairCap(ctx, cx, headY, r - 2, headY - 44, -44, 26);
+      break;
+    default:
+      // poni menyapu
+      fillHairCap(ctx, cx, headY, r - 4, headY - 34, 64, 40);
+  }
+}
+
+/** Aksen kecil per gaya — bikin tiap foto gampang dibedakan sekilas. */
+function drawAccessory(ctx: CanvasRenderingContext2D, look: DemoLook, cx: number, headY: number, r: number): void {
+  switch (look.style) {
+    case 'bob': {
+      // jepit bintang
+      ctx.fillStyle = look.accent;
+      fillSpark(ctx, cx + r - 22, headY - r + 34, 22);
+      break;
+    }
+    case 'curl': {
+      // bunga di samping
+      ctx.fillStyle = '#ffffff';
+      for (let k = 0; k < 5; k++) {
+        const a = (k / 5) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.arc(cx - r + 16 + Math.cos(a) * 17, headY - r + 34 + Math.sin(a) * 17, 14, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = look.accent;
+      ctx.beginPath();
+      ctx.arc(cx - r + 16, headY - r + 34, 12, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    }
+    case 'short': {
+      // kacamata bundar
+      ctx.strokeStyle = '#2a2140';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.arc(cx - 36, headY + 16, 28, 0, Math.PI * 2);
+      ctx.moveTo(cx + 64, headY + 16);
+      ctx.arc(cx + 36, headY + 16, 28, 0, Math.PI * 2);
+      ctx.moveTo(cx - 8, headY + 14);
+      ctx.lineTo(cx + 8, headY + 14);
+      ctx.stroke();
+      break;
+    }
+    case 'hijab': {
+      // pin bulan sabit
+      ctx.fillStyle = look.accent;
+      ctx.beginPath();
+      ctx.arc(cx + r - 24, headY - r + 42, 20, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = look.hair;
+      ctx.beginPath();
+      ctx.arc(cx + r - 14, headY - r + 36, 17, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    }
+    default: {
+      // pita di ekor kuda
+      ctx.fillStyle = look.accent;
+      ctx.beginPath();
+      ctx.moveTo(cx + r + 26, headY + 20);
+      ctx.lineTo(cx + r + 62, headY + 2);
+      ctx.lineTo(cx + r + 60, headY + 44);
+      ctx.closePath();
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(cx + r + 26, headY + 20);
+      ctx.lineTo(cx + r - 8, headY + 2);
+      ctx.lineTo(cx + r - 6, headY + 44);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+}
+
+/**
+ * Gambar satu foto sample: latar gradien + bokeh + halftone + kilau, lalu
+ * siluet orang bergaya. Semua isi penting dijaga di pita tengah kanvas
+ * (±43% lebar) supaya tidak terpotong saat kena crop "cover" di slot potret.
+ */
+function paintDemoPhoto(ctx: CanvasRenderingContext2D, w: number, h: number, index: number): void {
+  const look = DEMO_LOOKS[index % DEMO_LOOKS.length]!;
+  const cx = w / 2;
+  let seed = 104729 + index * 7919;
+  const rnd = (): number => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+
+  // 1. Latar gradien lembut.
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, look.bg[0]);
+  bg.addColorStop(1, look.bg[1]);
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // 2. Gembung cahaya — latarnya dalam, bukan kotak datar.
+  const glow = (x: number, y: number, rad: number, color: string): void => {
+    const g = ctx.createRadialGradient(x, y, 0, x, y, Math.max(1, rad));
+    g.addColorStop(0, color);
+    g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+  };
+  glow(cx * 0.5, h * 0.24, Math.max(w, h) * 0.5, look.glow[0]);
+  glow(cx * 1.5, h * 0.8, Math.max(w, h) * 0.45, look.glow[1]);
+
+  // 3. Halftone komik samar.
+  const step = Math.max(16, Math.round(Math.min(w, h) / 14));
+  ctx.fillStyle = 'rgba(255,255,255,0.13)';
+  for (let y = step / 2; y < h; y += step) {
+    for (let x = step / 2; x < w; x += step) {
+      ctx.beginPath();
+      ctx.arc(x, y, step * 0.14, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // 4. Kilau bintang — seed tetap, tiap slot selalu sama.
+  for (let i = 0; i < 24; i++) {
+    ctx.globalAlpha = 0.3 + rnd() * 0.5;
+    ctx.fillStyle = '#ffffff';
+    fillSpark(ctx, rnd() * w, rnd() * h * 0.7, 4 + rnd() * 9);
+  }
+  ctx.globalAlpha = 1;
+
+  // 5. Siluet orang: leher → bahu → rambut → wajah.
+  const r = 96;
+  const headY = 206;
+
+  ctx.fillStyle = look.skin;
+  fillRoundRect(ctx, cx - 34, headY + r - 46, 68, 112, 30); // leher
+
+  ctx.fillStyle = look.shirt; // bahu
+  ctx.beginPath();
+  ctx.moveTo(cx - 240, h);
+  ctx.quadraticCurveTo(cx - 226, 352, cx - 96, 320);
+  ctx.lineTo(cx + 96, 320);
+  ctx.quadraticCurveTo(cx + 226, 352, cx + 240, h);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(0,0,0,0.16)'; // kerah
+  ctx.beginPath();
+  ctx.moveTo(cx - 52, 322);
+  ctx.lineTo(cx, 382);
+  ctx.lineTo(cx + 52, 322);
+  ctx.closePath();
+  ctx.fill();
+
+  drawHairBack(ctx, look, cx, headY, r);
+
+  ctx.fillStyle = look.skin; // kepala
+  ctx.beginPath();
+  ctx.ellipse(cx, headY, r - 8, r - 2, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  drawHairFront(ctx, look, cx, headY, r);
+
+  // wajah
+  ctx.fillStyle = '#2a2140';
+  ctx.beginPath();
+  ctx.ellipse(cx - 36, headY + 16, 9, 12, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(cx + 36, headY + 16, 9, 12, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#2a2140';
+  ctx.lineWidth = 7;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.arc(cx, headY + 32, 34, 0.18 * Math.PI, 0.82 * Math.PI);
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(255,110,140,0.4)';
+  ctx.beginPath();
+  ctx.ellipse(cx - 58, headY + 38, 17, 11, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(cx + 58, headY + 38, 17, 11, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  drawAccessory(ctx, look, cx, headY, r);
+
+  // 6. Label kecil — pil gelap di tengah bawah. Naik dari tepi bawah biar
+  //    tidak ketimpa border stiker bingkai, dan lebarnya dibatasi supaya
+  //    tetap utuh saat slot potret cuma menampilkan ±43% tengah kanvas.
+  const label = '✦ foto sample ✦';
+  ctx.font = "700 34px 'Trebuchet MS', 'Nunito', sans-serif";
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const pillW = Math.min(ctx.measureText(label).width + 46, w * 0.4);
+  const pillH = 58;
+  const pillY = Math.round(h * 0.74);
+  ctx.fillStyle = 'rgba(9, 12, 35, 0.5)';
+  fillRoundRect(ctx, cx - pillW / 2, pillY - pillH / 2, pillW, pillH, pillH / 2);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(label, cx, pillY + 1);
 }
