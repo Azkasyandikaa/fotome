@@ -5,8 +5,8 @@
       "photoIndex": 0,
       "x": 68,
       "y": 68,
-      "width": 486,
-      "height": 472
+      "width": 508,
+      "height": 470
     },
     {
       "photoIndex": 1,
@@ -28,5 +28,7 @@
     "width": 640,
     "height": 1920
   },
-  "background": "#fffdf8"
+  "background": "#fffdf8",
+  "category": "",
+  "categories": []
 }

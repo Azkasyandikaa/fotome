@@ -1,7 +1,9 @@
 {
   "name": "fake wedding1",
-  "category": "",
-  "categories": [],
+  "category": "Fake wedding",
+  "categories": [
+    "Fake wedding"
+  ],
   "photoSlots": [
     {
       "photoIndex": 0,

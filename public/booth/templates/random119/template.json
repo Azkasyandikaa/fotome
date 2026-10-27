@@ -17,8 +17,8 @@
     },
     {
       "photoIndex": 2,
-      "x": 134,
-      "y": 827,
+      "x": 135,
+      "y": 826,
       "width": 471,
       "height": 366
     },
@@ -35,5 +35,7 @@
     "width": 640,
     "height": 1920
   },
-  "background": "#fffdf8"
+  "background": "#fffdf8",
+  "category": "",
+  "categories": []
 }

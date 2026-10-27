@@ -3,24 +3,27 @@
   "photoSlots": [
     {
       "photoIndex": 0,
-      "x": 44,
-      "y": 68,
-      "width": 543,
-      "height": 423
+      "x": 3,
+      "y": 37,
+      "width": 637,
+      "height": 481,
+      "rotation": 4
     },
     {
       "photoIndex": 1,
-      "x": 51,
-      "y": 704,
-      "width": 528,
-      "height": 439
+      "x": 0,
+      "y": 681,
+      "width": 631,
+      "height": 510,
+      "rotation": -4
     },
     {
       "photoIndex": 2,
-      "x": 58,
-      "y": 1392,
-      "width": 514,
-      "height": 454
+      "x": 4,
+      "y": 1350,
+      "width": 630,
+      "height": 520,
+      "rotation": 8
     }
   ],
   "description": "Drop-in frame dari public/booth/templates.",
@@ -28,5 +31,7 @@
     "width": 640,
     "height": 1920
   },
-  "background": "#fffdf8"
+  "background": "#fffdf8",
+  "category": "",
+  "categories": []
 }

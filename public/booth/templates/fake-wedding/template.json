@@ -1,0 +1,36 @@
+{
+  "name": "fake wedding3",
+  "category": "Fake wedding",
+  "categories": [
+    "Fake wedding"
+  ],
+  "photoSlots": [
+    {
+      "photoIndex": 0,
+      "x": 51,
+      "y": 446,
+      "width": 544,
+      "height": 436
+    },
+    {
+      "photoIndex": 1,
+      "x": 57,
+      "y": 862,
+      "width": 533,
+      "height": 441
+    },
+    {
+      "photoIndex": 2,
+      "x": 55,
+      "y": 1293,
+      "width": 537,
+      "height": 422
+    }
+  ],
+  "description": "Drop-in frame dari public/booth/templates.",
+  "canvas": {
+    "width": 640,
+    "height": 1920
+  },
+  "background": "#fffdf8"
+}

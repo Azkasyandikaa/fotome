@@ -3,10 +3,10 @@
   "photoSlots": [
     {
       "photoIndex": 0,
-      "x": 94,
-      "y": 160,
-      "width": 452,
-      "height": 511
+      "x": 65,
+      "y": 148,
+      "width": 522,
+      "height": 538
     },
     {
       "photoIndex": 1,
@@ -28,5 +28,7 @@
     "width": 640,
     "height": 1920
   },
-  "background": "#fffdf8"
+  "background": "#fffdf8",
+  "category": "",
+  "categories": []
 }

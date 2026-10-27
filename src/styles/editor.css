@@ -85,6 +85,13 @@
   overflow-y: auto;
 }
 
+/* Panel kanan adalah flex column dengan tinggi dibatasi viewport → semua
+   anaknya wajib tampil penuh (flex default-nya shrink; karena .btn punya
+   overflow:hidden, otomatis minimum = 0 sehingga "Lanjut ke Unduh" diperas
+   jadi garis 4px — kelihatan seperti tombol hilang). Kalau isi panel
+   kepanjangan, panelnya yang menggulir. */
+.editor__panel > * { flex-shrink: 0; }
+
 /* CTA unduh: panel kanan panjang & discroll — tombolnya di-sticky di bawah
    supaya "Lanjut ke Unduh" tidak pernah tenggelam di bawah layar. */
 .editor__next {

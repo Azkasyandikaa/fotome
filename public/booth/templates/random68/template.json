@@ -26,8 +26,8 @@
       "photoIndex": 3,
       "x": 88,
       "y": 1283,
-      "width": 441,
-      "height": 322
+      "width": 474,
+      "height": 320
     }
   ],
   "description": "Drop-in frame dari public/booth/templates.",
@@ -35,5 +35,7 @@
     "width": 640,
     "height": 1920
   },
-  "background": "#fffdf8"
+  "background": "#fffdf8",
+  "category": "",
+  "categories": []
 }

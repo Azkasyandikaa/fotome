@@ -5,22 +5,22 @@
       "photoIndex": 0,
       "x": 87,
       "y": 148,
-      "width": 426,
+      "width": 434,
       "height": 322
     },
     {
       "photoIndex": 1,
       "x": 87,
-      "y": 763,
-      "width": 426,
-      "height": 321
+      "y": 755,
+      "width": 433,
+      "height": 329
     },
     {
       "photoIndex": 2,
       "x": 87,
-      "y": 1376,
-      "width": 426,
-      "height": 322
+      "y": 1364,
+      "width": 436,
+      "height": 334
     }
   ],
   "description": "Drop-in frame dari public/booth/templates.",
@@ -28,5 +28,7 @@
     "width": 640,
     "height": 1920
   },
-  "background": "#fffdf8"
+  "background": "#fffdf8",
+  "category": "",
+  "categories": []
 }

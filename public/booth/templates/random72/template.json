@@ -19,7 +19,7 @@
       "photoIndex": 2,
       "x": 71,
       "y": 1190,
-      "width": 483,
+      "width": 504,
       "height": 471
     }
   ],
@@ -28,5 +28,7 @@
     "width": 640,
     "height": 1920
   },
-  "background": "#fffdf8"
+  "background": "#fffdf8",
+  "category": "",
+  "categories": []
 }

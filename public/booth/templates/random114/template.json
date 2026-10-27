@@ -10,10 +10,11 @@
     },
     {
       "photoIndex": 1,
-      "x": 145,
-      "y": 600,
-      "width": 344,
-      "height": 399
+      "x": 102,
+      "y": 587,
+      "width": 427,
+      "height": 421,
+      "rotation": -11
     },
     {
       "photoIndex": 2,
@@ -28,5 +29,7 @@
     "width": 640,
     "height": 1920
   },
-  "background": "#fffdf8"
+  "background": "#fffdf8",
+  "category": "",
+  "categories": []
 }

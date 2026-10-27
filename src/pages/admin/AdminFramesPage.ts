@@ -84,6 +84,8 @@ export function mountAdminFramesPage(host: HTMLElement): () => void {
   let selectedId = '';
   let draft: Draft | null = null;
   let selectedSlot = 0;
+  /** Kata kunci pencarian frame (disaring terhadap nama / kategori / id). */
+  let searchQuery = '';
   /** Cache-buster supaya perubahan template.json langsung kelihatan. */
   let rev = 0;
 
@@ -239,7 +241,19 @@ export function mountAdminFramesPage(host: HTMLElement): () => void {
       <div class="admin__work" data-work hidden>
         <aside class="admin__list panel-card" aria-label="Daftar frame">
           <p class="admin__list-title">Frame drop-in <span data-list-count></span></p>
+          <div class="admin__search">
+            <input
+              type="search"
+              data-card-search
+              placeholder="Cari frame (nama / kategori / id)…"
+              aria-label="Cari frame"
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <span class="admin__search-count" data-search-count hidden></span>
+          </div>
           <div class="admin__cards" data-cards></div>
+          <p class="admin__cards-empty" data-cards-empty hidden></p>
           <div class="admin__slot-actions">
             <button type="button" class="btn btn--ghost btn--sm" data-act="del-frame" disabled>🗑 Hapus frame ini</button>
           </div>
@@ -337,6 +351,9 @@ export function mountAdminFramesPage(host: HTMLElement): () => void {
   const offlineDetailEl = host.querySelector<HTMLElement>('[data-offline-detail]')!;
   const workEl = host.querySelector<HTMLElement>('[data-work]')!;
   const cardsEl = host.querySelector<HTMLElement>('[data-cards]')!;
+  const cardsEmptyEl = host.querySelector<HTMLElement>('[data-cards-empty]')!;
+  const searchEl = host.querySelector<HTMLInputElement>('[data-card-search]')!;
+  const searchCountEl = host.querySelector<HTMLElement>('[data-search-count]')!;
   const editorEl = host.querySelector<HTMLElement>('[data-editor]')!;
   const stageEl = host.querySelector<HTMLElement>('[data-stage]')!;
   const frameImg = host.querySelector<HTMLImageElement>('[data-frame]')!;
@@ -972,29 +989,7 @@ export function mountAdminFramesPage(host: HTMLElement): () => void {
     // Kategori yang sudah ada → isi select upload & editor (hanya daftar resmi).
     fillCategorySelects();
 
-    cardsEl.replaceChildren(
-      ...entries.map((e) => {
-        const card = document.createElement('button');
-        card.type = 'button';
-        card.className = 'admin-card' + (e.id === selectedId ? ' is-selected' : '');
-        card.innerHTML = `
-          <span class="admin-card__thumb"><img src="${e.thumb ?? e.frame}" alt="" loading="lazy" /></span>
-          <span class="admin-card__meta">
-            <span class="admin-card__name"></span>
-            <span class="admin-card__cat"></span>
-          </span>
-        `;
-        card.querySelector<HTMLElement>('.admin-card__name')!.textContent = nameOf(e);
-        const catsList = categoriesOf(e);
-        card.querySelector<HTMLElement>('.admin-card__cat')!.textContent =
-          `${catsList.length > 0 ? catsList.map(formatCat).join(', ') : 'tanpa kategori'} · ${slotCountOf(e)} slot`;
-        card.addEventListener('click', () => {
-          selectEntry(e.id);
-          if (delBtn) delBtn.disabled = false;
-        });
-        return card;
-      }),
-    );
+    renderCards();
 
     if (delBtn) delBtn.disabled = !entries.some((x) => x.id === selectedId);
 
@@ -1004,6 +999,70 @@ export function mountAdminFramesPage(host: HTMLElement): () => void {
       renderEditor();
     }
   }
+
+  /**
+   * Daftar frame setelah disaring kata kunci pencarian.
+   * Cocokkan terhadap nama, id folder, kategori (mentah + diformat), dan
+   * deskripsi — supaya frame gampang ditemukan walau lupa namanya persis.
+   */
+  function filteredEntries(): BoothTemplateEntry[] {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return entries;
+    return entries.filter((e) => {
+      const desc = typeof e.config?.description === 'string' ? e.config.description : '';
+      const cats = categoriesOf(e);
+      const parts = [nameOf(e), e.id, e.id.replace(/[-_]/g, ' '), ...cats, ...cats.map(formatCat), desc];
+      return parts.join(' \u0000 ').toLowerCase().includes(q);
+    });
+  }
+
+  /** Bangun satu kartu daftar frame. */
+  function buildCard(e: BoothTemplateEntry): HTMLButtonElement {
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'admin-card' + (e.id === selectedId ? ' is-selected' : '');
+    card.dataset.id = e.id;
+    card.innerHTML = `
+      <span class="admin-card__thumb"><img src="${e.thumb ?? e.frame}" alt="" loading="lazy" /></span>
+      <span class="admin-card__meta">
+        <span class="admin-card__name"></span>
+        <span class="admin-card__cat"></span>
+      </span>
+    `;
+    card.querySelector<HTMLElement>('.admin-card__name')!.textContent = nameOf(e);
+    const catsList = categoriesOf(e);
+    card.querySelector<HTMLElement>('.admin-card__cat')!.textContent =
+      `${catsList.length > 0 ? catsList.map(formatCat).join(', ') : 'tanpa kategori'} · ${slotCountOf(e)} slot`;
+    card.addEventListener('click', () => {
+      selectEntry(e.id);
+      if (delBtn) delBtn.disabled = false;
+    });
+    return card;
+  }
+
+  /** Render daftar frame sesuai pencarian + info jumlah hasil. */
+  function renderCards(): void {
+    const list = filteredEntries();
+    cardsEl.replaceChildren(...list.map(buildCard));
+
+    const q = searchQuery.trim();
+    searchCountEl.hidden = !q;
+    if (q) searchCountEl.textContent = `${list.length} / ${entries.length} frame`;
+
+    const none = list.length === 0;
+    cardsEmptyEl.hidden = !none;
+    if (none) {
+      cardsEmptyEl.textContent = entries.length === 0
+        ? 'Belum ada frame — upload frame dulu lewat “＋ Frame baru”.'
+        : `Tidak ada frame yang cocok dengan “${q}”. Coba kata kunci lain.`;
+    }
+  }
+
+  // Pencarian frame: filter daftar real-time saat mengetik (tanpa reload).
+  searchEl.addEventListener('input', () => {
+    searchQuery = searchEl.value;
+    renderCards();
+  });
 
   function nameOf(e: BoothTemplateEntry): string {
     const cfg = (e.config ?? {}) as { name?: unknown };
@@ -1113,8 +1172,10 @@ export function mountAdminFramesPage(host: HTMLElement): () => void {
     if (!e) return;
     draft = draftFrom(e);
     selectedSlot = 0;
-    cardsEl.querySelectorAll('.admin-card').forEach((el, i) => {
-      el.classList.toggle('is-selected', entries[i]?.id === id);
+    // Cocokkan lewat data-id (bukan index) supaya tetap benar saat daftar
+    // sedang disaring pencarian.
+    cardsEl.querySelectorAll<HTMLElement>('.admin-card').forEach((el) => {
+      el.classList.toggle('is-selected', el.dataset.id === id);
     });
     renderEditor();
   }

@@ -533,7 +533,9 @@ try {
     panel.scrollTop = Math.round(panel.scrollHeight / 2);
     const r = btn.getBoundingClientRect();
     const p = panel.getBoundingClientRect();
-    const visible = r.height > 0 && r.bottom <= p.bottom + 1 && r.top >= p.top - 1;
+    // Tinggi penuh (46px) — bukan cuma "ada": flex column yang dibatasi
+    // viewport pernah memeras tombol ini sampai ~4px sehingga terlihat hilang.
+    const visible = r.height >= 40 && r.bottom <= p.bottom + 1 && r.top >= p.top - 1;
     panel.scrollTop = 0;
     return visible;
   })()`);

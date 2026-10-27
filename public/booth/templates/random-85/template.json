@@ -3,19 +3,23 @@
   "photoSlots": [
     {
       "photoIndex": 0,
-      "x": 101,
-      "y": 283,
-      "width": 436,
-      "height": 411
+      "x": 58,
+      "y": 234,
+      "width": 531,
+      "height": 492,
+      "rotation": -2
     },
     {
       "photoIndex": 1,
-      "x": 101,
-      "y": 1093,
-      "width": 436,
-      "height": 410
+      "x": 68,
+      "y": 1040,
+      "width": 509,
+      "height": 494,
+      "rotation": -1
     }
   ],
+  "category": "",
+  "categories": [],
   "description": "Drop-in frame dari public/booth/templates.",
   "canvas": {
     "width": 640,
