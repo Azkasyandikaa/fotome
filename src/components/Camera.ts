@@ -1,5 +1,5 @@
 import { startCamera, stopCamera, grabFrame, CameraUnavailableError } from '../services/camera';
-import { getFilters, getFilter } from '../services/template';
+import { getFilters, getFilter, getTemplate } from '../services/template';
 import { loadImageCached } from '../services/canvas';
 import { runCountdown } from './Countdown';
 import { toast } from './toast';
@@ -36,6 +36,35 @@ function drawOverlay(
   const dw = iw * scale;
   const dh = ih * scale;
   ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+}
+
+/**
+ * Rasio (lebar/tinggi) kotak kamera — di-set ke CSS `--cam-ar`.
+ *
+ * Diambil dari lubang foto FRAME yang dipilih: rasio yang memotong paling
+ * sedikit saat semua foto masuk ke slotnya. Karena preview, hasil jepretan,
+ * dan lubang frame memakai rasio yang sama, hasilnya WYSIWYG — tidak ada
+ * crop tambahan saat foto masuk bingkai, dan kameranya tidak kelebaran.
+ */
+function frameAspect(): number {
+  const slots = getTemplate(store.get('selectedTemplateId'))?.engine.photoSlots ?? [];
+  const ratios = slots
+    .map((s) => s.width / s.height)
+    .filter((r) => Number.isFinite(r) && r > 0);
+  if (ratios.length === 0) return 4 / 3; // tanpa frame terpilih — 4:3 netral
+
+  // Cari SATU rasio yang memaksimalkan bagian foto yang terlihat di semua
+  // slot (cover: yang terlihat = min(p, s) / max(p, s)).
+  let best = ratios[0]!;
+  let bestVisible = -1;
+  for (let p = 0.5; p <= 3; p += 0.01) {
+    const visible = ratios.reduce((sum, r) => sum + Math.min(p, r) / Math.max(p, r), 0);
+    if (visible > bestVisible) {
+      bestVisible = visible;
+      best = p;
+    }
+  }
+  return Math.round(best * 100) / 100;
 }
 
 /**
@@ -76,17 +105,19 @@ export class Camera {
   private render(): void {
     this.host.innerHTML = `
       <div class="camera">
-        <div class="camera__stage">
-          <video class="camera__video" autoplay playsinline muted></video>
-          <div class="camera__overlay" aria-hidden="true"></div>
-          <span class="camera__brand" aria-hidden="true">fotome <i>✦</i></span>
-          <div class="camera__topbar">
-            <span class="camera__shot-label" aria-live="polite"></span>
-            <span class="camera__dots" aria-hidden="true">${Array.from({ length: this.shots }, () => '<i></i>').join('')}</span>
-          </div>
-          <div class="camera__status" hidden>
-            <p class="camera__status-msg"></p>
-            <button type="button" class="btn btn--sm" data-act="retry">Coba lagi</button>
+        <div class="camera__view">
+          <div class="camera__stage">
+            <video class="camera__video" autoplay playsinline muted></video>
+            <div class="camera__overlay" aria-hidden="true"></div>
+            <span class="camera__brand" aria-hidden="true">fotome <i>✦</i></span>
+            <div class="camera__topbar">
+              <span class="camera__shot-label" aria-live="polite"></span>
+              <span class="camera__dots" aria-hidden="true">${Array.from({ length: this.shots }, () => '<i></i>').join('')}</span>
+            </div>
+            <div class="camera__status" hidden>
+              <p class="camera__status-msg"></p>
+              <button type="button" class="btn btn--sm" data-act="retry">Coba lagi</button>
+            </div>
           </div>
         </div>
         <div class="camera__dock">
@@ -120,6 +151,10 @@ export class Camera {
         </div>
       </div>
     `;
+    // Rasio kotak kamera = rasio lubang frame terpilih (lihat frameAspect).
+    this.host
+      .querySelector<HTMLElement>('.camera')
+      ?.style.setProperty('--cam-ar', String(frameAspect()));
     this.video = this.host.querySelector('.camera__video');
     this.overlayEl = this.host.querySelector('.camera__overlay');
     this.statusEl = this.host.querySelector('.camera__status');
@@ -353,15 +388,16 @@ export class Camera {
   }
 
   /**
-   * Rasio (lebar/tinggi) stage kamera yang sedang tampil. Dipakai buat
+   * Rasio (lebar/tinggi) kotak VIDEO yang sedang tampil. Dipakai buat
    * memotong hasil jepretan supaya sama persis dengan preview.
+   *
+   * Diukur dari elemen video (bukan stage) — bezel/outline stage tidak ikut,
+   * jadi hasil jepretan = pixel yang benar-benar terlihat di layar.
    */
-  private previewAspect(): number | undefined {
-    const stage = this.host.querySelector<HTMLElement>('.camera__stage');
-    if (!stage) return undefined;
-    const { width, height } = stage.getBoundingClientRect();
-    if (width <= 0 || height <= 0) return undefined;
-    return width / height;
+  private previewAspect(): number {
+    const box = this.video?.getBoundingClientRect();
+    if (box && box.width > 0 && box.height > 0) return box.width / box.height;
+    return frameAspect();
   }
 
   /**

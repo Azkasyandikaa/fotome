@@ -100,7 +100,7 @@ export function mountGalleryPage(host: HTMLElement): void {
       <div class="gallery__empty" data-empty-public hidden>
         <div class="gallery__empty-art" aria-hidden="true">🌸</div>
         <h2>Galeri masih sepi</h2>
-        <p>Foto pilihan developer akan muncul di sini — ambil fotomu, lalu tawarkan lewat tombol galeri setelah download.</p>
+        <p>Ingin foto kamu masuk ke sini?? — ambil fotomu, lalu tawarkan lewat tombol galeri setelah download.</p>
         <a class="btn btn--primary" href="#/capture">MULAI FOTO</a>
       </div>
     </section>
@@ -172,7 +172,7 @@ export function mountGalleryPage(host: HTMLElement): void {
     if (status && status.authConfigured) {
       sub.textContent = 'Foto pilihan developer — tersimpan via Google Drive. Klik foto untuk memperbesar.';
     } else {
-      sub.textContent = 'Galeri publik belum aktif — cek panduan setup di docs/GALLERY-GDRIVE.md.';
+      sub.textContent = 'Kalian bisa memajang foto kalian disini, dan menjadi bagian dari perjalanan fotome.';
     }
     await rerenderPublic();
   })();

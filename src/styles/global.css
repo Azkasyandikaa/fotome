@@ -1973,14 +1973,25 @@ html[data-layout='phone'] .sticky-bar { display: block; }
   html[data-layout='phone'] .capture.is-fullview .tpl-preview__stage,
   html[data-layout='phone'] .strip-live__stage,
   html[data-layout='phone'] .capture.is-fullview .strip-live__stage { flex: none; height: min(56dvh, 500px); max-height: none; }
-  /* Kamera potret — crop 16/10 di layout HP bikin preview kekecilan.
-     Flex/width di-reset supaya stage tidak collapse di kolom ber-tinggi-otomatis. */
+  /* Kamera: rasio = lubang foto frame (sama dengan hasil jepretan, jadi
+     tidak ke-crop lagi saat masuk bingkai) — bukan crop 16/10 yang kecil.
+     View di-reset jadi blok biasa karena kolomnya ber-tinggi-otomatis:
+     tanpa reset itu container query bikin stage collapse ke 0. */
+  html[data-layout='phone'] .capture .camera__view {
+    flex: none;
+    min-height: 0;
+    display: block;
+    container-type: normal;
+  }
   html[data-layout='phone'] .capture .camera__stage {
     flex: none;
-    width: 100%;
     height: auto;
-    aspect-ratio: 3 / 4;
-    max-height: min(66dvh, 620px);
+    aspect-ratio: var(--cam-ar, 4 / 3);
+    width: 100%;
+    /* Batasi TINGGI dulu (biar tombol jepret tetap terlihat) — lebarnya ikut
+       mengecil supaya rasio lubang frame tetap utuh, bukan ke-crop lagi. */
+    width: min(100%, calc(min(76dvh, 680px) * var(--cam-ar, 4 / 3)));
+    max-height: min(76dvh, 680px);
   }
   html[data-layout='phone'] .capture.is-fullview .tpl-cards,
   html[data-layout='phone'] .tpl-cards { max-height: 300px; }
@@ -2756,16 +2767,23 @@ body.is-party::before {
   gap: 12px;
 }
 
-/* Kartu player: tersembunyi sampai disc dipencet (is-open). */
+/* Kartu player: tersembunyi sampai disc dipencet (is-open).
+   Tema "now playing" gelap — panel vinyl dengan aksen gradien pop. */
 .music-widget__card {
+  position: relative;
   width: min(320px, calc(100vw - 108px));
   display: grid;
-  gap: 11px;
-  padding: 13px 14px 15px;
-  background: var(--color-surface);
-  border: 1.5px solid var(--color-border-strong);
+  gap: 12px;
+  padding: 16px 15px;
+  background:
+    radial-gradient(120% 95% at 88% -15%, rgb(125 92 255 / 0.4) 0%, transparent 58%),
+    radial-gradient(110% 85% at -10% 115%, rgb(255 78 155 / 0.3) 0%, transparent 58%),
+    var(--color-canvas-dark);
+  color: #fff;
+  border: 2px solid var(--color-ink);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-pop);
+  overflow: hidden;
   opacity: 0;
   visibility: hidden;
   transform: translateY(14px) scale(0.94);
@@ -2786,10 +2804,20 @@ body.is-party::before {
     visibility 0s;
 }
 
+/* Pita gradien tipis di puncak kartu — signature panel "now playing". */
+.music-widget__card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  background: var(--grad-pop);
+  pointer-events: none;
+}
+
 .music-widget__head {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
   min-width: 0;
 }
 
@@ -2797,22 +2825,29 @@ body.is-party::before {
   flex-shrink: 0;
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  background: var(--color-canvas-dark);
-  border: 1.5px solid var(--color-ink);
+  background: rgb(255 255 255 / 0.06);
+  border: 1.5px solid rgb(255 255 255 / 0.18);
   overflow: hidden;
+  transition: box-shadow var(--duration-normal) var(--ease-out);
+}
+
+/* Saat musik jalan, sampul disc menyala — halo ungu-pink di sekelilingnya. */
+.music-widget.is-playing .music-widget__art {
+  box-shadow: 0 0 0 3px rgb(255 78 155 / 0.22), 0 0 18px rgb(125 92 255 / 0.6);
 }
 
 .music-widget__meta {
   display: grid;
-  gap: 2px;
+  gap: 3px;
   min-width: 0;
 }
 
 .music-widget__title {
-  font-size: var(--text-sm);
+  color: #fff;
+  font-size: 14px;
   font-weight: 800;
   line-height: 1.25;
   overflow: hidden;
@@ -2820,13 +2855,54 @@ body.is-party::before {
   white-space: nowrap;
 }
 
+.music-widget__subrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
 .music-widget__sub {
   font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--color-text-secondary);
+  color: rgb(255 255 255 / 0.62);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Equalizer mini: empat bilah memantul pelan saat musik berjalan, diam
+   saat jeda — penanda "sedang berputar" tanpa teks tambahan. */
+.music-widget__eq {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2.5px;
+  height: 13px;
+}
+
+.music-widget__eq i {
+  width: 3px;
+  height: 13px;
+  border-radius: 2px;
+  background: var(--color-lemon);
+  opacity: 0.45;
+  transform: scaleY(0.3);
+  transform-origin: bottom;
+}
+
+.music-widget.is-playing .music-widget__eq i {
+  animation: eq-bounce 0.95s ease-in-out infinite;
+  opacity: 1;
+}
+
+.music-widget.is-playing .music-widget__eq i:nth-child(2) { animation-delay: 0.15s; }
+.music-widget.is-playing .music-widget__eq i:nth-child(3) { animation-delay: 0.32s; }
+.music-widget.is-playing .music-widget__eq i:nth-child(4) { animation-delay: 0.5s; }
+
+@keyframes eq-bounce {
+  0%, 100% { transform: scaleY(0.26); }
+  50% { transform: scaleY(1); }
 }
 
 .music-widget__close {
@@ -2837,10 +2913,10 @@ body.is-party::before {
   display: grid;
   place-items: center;
   padding: 0;
-  border: 1.5px solid var(--color-border-strong);
+  border: 1.5px solid rgb(255 255 255 / 0.24);
   border-radius: 50%;
-  background: var(--color-surface-muted);
-  color: var(--color-text-secondary);
+  background: rgb(255 255 255 / 0.08);
+  color: rgb(255 255 255 / 0.78);
   font-size: 13px;
   line-height: 1;
   cursor: pointer;
@@ -2848,8 +2924,8 @@ body.is-party::before {
 }
 
 .music-widget__close:hover {
-  background: var(--color-accent-soft);
-  color: var(--color-danger);
+  background: var(--color-danger);
+  color: #fff;
   transform: rotate(90deg);
 }
 
@@ -2865,7 +2941,7 @@ body.is-party::before {
   font-family: var(--font-mono);
   font-size: 10.5px;
   font-weight: 700;
-  color: var(--color-text-secondary);
+  color: rgb(255 255 255 / 0.65);
   min-width: 34px;
 }
 
@@ -2875,10 +2951,10 @@ body.is-party::before {
 .music-widget__bar {
   position: relative;
   flex: 1;
-  height: 8px;
+  height: 9px;
   border-radius: var(--radius-pill);
-  background: var(--color-surface-muted);
-  border: 1.5px solid var(--color-border-strong);
+  background: rgb(255 255 255 / 0.12);
+  border: 1.5px solid rgb(255 255 255 / 0.22);
   cursor: pointer;
   touch-action: none;
   overflow: visible;
@@ -2893,63 +2969,41 @@ body.is-party::before {
   width: 0;
   border-radius: var(--radius-pill);
   background: var(--grad-pop);
+  box-shadow: 0 0 10px rgb(125 92 255 / 0.65);
   pointer-events: none;
 }
 
+/* Knob anak dari fill — posisinya otomatis ikut lebar progres. */
 .music-widget__knob {
   position: absolute;
   top: 50%;
-  left: 0;
-  width: 13px;
-  height: 13px;
+  right: -7px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background: var(--color-primary);
-  border: 2px solid #fff;
-  box-shadow: 0 0 0 1.5px var(--color-ink);
-  transform: translate(-50%, -50%);
+  background: #fff;
+  box-shadow: 0 0 0 2px var(--color-primary), 0 0 10px rgb(125 92 255 / 0.7);
+  transform: translate(50%, -50%);
   opacity: 0;
-  transition: opacity var(--duration-fast) var(--ease-out), left var(--duration-fast) linear;
+  transition: opacity var(--duration-fast) var(--ease-out);
   pointer-events: none;
 }
 
-.music-widget__bar-fill + .music-widget__knob { left: 0; }
 .music-widget.is-playing .music-widget__knob,
 .music-widget__bar:hover .music-widget__knob { opacity: 1; }
 
-/* Kontrol: prev · play (besar, gradien) · next */
+/* Kontrol: satu tombol play/pause besar. Pemutar ini khusus satu lagu,
+   jadi tombol prev/next memang tidak ada — lagu berputar ulang otomatis. */
 .music-widget__controls {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-}
-
-.music-widget__prev,
-.music-widget__next {
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 1.5px solid var(--color-border-strong);
-  border-radius: 50%;
-  background: var(--color-surface);
-  color: var(--color-text);
-  font-size: 14px;
-  line-height: 1;
-  cursor: pointer;
-  transition: background var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
-}
-
-.music-widget__prev:hover,
-.music-widget__next:hover {
-  background: var(--color-primary-soft);
-  transform: scale(1.1);
 }
 
 .music-widget__play {
-  width: 48px;
-  height: 48px;
+  position: relative;
+  width: 54px;
+  height: 54px;
   display: grid;
   place-items: center;
   padding: 0;
@@ -2957,15 +3011,23 @@ body.is-party::before {
   border-radius: 50%;
   background: var(--grad-pop);
   color: #fff;
-  font-size: 17px;
+  font-size: 19px;
   line-height: 1;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgb(79 59 234 / 0.4);
+  box-shadow: 0 4px 14px rgb(79 59 234 / 0.5);
   transition: transform var(--duration-fast) var(--ease-out), filter var(--duration-fast) var(--ease-out);
 }
 
-.music-widget__play:hover { transform: scale(1.08); filter: brightness(1.08); }
+.music-widget__play:hover { transform: scale(1.07); filter: brightness(1.1); }
 .music-widget__play:active { transform: scale(0.94); }
+
+/* Saat musik jalan, cincin pink memancar pelan dari tombol play. */
+.music-widget.is-playing .music-widget__play { animation: play-pulse 2.2s ease-in-out infinite; }
+
+@keyframes play-pulse {
+  0%, 100% { box-shadow: 0 4px 14px rgb(79 59 234 / 0.5), 0 0 0 0 rgb(255 78 155 / 0.5); }
+  55% { box-shadow: 0 4px 14px rgb(79 59 234 / 0.5), 0 0 0 12px rgb(255 78 155 / 0); }
+}
 
 /* ---- Piringan hitam (bentuk awal) ---- */
 .music-widget__disc {
@@ -3035,8 +3097,8 @@ body.is-party::before {
 /* Disc di dalam kartu: wajah vinyl kecil yang ikut berputar. */
 .music-widget__disc--art {
   display: block;
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background:
     radial-gradient(circle at 50% 50%, var(--color-lemon) 0 3px, transparent 3.5px),

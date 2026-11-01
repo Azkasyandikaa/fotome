@@ -4,17 +4,16 @@
  * Dua keadaan:
  *  - KOLAP: satu piringan hitam (vinyl) yang berputar saat musik jalan —
  *    bentuk default, ringan, tidak menutupi konten.
- *  - BUKA:  piringan "mekar" jadi kartu player ala Spotify — sampul disc,
- *    judul lagu, progress bar (klik utk seek), tombol prev / play-pause / next,
- *    plus tombol tutup.
+ *  - BUKA:  piringan "mekar" jadi kartu "now playing" ala Spotify — panel
+ *    gelap, sampul disc berputar + glow, equalizer mini, judul lagu,
+ *    progress bar (klik utk seek), tombol play-pause, plus tombol tutup.
+ *    Tanpa tombol prev/next: pemutar khusus satu lagu (public/music/).
  *
  * Muncul hanya kalau public/music/ punya lagu (lihat services/music.ts).
  */
 import {
   initMusic,
-  prevMusic,
   seekMusic,
-  skipMusic,
   subscribeMusic,
   toggleMusic,
   type MusicStatus,
@@ -69,11 +68,6 @@ function render(w: HTMLElement, s: MusicStatus): void {
     bar.setAttribute('aria-valuetext', `${fmt(s.time)} dari ${fmt(s.duration)}`);
   }
 
-  // Tombol prev/next hanya berguna kalau ada lebih dari satu lagu.
-  const multi = s.total > 1;
-  w.querySelectorAll<HTMLButtonElement>('.music-widget__prev, .music-widget__next').forEach((b) => {
-    b.hidden = !multi;
-  });
 }
 
 export function mountMusicWidget(): void {
@@ -91,7 +85,10 @@ export function mountMusicWidget(): void {
         </span>
         <span class="music-widget__meta">
           <strong class="music-widget__title">Musik latar</strong>
-          <small class="music-widget__sub">Sedang diputar</small>
+          <span class="music-widget__subrow">
+            <small class="music-widget__sub">Sedang diputar</small>
+            <span class="music-widget__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          </span>
         </span>
         <button type="button" class="music-widget__close" aria-label="Tutup player musik" title="Tutup">✕</button>
       </div>
@@ -100,16 +97,14 @@ export function mountMusicWidget(): void {
         <span class="music-widget__t-now">0:00</span>
         <div class="music-widget__bar" role="slider" tabindex="0"
              aria-label="Posisi lagu" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-          <span class="music-widget__bar-fill"></span>
-          <span class="music-widget__knob" aria-hidden="true"></span>
+          <!-- Knob di DALAM fill supaya posisinya ikut mengikuti progres. -->
+          <span class="music-widget__bar-fill"><span class="music-widget__knob" aria-hidden="true"></span></span>
         </div>
         <span class="music-widget__t-dur">0:00</span>
       </div>
 
       <div class="music-widget__controls">
-        <button type="button" class="music-widget__prev" aria-label="Lagu sebelumnya" title="Sebelumnya">⏮</button>
         <button type="button" class="music-widget__play" aria-label="Putar musik" aria-pressed="false">▶</button>
-        <button type="button" class="music-widget__next" aria-label="Lagu berikutnya" title="Berikutnya">⏭</button>
       </div>
     </div>
 
@@ -138,8 +133,6 @@ export function mountMusicWidget(): void {
   w.querySelector('.music-widget__close')?.addEventListener('click', () => setOpen(false));
 
   w.querySelector('.music-widget__play')?.addEventListener('click', toggleMusic);
-  w.querySelector('.music-widget__prev')?.addEventListener('click', prevMusic);
-  w.querySelector('.music-widget__next')?.addEventListener('click', skipMusic);
 
   // Progress bar: klik / seret utk seek + panah keyboard utk geser 5 detik.
   const bar = w.querySelector<HTMLElement>('.music-widget__bar');

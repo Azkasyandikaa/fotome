@@ -44,8 +44,7 @@ export function mountFramesPage(host: HTMLElement): () => void {
           </div>
         </div>
         <p class="frames__sub">
-          Rotasi foto, ukuran foto, dan jumlah jepretan otomatis ngikutin frame yang kamu pilih.
-          Geser barisnya ke kanan–kiri untuk lihat semua pilihan.
+          Berikut adalah preview lengkap dari semua frame, dengan berbagai kategori, dan jumlah fotonya.
         </p>
       </header>
 

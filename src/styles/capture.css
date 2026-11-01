@@ -22,7 +22,8 @@
   width: 100%;
   height: 100%;
   max-width: none;
-  padding: 12px clamp(14px, 2.4vw, 26px) 14px;
+  /* Padding vertikal dirapatkan supaya preview kamera dapat tinggi ekstra. */
+  padding: 8px clamp(14px, 2.4vw, 26px) 10px;
   align-items: stretch;
   grid-template-rows: minmax(0, 1fr);
   overflow: hidden;
@@ -672,41 +673,59 @@
 /* Fullview: kamera selalu terlihat utuh — stage mengecil bila perlu.
    PENTING: stage yang fleksibel, bukan tombol — shutter harus selalu
    berada di dalam viewport (halaman tidak bisa di-scroll). */
-/* Lebar bersama: stage kamera, dock filter, dan baris kontrol memakai kolom
-   yang SAMA — jadi kamera tidak pernah lebih sempit dari kartu filter di
-   bawahnya, dan tidak ada lagi sisa ruang kosong besar di kanan stage. */
+/* Lebar bersama: kolom booth dipakai bersama oleh kamera, dock filter, dan
+   baris kontrol (maks 760px). Stage di dalamnya MENYESUAIKAN diri ke rasio
+   lubang foto frame — tidak lagi membentang selebar kolom. */
 .capture.is-fullview .camera {
   flex: 1;
   min-height: 0;
   height: 100%;
+  gap: 8px; /* lebih rapat dari default 10px — stage kamera lebih tinggi */
   justify-content: flex-start;
   width: min(760px, 100%);
   margin-inline: auto;
 }
 
-/* Fullview: kamera mengisi SEMUA ruang tersisa — LEBAR = kolom booth
-   (sama persis dengan dock filter di bawahnya), TINGGI jatuh ke sisa tinggi
-   layar. Rasio preview selalu mengikut kotak terakhir, jadi hasil jepretan
-   tetap 100% sama dengan yang terlihat di layar (WYSIWYG). */
-.capture.is-fullview .camera__stage {
+/* Fullview: .camera__view mengisi SEMUA ruang tersisa di kolom kamera
+   (dock & kontrol di bawahnya tidak ikut) dan menengahkan stage di dalamnya.
+   Container-nya dipakai container query supaya stage bisa PAS rasio — lihat
+   aturan .camera__stage di bawah. */
+.camera__view {
   flex: 1 1 0;
   min-height: 240px;
-  min-width: 260px;
-  height: auto;
-  width: 100%;
-  align-self: stretch;
-  max-width: none;
-  margin-inline: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  container-type: size;
 }
 
-.capture.is-fullview .camera__dock { margin-top: 6px; flex-shrink: 0; }
+/* Stage = kotak video, RASIONYA rasio lubang foto frame (--cam-ar, di-set
+   JS dari frame terpilih) — bukan lebar penuh yang bikin preview kelebaran
+   lalu hasil jepretan ke-crop lagi saat masuk bingkai.
+   Ukuran = min(lebar view, tinggi view × rasio): muat tanpa memotong sudut.
+   Baris `width` pertama = fallback kalau container query belum didukung. */
+.capture.is-fullview .camera__stage {
+  flex: none;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+  max-width: none;
+  max-height: 100%;
+  margin-inline: 0;
+  width: 100%;
+  aspect-ratio: var(--cam-ar, 4 / 3);
+  width: min(100cqw, calc(100cqh * var(--cam-ar, 4 / 3)));
+}
+
+.capture.is-fullview .camera__dock { margin-top: 4px; flex-shrink: 0; }
 
 .capture.is-fullview .camera__controls { margin-top: 2px; flex-shrink: 0; }
 
 .capture.is-fullview .camera__review { flex-shrink: 0; }
 
 /* Stage kamera: bezel tinta + satu bayangan, bukan glow berlapis.
-   Rasio potret 3:4 (bukan 16:10) — preview = hasil jepretan, minim crop. */
+   Rasio dasar 3:4 hanya cadangan — di mode capture selalu ditimpa rasio
+   lubang frame (--cam-ar) lewat aturan .capture.is-fullview / media query. */
 .camera__stage {
   position: relative;
   background: var(--ink);
@@ -839,8 +858,8 @@
 .camera__dock {
   position: relative;
   margin: 8px auto 0;
-  /* Selaras dengan lebar stage kamera (keduanya memakai kolom booth yang
-     sama) — kartu filter dan kamera kelihatan sebagai satu ketukan rapi. */
+  /* Selaras dengan kolom booth (sama dengan .capture.is-fullview .camera)
+     — kartu filter dan kamera kelihatan sebagai satu ketukan rapi. */
   width: 100%;
   max-width: min(760px, 100%);
   z-index: 3;
@@ -1159,17 +1178,30 @@
   .capture.is-fullview .strip-live__stage,
   .capture.is-fullview .tpl-preview__stage { flex: none; height: min(56dvh, 500px); }
 
-  /* Kamera di ponsel: potret, bukan crop 16/10 yang kecil.
-     flex/width harus di-reset — aturan fullview (flex:1 1 0 + width:auto)
-     bikin stage collapse ke 0 saat kolomnya ber-tinggi-otomatis. */
-  .capture.is-fullview { padding-inline: 12px; }
+  /* Kamera di ponsel: lebar penuh, rasio = lubang frame (bukan potret 3:4
+     yang bikin hasil jepretan ke-crop saat masuk bingkai).
+     flex/width harus di-reset — aturan fullview (flex:1 1 0) + container query
+     bikin stage collapse ke 0 saat kolomnya ber-tinggi-otomatis, jadi view
+     kembali jadi blok biasa (tinggi = tinggi isinya). */
+  /* Padding tepi lebih tipis: stage kamera dapat lebar (dan tinggi) ekstra. */
+  .capture.is-fullview { padding-inline: 8px; }
+  .capture.is-fullview .camera__view,
+  .camera__view {
+    flex: none;
+    min-height: 0;
+    display: block;
+    container-type: normal;
+  }
   .capture.is-fullview .camera__stage,
   .camera__stage {
     flex: none;
-    width: 100%;
     height: auto;
-    aspect-ratio: 3 / 4;
-    max-height: min(70dvh, 620px);
+    aspect-ratio: var(--cam-ar, 4 / 3);
+    width: 100%;
+    /* Batasi TINGGI dulu (biar tombol jepret tetap terlihat) — lebarnya ikut
+       mengecil supaya rasio lubang frame tetap utuh, bukan ke-crop lagi. */
+    width: min(100%, calc(min(76dvh, 680px) * var(--cam-ar, 4 / 3)));
+    max-height: min(76dvh, 680px);
   }
 
   .capture { grid-template-columns: 1fr; gap: 16px; }

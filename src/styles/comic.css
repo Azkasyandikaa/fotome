@@ -1094,14 +1094,11 @@ select {
 .music-widget__card {
   border-width: 2.5px;
   border-color: var(--color-ink);
-  background: var(--color-surface);
+  /* Latar gelap "now playing" diatur global.css — jangan ditimpa di sini. */
   box-shadow: 5px 6px 0 var(--color-ink);
 }
 
 .music-widget__disc { border: 2.5px solid var(--color-ink); box-shadow: 3px 4px 0 var(--color-ink); }
-.music-widget__prev,
-.music-widget__next { border-width: 2px; border-color: var(--color-ink); }
-.music-widget__close { border-width: 2px; border-color: var(--color-ink); }
 
 .modal__header { border-bottom: 2.5px solid var(--color-ink); background: var(--color-primary-soft); }
 .modal__footer { border-top: 2.5px dashed var(--color-ink); background: var(--color-surface-muted); }

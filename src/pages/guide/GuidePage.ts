@@ -12,7 +12,7 @@ const STEPS = [
     icon: '🖼️',
     title: 'Pilih frame',
     text: 'Buka menu Pilih Frame, lalu geser baris “Semua / 1–5 foto” dan baris kategori ke kanan–kiri untuk menyaring gaya bingkai.',
-    note: 'Jumlah jepretan otomatis ngikutin slot frame — frame 4 slot = 4 jepretan, dst. Kamera berhenti sendiri saat slot penuh.',
+    note: 'Lalu pilih frame yang kamu sukai:)',
     accent: 'pink',
   },
   {

@@ -143,6 +143,43 @@ async function shot(name) {
 const click = (selector) => evalJs(`document.querySelector(${JSON.stringify(selector)}).click()`);
 const textOf = (selector) => evalJs(`document.querySelector(${JSON.stringify(selector)})?.textContent?.trim() ?? null`);
 
+/**
+ * Rasio (w/h) tiap lubang foto pada frame yang sedang dipilih — diambil dari
+ * manifest booth yang SAMA dengan yang dipakai aplikasi (/api/booth).
+ */
+async function frameSlotRatios() {
+  try {
+    const id = await evalJs("localStorage.getItem('photobooth.template')");
+    if (!id) return null;
+    const manifest = await (await fetch(`${BASE}/api/booth`)).json();
+    const entry = (manifest.templates ?? []).find((t) => `booth-${t.id}` === id || t.id === id);
+    const slots = entry?.config?.photoSlots;
+    if (!Array.isArray(slots) || slots.length === 0) return null;
+    const ratios = slots.map((s) => s.width / s.height).filter((r) => Number.isFinite(r) && r > 0);
+    return ratios.length > 0 ? ratios : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Kamera WYSIWYG: preview harus terisi penuh di lubang foto frame (cover),
+ * jadi hasil jepretan tidak ke-crop lagi saat masuk bingkai.
+ */
+function checkFrameFit(where, box, ratios) {
+  if (!ratios) {
+    console.log(`[SKIP] camera preview vs frame hole (${where}) — slot data unavailable`);
+    return;
+  }
+  const p = box.w / box.h;
+  const worst = Math.min(...ratios.map((r) => Math.min(p, r) / Math.max(p, r)));
+  check(
+    `camera preview aspect fills the frame hole (${where})`,
+    worst >= 0.95,
+    `${box.w}x${box.h} → ${(worst * 100).toFixed(1)}% of every photo slot visible`,
+  );
+}
+
 // ---------------------------------------------------------------------------
 // 2. Drive the app
 // ---------------------------------------------------------------------------
@@ -406,23 +443,53 @@ try {
   );
   check('camera preview has rounded frame', parseFloat(previewRadius) > 0, previewRadius);
 
-  // Ukuran kamera: stage dan kartu filter memakai SATU kolom booth (cap
-  // 760px) — lebarnya harus sama persis, jadi kamera tidak pernah lebih
-  // sempit dari dock filternya. HP tetap potret 3:4 (media query terpisah).
+  // Rasio lubang foto frame yang dipilih — patokan "foto harus muat di bingkai".
+  const slotRatios = await frameSlotRatios();
+
+  // Ukuran kamera: kolom booth dipakai bersama (cap 760px) — stage tidak
+  // pernah lebih lebar dari kartu filternya, dan selalu muat di ruang sisa.
+  // Rasionya sendiri dicek terpisah: harus = rasio lubang frame.
   const stageBox = await evalJs(
     "JSON.stringify({ w: Math.round(document.querySelector('.camera__stage').getBoundingClientRect().width), h: Math.round(document.querySelector('.camera__stage').getBoundingClientRect().height), dock: Math.round(document.querySelector('.camera__dock').getBoundingClientRect().width), vw: innerWidth })",
   );
   const parsedStage = JSON.parse(stageBox);
   check(
-    'camera stage is wide and exactly as wide as the filter card (cap 760px)',
+    'camera stage fits the booth column (cap 760px) and never outgrows the filter card',
     parsedStage.h >= 420 &&
       parsedStage.w <= 760 &&
       parsedStage.w >= 520 &&
       parsedStage.w === parsedStage.dock,
     stageBox,
   );
+  checkFrameFit('desktop', parsedStage, slotRatios);
 
-  // Di ponsel kamera harus potret, bukan crop 16/10 yang kecil.
+  // Hasil jepretan harus sama dengan kotak preview (WYSIWYG): grabFrame
+  // memotong video ke rasio yang SAMA dengan yang tampil di layar.
+  const grab = await evalJs(`(async () => {
+    const { grabFrame } = await import('/src/services/camera.ts');
+    const video = document.querySelector('.camera__video');
+    const box = video.getBoundingClientRect();
+    const frame = await grabFrame(video, false, box.width / box.height);
+    if (!frame) return 'null';
+    const out = JSON.stringify({
+      want: Math.round((box.width / box.height) * 1000) / 1000,
+      got: Math.round((frame.width / frame.height) * 1000) / 1000,
+      px: frame.width + 'x' + frame.height,
+    });
+    frame.close();
+    return out;
+  })()`);
+  const parsedGrab = grab === 'null' ? null : JSON.parse(grab);
+  check(
+    'captured frame matches the live preview aspect (WYSIWYG)',
+    !!parsedGrab && Math.abs(parsedGrab.got - parsedGrab.want) < 0.02,
+    parsedGrab
+      ? `preview ${parsedGrab.want} vs photo ${parsedGrab.got} (${parsedGrab.px})`
+      : String(grab),
+  );
+
+  // Di ponsel: lebar penuh, tinggi dibatasi supaya tombol jepret tetap
+  // terlihat — rasio ikut lubang frame, bukan potret 3:4 yang bikin crop.
   await send('Emulation.setDeviceMetricsOverride', {
     width: 360,
     height: 780,
@@ -435,10 +502,32 @@ try {
   );
   const parsedMobile = JSON.parse(mobileStage);
   check(
-    'camera is portrait and tall on phones',
-    parsedMobile.h / parsedMobile.w >= 1.25 && parsedMobile.h >= 420,
+    'camera preview fills the phone width but stays short enough to reach the shutter',
+    parsedMobile.w >= 300 && parsedMobile.h >= 180 && parsedMobile.h <= 640,
     `${parsedMobile.w}x${parsedMobile.h}`,
   );
+  checkFrameFit('phone', parsedMobile, slotRatios);
+
+  // Jendela pendek (720p): stage mengecil mengikuti ruang sisa, tapi kontrol
+  // dan tombol jepret harus tetap di dalam viewport (capture tidak bisa scroll).
+  await send('Emulation.setDeviceMetricsOverride', {
+    width: 1280,
+    height: 720,
+    deviceScaleFactor: 1,
+    mobile: false,
+  });
+  await sleep(400);
+  const shortBox = JSON.parse(
+    await evalJs(
+      "JSON.stringify({ w: Math.round(document.querySelector('.camera__stage').getBoundingClientRect().width), h: Math.round(document.querySelector('.camera__stage').getBoundingClientRect().height), shutterBottom: Math.round(document.querySelector('[data-act=\"capture\"]').getBoundingClientRect().bottom), vh: innerHeight })",
+    ),
+  );
+  check(
+    'shutter stays inside the viewport on a short 720p window',
+    shortBox.shutterBottom <= shortBox.vh && shortBox.w > 0 && shortBox.h > 0,
+    JSON.stringify(shortBox),
+  );
+  checkFrameFit('short window', shortBox, slotRatios);
   await send('Emulation.setDeviceMetricsOverride', {
     width: 1440,
     height: 1200,
