@@ -210,31 +210,60 @@ export class StripPreview {
   }
 
   /** Called by the page after each shot. */
-  addPhoto(photo: ImageBitmap): void {
+  addPhoto(photo: ImageBitmap, at?: number): void {
     if (this.mode !== 'strip') return;
-    this.photos.push(photo);
+    if (at === undefined) this.photos.push(photo);
+    else this.photos.splice(at, 0, photo);
     this.draw();
-    const step = this.host.querySelector<HTMLElement>(`[data-step="${this.photos.length - 1}"]`);
-    step?.classList.add('is-done');
+    this.syncSteps();
   }
 
   /** Drop the newest slot (photo is closed by the Camera) and redraw. */
   removeLast(): void {
-    this.photos.pop();
+    this.removeAt(this.photos.length - 1);
+  }
+
+  /**
+   * Buang slot ke-`index` TANPA menutup bitmapnya — kepemilikan bitmap ada
+   * di Camera (yang sudah menutupnya sebelum memanggil callback ini).
+   */
+  removeAt(index: number): void {
+    this.photos.splice(index, 1);
     if (this.mode === 'strip' && this.template) {
-      const step = this.host.querySelector<HTMLElement>(`[data-step="${this.photos.length}"]`);
-      step?.classList.remove('is-done');
       this.draw();
+      this.syncSteps();
     }
+  }
+
+  /**
+   * Ganti foto di slot `index` dengan hasil jepretan ulang — bitmap lama
+   * sudah ditutup oleh Camera, di sini cukup tukar referensi + gambar ulang.
+   */
+  replacePhoto(index: number, photo: ImageBitmap): void {
+    if (this.mode !== 'strip' || index < 0 || index >= this.photos.length) return;
+    this.photos[index] = photo;
+    this.draw();
+    this.syncSteps();
   }
 
   reset(): void {
     this.photos.forEach((p) => p.close());
     this.photos = [];
     if (this.mode === 'strip' && this.template) {
-      this.host.querySelectorAll('.strip-live__steps li').forEach((el) => el.classList.remove('is-done'));
+      this.syncSteps();
       this.draw();
     }
+  }
+
+  /** Langkah 1..N: pertama `photos.length` dianggap sudah terisi. Dilakukan
+   *  ulang tiap perubahan supaya ulang foto TENGAH pun ikut benar — kalau
+   *  hanya toggle satu li, urutan tanda akan bergeser salah. */
+  private syncSteps(): void {
+    if (this.mode !== 'strip') return;
+    this.host.querySelectorAll<HTMLElement>('.strip-live__steps li').forEach((el) => {
+      const i = Number(el.dataset.step);
+      el.classList.toggle('is-done', i < this.photos.length);
+    });
   }
 
   /** Redraw the strip composite. */

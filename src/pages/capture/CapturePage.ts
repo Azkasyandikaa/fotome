@@ -69,10 +69,11 @@ export function mountCapturePage(host: HTMLElement): () => void {
     camera = new Camera(mainSlot, {
       onShot: (_i, photo) => strip.addPhoto(photo),
       onRetakeOne: (index) => {
-        // Camera already popped & closed the bitmap; drop the matching slot.
-        if (index === strip.getPhotos().length - 1) strip.removeLast();
-        else strip.reset();
+        // Camera sudah menutup bitmapnya sendiri; buang slot yang cocok di
+        // strip (posisi mana pun benar — urutan slot lain tidak ikut rusak).
+        strip.removeAt(index);
       },
+      onReplaceShot: (index, photo) => strip.replacePhoto(index, photo),
       onRetakeAll: () => {
         strip.reset();
       },

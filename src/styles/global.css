@@ -3048,6 +3048,17 @@ body.is-party::before {
 .music-widget__disc:hover { transform: scale(1.08); }
 .music-widget__disc:active { transform: scale(0.94); }
 
+/* Piringan = pegangan geser widget: touch-action none supaya sentuhan di HP
+   menyeret widget, bukan menggulir halaman. Kursor grab menandakan menggenggam
+   bisa pindah tempat; saat benar-benar diseret, transisi dimatikan biar ikut
+   pointer 1:1 (tanpa telat). */
+.music-widget__disc { touch-action: none; user-select: none; cursor: grab; }
+.music-widget__disc.is-dragging { cursor: grabbing !important; transition: none; transform: none; }
+
+/* Saat digeser, bayangan widget menempel dangan tangan supaya terasa "diangkat". */
+.music-widget.is-dragging { z-index: 80; }
+
+
 /* Wajah vinyl: alur putar + label tengah. */
 .music-widget__disc-face {
   position: relative;

@@ -12,6 +12,8 @@ export interface CameraOptions {
   onRetakeOne: (index: number) => void;
   /** Start the whole session over. */
   onRetakeAll: () => void;
+  /** Foto ke-`index` diganti hasil jepretan ulang (per-session retake). */
+  onReplaceShot: (index: number, photo: ImageBitmap) => void;
   /** Called when the user confirms the 3 photos. */
   onComplete: (photos: ImageBitmap[]) => void;
 }
@@ -84,6 +86,8 @@ export class Camera {
   private capturing = false;
   /** True saat jeda antar sesi jepretan — tombol bulat berfungsi sebagai LANJUT. */
   private breaking = false;
+  /** True saat review akhir tampil — di sini ulang per foto boleh jalan. */
+  private reviewing = false;
   private stopped = false;
   private opts: CameraOptions;
   private photos: ImageBitmap[] = [];
@@ -146,8 +150,12 @@ export class Camera {
           </div>
         </div>
         <div class="camera__review" hidden>
-          <button type="button" class="btn btn--ghost" data-act="retake-all">MULAI ULANG</button>
-          <button type="button" class="btn btn--primary" data-act="confirm">LANJUT EDIT</button>
+          <p class="camera__review-hint">Cek hasilnya — sentuh foto yang mau diulang ↺</p>
+          <div class="camera__review-shots" role="group" aria-label="Ulangi foto tertentu"></div>
+          <div class="camera__review-actions">
+            <button type="button" class="btn btn--ghost" data-act="retake-all">MULAI ULANG</button>
+            <button type="button" class="btn btn--primary" data-act="confirm">LANJUT EDIT</button>
+          </div>
         </div>
       </div>
     `;
@@ -467,7 +475,10 @@ export class Camera {
         // Final review: strip panel already shows all three photos.
         this.host.querySelector<HTMLElement>('.camera__controls')!.hidden = true;
         this.host.querySelector<HTMLElement>('.camera__review')!.hidden = false;
+        this.buildReviewShots();
+        this.reviewing = true;
         const finalAction = await this.waitResume();
+        this.reviewing = false;
         this.host.querySelector<HTMLElement>('.camera__review')!.hidden = true;
         this.host.querySelector<HTMLElement>('.camera__controls')!.hidden = false;
         if (this.stopped) return;
@@ -518,6 +529,95 @@ export class Camera {
     return new Promise((resolve) => {
       this.resumeAction = resolve;
     });
+  }
+
+  /**
+   * Review per foto ("settingan" ulang per sesi setelah jepret 1–N selesai):
+   * setiap foto jadi tombol thumbnail kecil — menekannya mengulang SATU foto
+   * itu saja (countdown → jepret → slot itu diganti), foto lain tetap utuh.
+   */
+  private buildReviewShots(): void {
+    const row = this.host.querySelector<HTMLElement>('.camera__review-shots');
+    if (!row || this.photos.length === 0) return;
+    row.replaceChildren(
+      ...this.photos.map((photo, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'camera__review-shot';
+        btn.setAttribute('aria-label', `Ulangi foto ${i + 1}`);
+        btn.title = `Ulangi foto ${i + 1}`;
+        const canvas = document.createElement('canvas');
+        canvas.className = 'camera__review-thumb';
+        canvas.width = 64;
+        canvas.height = 80;
+        const ctx = canvas.getContext('2d');
+        if (ctx && photo.width > 0 && photo.height > 0) {
+          // "Cover" — isi kotak thumbnail penuh, sisi lebih panjang terpotong.
+          const scale = Math.max(canvas.width / photo.width, canvas.height / photo.height);
+          const dw = photo.width * scale;
+          const dh = photo.height * scale;
+          ctx.drawImage(photo, (canvas.width - dw) / 2, (canvas.height - dh) / 2, dw, dh);
+        }
+        const tag = document.createElement('span');
+        tag.className = 'camera__review-tag';
+        tag.textContent = `${i + 1} ↺`;
+        btn.append(canvas, tag);
+        btn.addEventListener('click', () => void this.retakeOne(i));
+        return btn;
+      }),
+    );
+  }
+
+  /**
+   * Ulang SATU foto di posisi `index`: ulang countdown sesuai timer yang
+   * aktif, jepret, lalu tukar slotnya — strip & thumbnail review ikut
+   * digambar ulang, foto lain tidak tersentuh.
+   */
+  private async retakeOne(index: number): Promise<void> {
+    if (this.breaking || !this.video) return;
+    // Selama review akhir, captureSequence "menahan" capturing=true di
+    // await waitResume — hook reviewing membuat ulang per foto tetap boleh.
+    if (this.capturing && !this.reviewing) return;
+    if (index < 0 || index >= this.photos.length) return;
+    this.capturing = true;
+    this.setShootingUi(true);
+
+    const review = this.host.querySelector<HTMLElement>('.camera__review');
+    const controls = this.host.querySelector<HTMLElement>('.camera__controls');
+    const label = this.host.querySelector<HTMLElement>('.camera__shot-label');
+    if (review) review.hidden = true;
+    if (controls) controls.hidden = false;
+    this.host.querySelector('.camera')?.classList.remove('is-break');
+
+    try {
+      if (label) label.textContent = `Ulangi foto ${index + 1}`;
+      const filter = getFilter(store.get('selectedFilterId'));
+      if (this.timerSecs === 'off') await runCountdown({ seconds: 0 });
+      else await runCountdown({ seconds: this.timerSecs });
+      if (this.stopped) return;
+
+      const frame = await grabFrame(this.video, this.mirror, this.previewAspect());
+      if (!frame) throw new Error('capture failed');
+      const baked = await applyFilterToFrame(frame, filter.css, filter.overlay, filter.fit);
+
+      const old = this.photos[index]!;
+      this.photos[index] = baked;
+      this.opts.onReplaceShot(index, baked);
+      old.close();
+
+      flashStage(this.host);
+      if (label) label.textContent = 'Selesai ✦';
+    } catch {
+      toast('Pengambilan foto gagal — coba lagi.', 'error');
+    } finally {
+      this.capturing = false;
+      this.setShootingUi(false);
+      if (!this.stopped) {
+        if (review) review.hidden = false;
+        if (controls) controls.hidden = true;
+        this.buildReviewShots(); // thumbnail slot yang diulang ikut membesar segar
+      }
+    }
   }
 
   private resumeWith(action: ResumeAction): void {
