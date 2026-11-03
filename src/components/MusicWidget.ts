@@ -65,13 +65,21 @@ function applyInitialPosition(w: HTMLElement): void {
   setWidgetPos(w, { x, y });
 }
 
-/** Set left/top eksplisit (left/top mengalahkan right/bottom di CSS). */
+/**
+ * Set left/top eksplisit. PENTING: right/bottom di-set `auto` supaya aturan
+ * CSS `.music-widget { right; bottom }` tidak tetap aktif — kalau left DAN
+ * right hidup bersamaan di elemen fixed, kotaknya MERENTANG selebar layar
+ * (menutup tombol di bawahnya dan membuat clamp jadi liar).
+ * width/height max-content menjaga kotak pas sebesar konten (kartu+disc).
+ */
 function setWidgetPos(w: HTMLElement, p: WidgetPos): WidgetPos {
   const clamped = clampPos(w, p);
   w.style.left = `${clamped.x}px`;
   w.style.top = `${clamped.y}px`;
-  w.style.right = '';
-  w.style.bottom = '';
+  w.style.right = 'auto';
+  w.style.bottom = 'auto';
+  w.style.width = 'max-content';
+  w.style.height = 'auto';
   return clamped;
 }
 
@@ -141,9 +149,11 @@ function enableDrag(w: HTMLElement, handle: HTMLElement): void {
   handle.addEventListener('pointercancel', finish, true);
 
   // Layar berubah ukuran (rotate HP, resize) → widget diseret balik ke-view.
+  // (SavePos di sini juga — tidak ada dua listener resize.)
   window.addEventListener('resize', () => {
     const rect = w.getBoundingClientRect();
-    setWidgetPos(w, { x: rect.left, y: rect.top });
+    const clamped = setWidgetPos(w, { x: rect.left, y: rect.top });
+    if (w.dataset.dragged === '1') savePos(clamped);
   });
 }
 

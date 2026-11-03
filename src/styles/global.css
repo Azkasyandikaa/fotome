@@ -2755,17 +2755,23 @@ body.is-party::before {
 .lightbox__acts { display: flex; gap: var(--space-2); flex-shrink: 0; }
 
 /* ---- 21. Widget musik (disc → kartu player) + modal upload galeri ------ */
-/* Kontainer KOSONG di pojok kanan-bawah — semua chrome ada di dalam disc /
-   kartu, jadi saat kolap yang terlihat hanya piringan hitam bulat. */
+/* Posisi AWAL pojok kanan-ATAS — widget bisa digeser-geser (sejak pertama
+   tap piringan, JS mengganti ke left/top eksplisit + width max-content
+   supaya kotaknya tetap pas, tidak merentang selebar layar).
+   pointer-events: none di kontainer = bagian tak terlihat TIDAK pernah
+   melindungi tombol halaman lain (CTA "Lanjut ke Unduh" dsb). */
 .music-widget {
   position: fixed;
+  top: 14px;
   right: 14px;
-  bottom: 14px;
   z-index: 60;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 12px;
+  pointer-events: none;
 }
+
+.music-widget > * { pointer-events: auto; }
 
 /* Kartu player: tersembunyi sampai disc dipencet (is-open).
    Tema "now playing" gelap — panel vinyl dengan aksen gradien pop. */
@@ -3055,8 +3061,9 @@ body.is-party::before {
 .music-widget__disc { touch-action: none; user-select: none; cursor: grab; }
 .music-widget__disc.is-dragging { cursor: grabbing !important; transition: none; transform: none; }
 
-/* Saat digeser, bayangan widget menempel dangan tangan supaya terasa "diangkat". */
-.music-widget.is-dragging { z-index: 80; }
+/* Saat digeser, bayangan widget menempel dengan tangan supaya terasa "diangkat". */
+.music-widget.is-dragging { z-index: 90; }
+.music-widget.is-dragging .music-widget__card { transition: none; }
 
 
 /* Wajah vinyl: alur putar + label tengah. */
@@ -3125,9 +3132,10 @@ body.is-party::before {
 
 .music-widget__disc--art i { display: none; }
 
-/* Sticky bar (HP) ada di bawah — widget naik di atasnya. */
+/* Widget musik versi geser: HP pun mulai di kanan-atas (tidak lagi
+   mengejar sticky bar — piringannya bebas dipindah user). */
 @media (max-width: 767px) {
-  .music-widget { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); right: 10px; }
+  .music-widget { top: 10px; right: 10px; }
 }
 
 .dl-drive { display: grid; gap: var(--space-4); }
